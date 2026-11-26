@@ -265,15 +265,15 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
 ## Pedidos de 26/11/2026 (tarde) — para a próxima versão
 
 ### Refeições (a parte que mais precisa simplificar)
-- [ ] **Nome da tela:** "Refeições & Scanner" → **"Refeições"**.
-- [ ] **IA:** escrever só "IA" (sem citar Gemini) e permitir outros provedores no futuro.
+- [x] **Nome da tela:** "Refeições & Scanner" → **"Refeições"**.
+- [x] **IA:** escrever só "IA" (sem citar Gemini) e permitir outros provedores no futuro.
   - Na versão da loja ela continua desligada, porque o app promete não usar internet.
 - [ ] **Registrar tocando em botões, sem precisar digitar:**
   - botões com comidas básicas e genéricas, ex.: bife, frango, peixe, ovo, carne moída, porco, arroz, feijão,
     macarrão, batata, salada, legumes, pão, queijo, iogurte, fruta, **sobremesa, doce**;
   - porção como pouco / médio / muito, em vez de gramas;
   - **"+ adicionar item"** para pôr mais de uma coisa na mesma refeição;
-  - **calorias e proteína opcionais:** hoje são obrigatórias e travam o registro; o app estima pelos botões ou
+  - [x] **calorias e proteína opcionais** (feito na 1.4): hoje são obrigatórias e travam o registro; o app estima pelos botões ou
     deixa em branco.
 - [ ] **Velocidade ao comer:** rápido / normal / devagar. Com a caneta, comer rápido costuma causar enjoo, então
   é útil para a nutricionista.
@@ -283,10 +283,10 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
   - acrescentar o botão "Comi outra coisa", que abre os botões de comida;
   - opção "Sigo o cardápio da nutricionista", que esconde as sugestões e mostra só quanto falta de proteína,
     fibras e água.
-- [ ] **Atalhos de cima também no rodapé** (confirmar com o usuário quais atalhos).
+- [x] **Telas longas:** botão "↑" para voltar ao topo, que aparece ao rolar. Era o menu superior.
 
 ### Dia a dia
-- [ ] **Atividades:** acrescentar **bicicleta**, e também corrida, natação/hidroginástica, dança, pilates/yoga.
+- [x] **Atividades:** acrescentar **bicicleta**, e também corrida, natação/hidroginástica, dança, pilates/yoga.
 - [ ] **Dia de festa:** um botão que marca o dia como festa. O app:
   - não trata o dia como "falha";
   - dá dicas (proteína primeiro, comer devagar, beber água, cuidado com álcool e enjoo);
@@ -295,7 +295,7 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
   hipoglicemia em quem usa remédio para diabetes.
 - [ ] **Cigarro** como condição no perfil (fumante / ex-fumante), não como registro diário. Opcional, sem
   julgamento.
-- [ ] **Jejum intermitente** (opcional): registrar a janela de alimentação.
+- [ ] **Jejum intermitente e outras rotinas alimentares** (opcional; a mensagem do usuário veio cortada em "vamos considerar que a pessoa pode…" — confirmar): registrar a janela de alimentação.
   - Mostrar o aviso: "combine com seu médico/nutricionista", porque com a caneta aumenta o risco de pouca
     proteína e de hipoglicemia em diabéticos.
   - O app não incentiva o jejum.
@@ -321,5 +321,5 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
 - [ ] **Ordem do menu:** primeiro um **Resumo** com os meus dados (nome, dias de tratamento, próxima dose, peso,
   metas), depois o **Diário**, depois os demais, e **Evolução por último**.
 - [ ] **Relatório com gráficos** (peso, proteína, fome, exames), não só números, também no PDF/impressão.
-- [ ] **Formatos do relatório:** "Consulta nutricional" primeiro, "Consulta médica" depois.
-- [ ] **Aviso de que as informações são só recomendações** no topo do relatório, logo abaixo da identificação.
+- [x] **Formatos do relatório:** "Consulta nutricional" primeiro, "Consulta médica" depois.
+- [x] **Aviso de que as informações são só recomendações** no topo do relatório, logo abaixo da identificação.

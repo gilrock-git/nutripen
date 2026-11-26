@@ -392,7 +392,7 @@
     <section id="tab-refeicoes" class="tab-panel hidden space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <h2 class="page-title">Refeições & Scanner</h2>
+          <h2 class="page-title">Refeições</h2>
           <p class="page-sub">Alertas automáticos para vesícula, glicemia, refluxo e bariátrica</p>
         </div>
         <div class="flex flex-wrap items-center gap-x-3 gap-y-1 card px-3.5 py-2 text-xs font-semibold tabular-nums">
@@ -406,7 +406,7 @@
       <div class="card p-5 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300 border border-brand-200 dark:border-brand-800">☁️ IA Gemini (requer chave e internet)</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300 border border-brand-200 dark:border-brand-800">☁️ IA (requer chave e internet)</span>
             <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-2">Fotografe o prato ou descreva o que vai comer</h3>
             <p class="text-xs text-slate-600 dark:text-slate-400">A IA estima os macros e o app confere seus tetos clínicos. Estimativas por foto têm margem de erro — confira antes de salvar.</p>
           </div>
@@ -532,8 +532,8 @@
               <input type="text" id="meal-desc" required placeholder="Ex.: 120g de frango grelhado + purê de abóbora" class="field" />
             </div>
             <div class="grid grid-cols-3 gap-2.5">
-              <div><label for="meal-kcal" class="field-label">Calorias *</label><input type="number" inputmode="numeric" min="0" max="4000" step="1" id="meal-kcal" required placeholder="290" class="field" /></div>
-              <div><label for="meal-protein" class="field-label">Proteína (g) *</label><input type="number" inputmode="decimal" min="0" max="250" step="0.1" id="meal-protein" required placeholder="28" class="field" /></div>
+              <div><label for="meal-kcal" class="field-label">Calorias</label><input type="number" inputmode="numeric" min="0" max="4000" step="1" id="meal-kcal" placeholder="290" class="field" /></div>
+              <div><label for="meal-protein" class="field-label">Proteína (g)</label><input type="number" inputmode="decimal" min="0" max="250" step="0.1" id="meal-protein" placeholder="28" class="field" /></div>
               <div><label for="meal-fiber" class="field-label">Fibras (g)</label><input type="number" inputmode="decimal" min="0" max="120" step="0.1" id="meal-fiber" placeholder="0" class="field" /></div>
             </div>
             <div class="grid grid-cols-2 gap-2.5">
@@ -830,13 +830,23 @@
         <p class="page-sub">Para levar à consulta: perfil, condições, glicemia, medidas e adesão nutricional</p>
       </div>
 
+      <div class="rounded-2xl bg-slate-900 border border-slate-700 text-white p-4 sm:p-5 flex items-start gap-3.5 shadow-sm">
+        <div class="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 shrink-0"><i data-lucide="shield-alert" class="w-6 h-6"></i></div>
+        <div>
+          <h3 class="text-sm sm:text-base font-bold text-amber-300">Aviso clínico importante</h3>
+          <p class="text-xs sm:text-sm text-slate-200 mt-1 leading-relaxed">
+            O <strong>NutriPen</strong> é uma ferramenta de apoio e não substitui consulta. Metas e alertas são estimativas genéricas. <strong>Qualquer ajuste, escalonamento ou interrupção de dose da caneta (agonistas GLP-1/GIP) deve ser decidido pelo seu médico.</strong> Em caso de dor abdominal intensa e persistente, vômitos repetidos ou sinais de desidratação, procure atendimento.
+          </p>
+        </div>
+      </div>
+
       <div class="card p-5 sm:p-6 space-y-5">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-3 no-print">
           <div>
             <span class="eyebrow text-brand-700 dark:text-brand-400 block mb-1.5">Formato</span>
             <div class="flex flex-wrap gap-2" id="report-type-selector" role="radiogroup" aria-label="Formato do relatório">
-              <button type="button" data-report-type="medical" class="report-type-btn">👨‍⚕️ Consulta médica</button>
               <button type="button" data-report-type="nutrition" class="report-type-btn">🥗 Consulta nutricional</button>
+              <button type="button" data-report-type="medical" class="report-type-btn">👨‍⚕️ Consulta médica</button>
               <button type="button" data-report-type="complete" class="report-type-btn">📋 Completo</button>
             </div>
           </div>
@@ -849,15 +859,6 @@
         <div id="printable-clinical-report" class="rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 sm:p-6 text-xs sm:text-sm text-slate-900 dark:text-slate-100 space-y-4"></div>
       </div>
 
-      <div class="rounded-2xl bg-slate-900 border border-slate-700 text-white p-4 sm:p-5 flex items-start gap-3.5 shadow-sm">
-        <div class="p-2.5 rounded-xl bg-amber-500/20 text-amber-300 shrink-0"><i data-lucide="shield-alert" class="w-6 h-6"></i></div>
-        <div>
-          <h3 class="text-sm sm:text-base font-bold text-amber-300">Aviso clínico importante</h3>
-          <p class="text-xs sm:text-sm text-slate-200 mt-1 leading-relaxed">
-            O <strong>NutriPen</strong> é uma ferramenta de apoio e não substitui consulta. Metas e alertas são estimativas genéricas. <strong>Qualquer ajuste, escalonamento ou interrupção de dose da caneta (agonistas GLP-1/GIP) deve ser decidido pelo seu médico.</strong> Em caso de dor abdominal intensa e persistente, vômitos repetidos ou sinais de desidratação, procure atendimento.
-          </p>
-        </div>
-      </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <article class="rounded-2xl dica-nutri-card border p-5 space-y-2">
@@ -942,6 +943,7 @@
   </nav>
 
   <!-- Botão + (registro rápido) -->
+  <button type="button" id="to-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" aria-label="Voltar ao topo" class="no-print hidden fixed z-30 left-4 bottom-24 md:bottom-8 md:left-8 w-11 h-11 rounded-full bg-white/95 dark:bg-slate-800/95 border border-slate-200 dark:border-slate-700 shadow-lg text-lg font-bold text-slate-700 dark:text-slate-200 items-center justify-center">↑</button>
   <button type="button" id="fab-add" class="no-print fixed z-30 right-4 bottom-24 md:bottom-8 md:right-8 w-14 h-14 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white shadow-lg flex items-center justify-center transition active:scale-95" aria-label="Registrar">
     <i data-lucide="plus" class="w-7 h-7"></i>
   </button>
@@ -1336,7 +1338,7 @@
     let appState = null;
     let currentTab = 'diario';
     let currentChartMode = 'weight';
-    let currentReportType = 'medical';
+    let currentReportType = 'nutrition';
     let selectedFoodCategory = 'Todos';
     let selectedPortionMultiplier = 1;
     let selectedWeightMoment = '🌅 Jejum / Manhã';
@@ -3830,6 +3832,11 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       { id: 'none', emoji: '🚫', label: 'Não pratiquei' },
       { id: 'walk', emoji: '🚶', label: 'Caminhada' },
       { id: 'strength', emoji: '🏋️', label: 'Musculação' },
+      { id: 'bike', emoji: '🚴', label: 'Bicicleta' },
+      { id: 'run', emoji: '🏃', label: 'Corrida' },
+      { id: 'swim', emoji: '🏊', label: 'Natação / hidro' },
+      { id: 'dance', emoji: '💃', label: 'Dança' },
+      { id: 'pilates', emoji: '🧘', label: 'Pilates / yoga' },
       { id: 'other', emoji: '➕', label: 'Outra' }
     ];
     const HUNGER_LEVELS = [[1, '😌', 'Nenhuma'], [2, '🙂', 'Pouca'], [3, '😐', 'Normal'], [4, '😋', 'Bastante'], [5, '🤤', 'Muita']];
@@ -4807,7 +4814,6 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         const desc = $('meal-desc').value.trim();
         const kcalRaw = $('meal-kcal').value, protRaw = $('meal-protein').value;
         if (!desc) { showToast('Descreva a refeição.', 'error'); $('meal-desc').focus(); return; }
-        if (kcalRaw === '' || protRaw === '') { showToast('Informe calorias e proteína (pode ser 0).', 'error'); (kcalRaw === '' ? $('meal-kcal') : $('meal-protein')).focus(); return; }
         const v = readMealFormValues();
         addMealToToday({ ...v, desc, time: $('meal-time').value || getCurrentTimeHM(), digest: document.querySelector('input[name="meal-digest"]:checked')?.value,
           offPlan: $('meal-offplan').checked, offReason: $('meal-offreason').value });
@@ -4924,6 +4930,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       });
 
       // Virada do dia com o app aberto
+      window.addEventListener('scroll', () => { const t = $('to-top'), on = window.scrollY > 700; t.classList.toggle('hidden', !on); t.classList.toggle('flex', on); }, { passive: true });
       document.addEventListener('visibilitychange', () => { if (document.hidden) return; if (getTodayISO() !== lastRenderedDay) renderAll(); else refreshAutoDates(); });
       ['diary-entry-date', 'diary-entry-time', 'inj-date', 'w-date', 'w-time', 'meal-time', 'hunger-time'].forEach(id => ['input', 'change'].forEach(ev => $(id).addEventListener(ev, e => { if (e.isTrusted) $(id).dataset.auto = ''; })));
       window.addEventListener('online', () => showToast('Conexão restabelecida — IA disponível.'));

@@ -52,7 +52,7 @@ sub(r"\n\s*window\.addEventListener\('offline',[^\n]*", '')
 rep('    body { font-family:', '    header.sticky { padding-top: env(safe-area-inset-top, 0px); }\n    body { font-family:')
 
 # ---------------------------------------------------------------- Refeições: sem IA, montador sempre visível
-sub(r'<span class="px-2\.5 py-0\.5 rounded-full[^>]*>☁️ IA Gemini \(requer chave e internet\)</span>\s*<h3[^>]*>.*?</h3>\s*<p[^>]*>.*?</p>',
+sub(r'<span class="px-2\.5 py-0\.5 rounded-full[^>]*>☁️ IA \(requer chave e internet\)</span>\s*<h3[^>]*>.*?</h3>\s*<p[^>]*>.*?</p>',
     '<span class="eyebrow text-brand-700 dark:text-brand-400">Registro rápido</span>\n'
     '            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-1">Monte seu prato</h3>\n'
     '            <p class="text-xs text-slate-600 dark:text-slate-400">Escolha proteína, carboidrato, vegetal e fruta: o app soma os macros e confere seus tetos. Para outros alimentos, use a Tabela ou o formulário abaixo.</p>')
