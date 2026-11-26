@@ -71,6 +71,35 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
 - [ ] **Termo "glicemia capilar".** Avaliar trocar no app por "Glicemia (medida no dedo)" e manter
   "glicemia capilar" só no relatório para o médico. *Aguardando decisão.*
 
+- [ ] **Tela limpa e "árvore" para abrir contextos (redesenho de navegação).** Mostrar só o essencial e
+  abrir detalhes sob demanda (seções que expandem ▸), lembrando o que a pessoa deixou aberto.
+  - **Hoje:** saudação, cartão da próxima aplicação e só 3 metas (proteína, água, fibras) com "Ver todas
+    as metas ▸"; Dica da Nutri em 1 linha que expande; checklist resumido ("4/6 ▸"); contabilidade clínica
+    vai para Meu Perfil.
+  - **Botão "+" flutuante** com registro rápido: peso, água, refeição, glicemia, atividade, sintoma, aplicação.
+  - **Diário:** linhas que abrem — Peso ▸ · Aplicação ▸ · Evacuação e sintomas ▸ · Lembrete ▸ · Linha do tempo ▸.
+  - **Medidas:** abas internas Peso | Medidas | Glicemia | Exames, cada uma com gráfico e "Registrar ▸".
+  - **Refeições:** resumo do dia no topo; "Registrar refeição ▸", "Montador ▸", "Diário de hoje (3) ▸".
+
+- [ ] **Atividade física.** Registro simples por dia: *Não pratiquei* / *Caminhada* / *Musculação* /
+  *Outra*, com minutos opcionais.
+  - Meta semanal de referência (OMS): **150 min de atividade moderada + 2 dias de força**; mostrar progresso
+    da semana. Destacar **musculação/força** (protege a massa magra durante o emagrecimento com a caneta).
+  - Substitui o item "Treino de força / caminhada" do checklist; entra no relatório (média semanal).
+  - Se o padrão real ficar diferente do "nível de atividade" do perfil, sugerir atualizar (muda a meta de calorias).
+
+- [ ] **Exames com gráfico de evolução.** Condições novas no cadastro: **colesterol alto** e **gordura no
+  fígado**. Área "Exames" (dentro de Medidas): data + valores de HbA1c, glicemia de jejum (laboratório),
+  colesterol total, LDL, HDL, triglicerídeos; opcionais TGO/TGP, vitamina D, B12, ferritina, creatinina.
+  Gráfico por exame com faixa de referência geral (meta individual é do médico) e tabela "antes → agora"
+  no relatório.
+
+- [ ] **Bulas: só resumos com fonte (decidido).** Não guardar a bula no app. Para cada caneta:
+  - resumos curtos do que importa no momento (ex.: dose esquecida, anticoncepcional), sempre com
+    *"Fonte: bula [nome] — ANVISA, versão de [data]. Verifique se há atualização."*;
+  - botão "📄 Ver bula oficial" que abre o **Bulário Eletrônico da ANVISA** no navegador (sempre atualizado);
+  - guardar no código a data da versão consultada e revisar os resumos a cada nova versão da bula.
+
 ## Decisões em aberto
 
 - [x] **Nome na loja:** proposta "NutriPen: Diário da Caneta" (26 caracteres), com "caneta
