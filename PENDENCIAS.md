@@ -377,3 +377,13 @@ ler.
 - [ ] **Paginação da impressão:** A4, sem cortar blocos, rodapé com página e data, aviso clínico curto no topo.
 - [ ] **Diário da semana em tabela** (dia × horários), em vez de texto corrido.
 - [ ] Rodapé discreto "Gerado pelo NutriPen" para divulgação entre profissionais.
+
+### Logotipo escolhido (26/11/2026)
+- [ ] **Aplicar a opção A1, caneta + folha com detalhes em âmbar** (`marca/simbolo-caneta-folha-ambar.svg`):
+  - ícone do Android: regerar com `npm run icons` a partir do símbolo;
+  - ícones do app web (`icons/`);
+  - topo do app;
+  - cabeçalho do relatório redesenhado;
+  - página da Play Store e política de privacidade.
+- Nome escrito: "Nutri" em escuro + "Pen" em verde-azulado (#0d9488), fonte Plus Jakarta Sans ExtraBold, com
+  "Diário da Caneta" embaixo.
