@@ -70,7 +70,7 @@
       .section-title { @apply text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2; }
       .page-title { @apply text-xl sm:text-2xl font-bold text-slate-900 dark:text-white; }
       .page-sub { @apply text-sm text-slate-600 dark:text-slate-400; }
-      .list-item { @apply p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700; }
+      .row-card { @apply p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700; }
       .empty { @apply text-center py-8 px-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 text-sm text-slate-600 dark:text-slate-300; }
       .modal { @apply fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-slate-950/70 backdrop-blur-sm sm:p-4; }
       .modal-panel { @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-t-3xl sm:rounded-2xl w-full shadow-2xl max-h-[92vh] overflow-y-auto overscroll-contain; }
@@ -1077,7 +1077,7 @@
         <p class="dica-text leading-relaxed">A análise de foto roda nos servidores do Google Gemini. O <strong>Montador rápido</strong> e a <strong>Tabela</strong> não usam IA. Seus dados ficam salvos <strong>só neste aparelho/navegador</strong> — faça backup com frequência.</p>
       </div>
       <div class="space-y-3 text-xs sm:text-sm">
-        <div class="list-item space-y-1">
+        <div class="row-card space-y-1">
           <strong class="block">🤖 Android (Chrome)</strong>
           <ol class="list-decimal list-inside text-slate-700 dark:text-slate-300 space-y-1">
             <li>Abra o app no <strong>Chrome</strong>.</li>
@@ -1085,7 +1085,7 @@
             <li>Escolha <strong>"Adicionar à tela inicial"</strong>.</li>
           </ol>
         </div>
-        <div class="list-item space-y-1">
+        <div class="row-card space-y-1">
           <strong class="block">🍎 iPhone / iPad (Safari)</strong>
           <ol class="list-decimal list-inside text-slate-700 dark:text-slate-300 space-y-1">
             <li>Abra o link no <strong>Safari</strong>.</li>
@@ -2400,7 +2400,7 @@
         const alerts = evaluateMealClinicalAlerts(m, targets, appState.profile);
         const slotEmoji = (MEAL_SLOTS.find(s => s[0] === m.slot) || [null, '🍽️'])[1];
         return `
-          <div class="list-item space-y-2">
+          <div class="row-card space-y-2">
             <div class="flex items-start justify-between gap-3">
               <div class="space-y-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2">
@@ -2782,7 +2782,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       $('food-cards-mobile').innerHTML = scaled.map(s => {
         const hiFat = cond.cholecystectomy && s.fat > 14;
         return `
-          <div class="list-item">
+          <div class="row-card">
             <div class="flex items-start justify-between gap-2">
               <div class="min-w-0"><div class="font-bold text-sm text-slate-900 dark:text-white">${escapeHTML(s.it.name)}</div><div class="text-[11px] text-slate-500 dark:text-slate-400">${escapeHTML(s.it.portion)}${multTag}</div></div>
               <div class="flex items-center gap-1 shrink-0">${actions(s.it.id)}</div>
@@ -3774,6 +3774,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         d.addEventListener('toggle', () => {
           try { const s = JSON.parse(localStorage.getItem(FOLD_KEY) || '{}') || {}; s[k] = d.open; localStorage.setItem(FOLD_KEY, JSON.stringify(s)); } catch (e) {}
           if (d.open && k === 'relatorio') renderClinicalReport();
+          if (d.open && k === 'exames') requestAnimationFrame(drawExamChart);
           if (d.open) refreshIcons();
         });
       });
@@ -4105,10 +4106,10 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const bs = $('bula-summary');
       if (!info) { bs.innerHTML = '<p class="text-slate-600 dark:text-slate-300">Para "Outra caneta", consulte a bula do seu medicamento no Bulário Eletrônico da ANVISA.</p><a class="btn btn-sm btn-soft mt-2" target="_blank" rel="noopener noreferrer" href="https://consultas.anvisa.gov.br/#/bulario/">📄 Abrir Bulário da ANVISA</a>'; return; }
       bs.innerHTML = `
-        <div class="list-item"><strong class="block mb-1">⏰ Se esquecer uma dose</strong><p>${escapeHTML(info.esquecida.texto)}</p></div>
-        <div class="list-item"><strong class="block mb-1">🚫 Nunca dobre a dose</strong><p>Não aplique duas doses para compensar a esquecida.</p></div>
-        ${info.anticoncepcional ? '<div class="list-item"><strong class="block mb-1">🌸 Anticoncepcional oral</strong><p>Pode ter o efeito reduzido nas 4 semanas após o início e após cada aumento de dose; use também método de barreira ou um método não oral nesse período.</p></div>' : ''}
-        <div class="list-item"><strong class="block mb-1">🚨 Procure atendimento se</strong><p>Dor forte e persistente na barriga (que pode ir para as costas), com ou sem vômitos; vômitos ou diarreia que não param; sinais de desidratação; dor no lado direito da barriga com febre ou pele amarelada.</p></div>
+        <div class="row-card"><strong class="block mb-1">⏰ Se esquecer uma dose</strong><p>${escapeHTML(info.esquecida.texto)}</p></div>
+        <div class="row-card"><strong class="block mb-1">🚫 Nunca dobre a dose</strong><p>Não aplique duas doses para compensar a esquecida.</p></div>
+        ${info.anticoncepcional ? '<div class="row-card"><strong class="block mb-1">🌸 Anticoncepcional oral</strong><p>Pode ter o efeito reduzido nas 4 semanas após o início e após cada aumento de dose; use também método de barreira ou um método não oral nesse período.</p></div>' : ''}
+        <div class="row-card"><strong class="block mb-1">🚨 Procure atendimento se</strong><p>Dor forte e persistente na barriga (que pode ir para as costas), com ou sem vômitos; vômitos ou diarreia que não param; sinais de desidratação; dor no lado direito da barriga com febre ou pele amarelada.</p></div>
         <p class="text-[11px] text-slate-500 dark:text-slate-400">${escapeHTML(BULA_FONTE)}</p>
         <div class="flex flex-wrap gap-2">${info.produtos.map(([n, u]) => `<a class="btn btn-sm btn-soft" target="_blank" rel="noopener noreferrer" href="${u}">📄 Bula oficial: ${escapeHTML(n)}</a>`).join('')}</div>`;
     }
@@ -4204,9 +4205,9 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
           <div class="flex gap-1 overflow-x-auto no-scrollbar bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">${withData.map(d => `<button type="button" onclick="examChartKey='${d.key}'; renderExams(); refreshIcons();" class="shrink-0 px-2.5 py-1.5 rounded-lg text-xs ${d.key === examChartKey ? 'font-bold bg-white dark:bg-slate-900 shadow-sm' : 'font-semibold text-slate-600 dark:text-slate-400'}">${d.short}</button>`).join('')}</div>
           <div id="exam-chart" class="w-full h-56 rounded-xl bg-slate-50/60 dark:bg-slate-950/60 border border-slate-200/70 dark:border-slate-800"></div>
           <p class="text-[11px] text-slate-500 dark:text-slate-400" id="exam-ref"></p>
-          <div class="space-y-1.5 text-xs">${exams.map(e => `<div class="list-item flex items-start justify-between gap-2"><div><strong>${formatDateBR(e.date)}</strong><div class="text-slate-600 dark:text-slate-300 mt-0.5">${EXAM_DEFS.filter(d => e.values[d.key] !== undefined).map(d => `${d.short} ${fmt(e.values[d.key], d.dec)} ${d.unit}`).join(' · ')}</div></div><button type="button" onclick="deleteExam('${e.id}')" class="icon-btn-danger" aria-label="Excluir exame"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>`).join('')}</div>
+          <div class="space-y-1.5 text-xs">${exams.map(e => `<div class="row-card flex items-start justify-between gap-2"><div><strong>${formatDateBR(e.date)}</strong><div class="text-slate-600 dark:text-slate-300 mt-0.5">${EXAM_DEFS.filter(d => e.values[d.key] !== undefined).map(d => `${d.short} ${fmt(e.values[d.key], d.dec)} ${d.unit}`).join(' · ')}</div></div><button type="button" onclick="deleteExam('${e.id}')" class="icon-btn-danger" aria-label="Excluir exame"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>`).join('')}</div>
         </div>` : '<p class="text-xs text-slate-500 dark:text-slate-400 mt-3">Nenhum exame registrado ainda.</p>'}`;
-      if (withData.length) drawExamChart();
+      if (withData.length) requestAnimationFrame(drawExamChart);
     }
     function drawExamChart() {
       const def = EXAM_DEFS.find(d => d.key === examChartKey), box = $('exam-chart'); if (!def || !box) return;
@@ -4295,7 +4296,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       appState.injections.filter(i => i.date === iso).forEach(i => out.push(i.skipped ? '⏭️ Dose pulada' : `💉 ${escapeHTML(fmtDose(i.dose))} ${escapeHTML(i.site)}`));
       appState.diaryEntries.filter(e => e.date === iso).forEach(e => out.push(`📝 ${escapeHTML(e.symptomChips.map(id => (SYMPTOM_CHIPS.find(c => c.id === id) || {}).label).filter(Boolean).join(', '))}`));
       appState.appointments.filter(a => a.date === iso).forEach(a => out.push(`📅 ${APPT_TYPES[a.type].label}${a.who ? ' — ' + escapeHTML(a.who) : ''}`));
-      $('calendar-day').innerHTML = `<div class="list-item text-sm"><strong>${formatDateBR(iso)}</strong>${out.length ? `<ul class="mt-1 space-y-0.5 text-xs">${out.map(x => `<li>${x}</li>`).join('')}</ul>` : '<p class="text-xs text-slate-500 mt-1">Sem registros neste dia.</p>'}</div>`;
+      $('calendar-day').innerHTML = `<div class="row-card text-sm"><strong>${formatDateBR(iso)}</strong>${out.length ? `<ul class="mt-1 space-y-0.5 text-xs">${out.map(x => `<li>${x}</li>`).join('')}</ul>` : '<p class="text-xs text-slate-500 mt-1">Sem registros neste dia.</p>'}</div>`;
     }
 
     // Fotos de progresso: ficam só no aparelho (IndexedDB) e não entram no backup
@@ -4336,7 +4337,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const sec = $('appointments-section'); if (!sec) return;
       const today = getTodayISO();
       const up = appState.appointments.filter(a => a.date >= today).sort(sortChronologicalAsc), past = appState.appointments.filter(a => a.date < today).sort(sortChronologicalDesc).slice(0, 6);
-      const row = a => `<div class="list-item flex items-start justify-between gap-2 text-sm"><div class="min-w-0"><strong>${APPT_TYPES[a.type].emoji} ${APPT_TYPES[a.type].label}${a.who ? ' — ' + escapeHTML(a.who) : ''}</strong>
+      const row = a => `<div class="row-card flex items-start justify-between gap-2 text-sm"><div class="min-w-0"><strong>${APPT_TYPES[a.type].emoji} ${APPT_TYPES[a.type].label}${a.who ? ' — ' + escapeHTML(a.who) : ''}</strong>
         <p class="text-xs text-slate-600 dark:text-slate-300">${formatDateBR(a.date)}${a.time ? ' às ' + escapeHTML(a.time) : ''}${a.place ? ' · ' + escapeHTML(a.place) : ''}</p>${a.notes ? `<p class="text-xs italic text-slate-500">${escapeHTML(a.notes)}</p>` : ''}</div>
         <button type="button" onclick="deleteAppointment('${a.id}')" class="icon-btn-danger" aria-label="Excluir consulta"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>`;
       sec.innerHTML = `<form class="grid grid-cols-2 gap-2" onsubmit="event.preventDefault(); saveAppointment();">
@@ -4366,7 +4367,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const sec = $('questions-section'); if (!sec) return;
       const qs = appState.questions;
       sec.innerHTML = `<form class="flex gap-2" onsubmit="event.preventDefault(); addQuestion();"><input id="question-input" maxlength="200" class="field field-sm flex-1" placeholder="Ex.: Posso espaçar a dose para 10 dias?" aria-label="Nova pergunta" /><button type="submit" class="btn btn-sm btn-primary shrink-0">Anotar</button></form>
-        <ul class="mt-3 space-y-1.5">${qs.length ? qs.map(q => `<li class="list-item flex items-start gap-2 text-sm"><input type="checkbox" ${q.done ? 'checked' : ''} onchange="toggleQuestion('${q.id}')" class="mt-0.5 w-4 h-4 accent-teal-600" aria-label="Marcar como respondida" />
+        <ul class="mt-3 space-y-1.5">${qs.length ? qs.map(q => `<li class="row-card flex items-start gap-2 text-sm"><input type="checkbox" ${q.done ? 'checked' : ''} onchange="toggleQuestion('${q.id}')" class="mt-0.5 w-4 h-4 accent-teal-600" aria-label="Marcar como respondida" />
           <span class="flex-1 ${q.done ? 'line-through text-slate-400' : ''}">${escapeHTML(q.text)}</span><button type="button" onclick="deleteQuestion('${q.id}')" class="icon-btn-danger" aria-label="Excluir pergunta"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></li>`).join('') : '<li class="text-xs text-slate-500">Anote aqui as dúvidas que surgirem. As não respondidas entram no relatório da consulta.</li>'}</ul>`;
     }
     function addQuestion() {
