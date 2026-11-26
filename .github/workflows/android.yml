@@ -1,0 +1,86 @@
+name: Android (Google Play)
+
+# Gera o app Android do NutriPen:
+#  - nutripen-teste.apk  → para instalar direto no celular e testar
+#  - nutripen-play.aab   → para enviar ao Google Play (assinado se os secrets existirem)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'fonte/**'
+      - 'loja/**'
+      - '.github/workflows/android.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: loja
+    env:
+      HAS_UPLOAD_KEY: ${{ secrets.NUTRIPEN_KEYSTORE_BASE64 != '' }}
+      NUTRIPEN_VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: loja/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Instalar dependências
+        run: npm ci --no-audit --no-fund
+
+      - name: Gerar a versão da loja (www/) e sincronizar com o Android
+        run: |
+          python3 scripts/build_store.py
+          npx cap sync android
+
+      - name: Preparar chave de assinatura (upload key)
+        if: env.HAS_UPLOAD_KEY == 'true'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.NUTRIPEN_KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          echo "NUTRIPEN_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+
+      - name: Compilar APK de teste e pacote AAB
+        working-directory: loja/android
+        env:
+          NUTRIPEN_KEYSTORE_PASSWORD: ${{ secrets.NUTRIPEN_KEYSTORE_PASSWORD }}
+          NUTRIPEN_KEY_ALIAS: ${{ secrets.NUTRIPEN_KEY_ALIAS }}
+          NUTRIPEN_KEY_PASSWORD: ${{ secrets.NUTRIPEN_KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleDebug bundleRelease
+          mkdir -p "$RUNNER_TEMP/out"
+          cp app/build/outputs/apk/debug/app-debug.apk "$RUNNER_TEMP/out/nutripen-teste.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "$RUNNER_TEMP/out/nutripen-play.aab"
+          echo "versionCode: $NUTRIPEN_VERSION_CODE" > "$RUNNER_TEMP/out/versao.txt"
+          echo "assinado para a Play Store: $HAS_UPLOAD_KEY" >> "$RUNNER_TEMP/out/versao.txt"
+
+      - name: Remover chave do disco
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nutripen-android-${{ github.run_number }}
+          path: ${{ runner.temp }}/out/
+          retention-days: 30

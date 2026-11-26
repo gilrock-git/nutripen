@@ -1,0 +1,14 @@
+{
+  "appId": "br.com.nutripen.app",
+  "appName": "NutriPen",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#f8fafc",
+    "allowMixedContent": false,
+    "captureInput": false,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SystemBars": { "insetsHandling": "css", "initialViewportFitValueHint": "cover" }
+  }
+}
