@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="NutriPen">
+  <defs>
+    <linearGradient id="bg-ambar" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#0f766e"/></linearGradient>
+    <linearGradient id="body-ambar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9f7f1"/></linearGradient>
+    <linearGradient id="acc-ambar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/></linearGradient>
+    <linearGradient id="leaf-ambar" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#86efac"/><stop offset="1" stop-color="#22c55e"/></linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="28" fill="url(#bg-ambar)"/>
+  <path d="M84 38 C 81 22, 95 12, 110 12 C 110 28, 100 38, 84 38 Z" fill="url(#leaf-ambar)"/>
+  <path d="M85 37 L 105 17" stroke="#15803d" stroke-width="1.8" stroke-linecap="round" opacity=".7"/>
+  <g transform="rotate(-45 60 60)">
+    <ellipse cx="57" cy="72" rx="34" ry="4" fill="#064e3b" opacity=".18"/>
+    <line x1="6" y1="60" x2="19" y2="60" stroke="#e2e8f0" stroke-width="2.6" stroke-linecap="round"/>
+    <rect x="18" y="55" width="10" height="10" rx="2.5" fill="#cbd5e1"/>
+    <rect x="26" y="49.5" width="56" height="21" rx="10.5" fill="url(#body-ambar)"/>
+    <rect x="38" y="55" width="22" height="10" rx="3" fill="#134e4a"/>
+    <rect x="41" y="57.5" width="2" height="5" rx="1" fill="#5eead4"/><rect x="46" y="57.5" width="2" height="5" rx="1" fill="#5eead4"/><rect x="51" y="57.5" width="2" height="5" rx="1" fill="#5eead4"/>
+    <rect x="55.5" y="56.5" width="3" height="7" rx="1.2" fill="#fbbf24"/>
+    <rect x="66" y="49.5" width="5" height="21" fill="#fbbf24" opacity=".9"/>
+    <rect x="82" y="52.5" width="12" height="15" rx="4" fill="url(#acc-ambar)"/>
+    <rect x="94" y="55.5" width="6" height="9" rx="2" fill="#d97706"/>
+  </g>
+</svg>
