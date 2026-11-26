@@ -379,11 +379,11 @@ ler.
 - [ ] Rodapé discreto "Gerado pelo NutriPen" para divulgação entre profissionais.
 
 ### Logotipo escolhido (26/11/2026)
-- [ ] **Aplicar a opção A1, caneta + folha com detalhes em âmbar** (`marca/simbolo-caneta-folha-ambar.svg`):
+- [x] **Aplicado em 26/11: opção A1, caneta + folha com detalhes em âmbar** (`marca/simbolo-caneta-folha-ambar.svg`):
   - ícone do Android: regerar com `npm run icons` a partir do símbolo;
   - ícones do app web (`icons/`);
   - topo do app;
-  - cabeçalho do relatório redesenhado;
-  - página da Play Store e política de privacidade.
+  - cabeçalho do relatório redesenhado (fica para o redesenho do relatório);
+  - Play Store: `marca/icone-512.png` pronto; refazer a imagem de destaque (1024×500) com o novo logo.
 - Nome escrito: "Nutri" em escuro + "Pen" em verde-azulado (#0d9488), fonte Plus Jakarta Sans ExtraBold, com
   "Diário da Caneta" embaixo.

@@ -52,16 +52,13 @@ shutil.rmtree(work)
 # 3) Lucide local
 shutil.copy(node_dir / 'lucide' / 'dist' / 'umd' / 'lucide.min.js', out / 'vendor' / 'lucide.min.js')
 
-# 4) Ícone SVG (mesmo desenho do logotipo)
-icon_svg = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14b8a6"/><stop offset="1" stop-color="#115e59"/></linearGradient></defs>
-  <rect width="512" height="512" rx="{rx}" fill="url(#g)"/>
-  <g transform="translate({t} {t}) scale({s})" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/><path d="M9.5 11.5c1.5-1.5 3.5-1.5 5 0"/>
-  </g>
-</svg>'''
-(out / 'icons' / 'icon.svg').write_text(icon_svg.format(rx=112, t=106, s=12.5), encoding='utf-8')
-(out / 'icons' / 'maskable.svg').write_text(icon_svg.format(rx=0, t=156, s=8.33), encoding='utf-8')
+# 4) Ícones SVG a partir do logotipo oficial (marca/simbolo-caneta-folha-ambar.svg)
+logo = (Path(__file__).resolve().parent.parent / 'marca' / 'simbolo-caneta-folha-ambar.svg').read_text(encoding='utf-8')
+(out / 'icons' / 'icon.svg').write_text(logo, encoding='utf-8')
+# Versão "maskable": fundo até a borda e desenho reduzido para caber na área segura (círculo de 80%)
+m = re.match(r'(<svg[^>]*>\s*<defs>.*?</defs>)\s*<rect[^>]*/>(.*)</svg>\s*$', logo, re.S)
+maskable = m.group(1) + '<rect width="120" height="120" fill="url(#bg-ambar)"/><g transform="translate(60 60) scale(.74) translate(-60 -60)">' + m.group(2) + '</g></svg>'
+(out / 'icons' / 'maskable.svg').write_text(maskable, encoding='utf-8')
 
 # 5) Manifest
 manifest = {

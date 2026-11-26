@@ -94,11 +94,27 @@
   <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 no-print">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3">
       <div class="flex items-center gap-3 min-w-0">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-teal-800 flex items-center justify-center text-white shadow-sm shrink-0" aria-hidden="true">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /><path d="M9.5 11.5c1.5-1.5 3.5-1.5 5 0" />
-          </svg>
-        </div>
+        <div class="w-10 h-10 shrink-0 drop-shadow-sm" aria-hidden="true"><svg class="w-10 h-10" viewBox="0 0 120 120" aria-hidden="true"><defs>
+    <linearGradient id="bg-hdr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#0f766e"/></linearGradient>
+    <linearGradient id="body-hdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9f7f1"/></linearGradient>
+    <linearGradient id="acc-hdr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/></linearGradient>
+    <linearGradient id="leaf-hdr" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#86efac"/><stop offset="1" stop-color="#22c55e"/></linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="28" fill="url(#bg-hdr)"/>
+  <path d="M84 38 C 81 22, 95 12, 110 12 C 110 28, 100 38, 84 38 Z" fill="url(#leaf-hdr)"/>
+  <path d="M85 37 L 105 17" stroke="#15803d" stroke-width="1.8" stroke-linecap="round" opacity=".7"/>
+  <g transform="rotate(-45 60 60)">
+    <ellipse cx="57" cy="72" rx="34" ry="4" fill="#064e3b" opacity=".18"/>
+    <line x1="6" y1="60" x2="19" y2="60" stroke="#e2e8f0" stroke-width="2.6" stroke-linecap="round"/>
+    <rect x="18" y="55" width="10" height="10" rx="2.5" fill="#cbd5e1"/>
+    <rect x="26" y="49.5" width="56" height="21" rx="10.5" fill="url(#body-hdr)"/>
+    <rect x="38" y="55" width="22" height="10" rx="3" fill="#134e4a"/>
+    <rect x="41" y="57.5" width="2" height="5" rx="1" fill="#5eead4"/><rect x="46" y="57.5" width="2" height="5" rx="1" fill="#5eead4"/><rect x="51" y="57.5" width="2" height="5" rx="1" fill="#5eead4"/>
+    <rect x="55.5" y="56.5" width="3" height="7" rx="1.2" fill="#fbbf24"/>
+    <rect x="66" y="49.5" width="5" height="21" fill="#fbbf24" opacity=".9"/>
+    <rect x="82" y="52.5" width="12" height="15" rx="4" fill="url(#acc-hdr)"/>
+    <rect x="94" y="55.5" width="6" height="9" rx="2" fill="#d97706"/>
+  </g></svg></div>
         <div class="min-w-0">
           <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-none">Nutri<span class="text-brand-600 dark:text-brand-400">Pen</span></h1>
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate" id="header-conditions-subtitle"></p>
@@ -1139,9 +1155,27 @@
   <div id="welcome-modal" class="modal" data-required="1" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
     <div class="modal-panel max-w-lg p-6 space-y-4">
       <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500 to-teal-800 flex items-center justify-center text-white shrink-0" aria-hidden="true">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /><path d="M9.5 11.5c1.5-1.5 3.5-1.5 5 0" /></svg>
-        </div>
+        <div class="w-11 h-11 shrink-0" aria-hidden="true"><svg class="w-11 h-11" viewBox="0 0 120 120" aria-hidden="true"><defs>
+    <linearGradient id="bg-wel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#0f766e"/></linearGradient>
+    <linearGradient id="body-wel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9f7f1"/></linearGradient>
+    <linearGradient id="acc-wel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/></linearGradient>
+    <linearGradient id="leaf-wel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#86efac"/><stop offset="1" stop-color="#22c55e"/></linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="28" fill="url(#bg-wel)"/>
+  <path d="M84 38 C 81 22, 95 12, 110 12 C 110 28, 100 38, 84 38 Z" fill="url(#leaf-wel)"/>
+  <path d="M85 37 L 105 17" stroke="#15803d" stroke-width="1.8" stroke-linecap="round" opacity=".7"/>
+  <g transform="rotate(-45 60 60)">
+    <ellipse cx="57" cy="72" rx="34" ry="4" fill="#064e3b" opacity=".18"/>
+    <line x1="6" y1="60" x2="19" y2="60" stroke="#e2e8f0" stroke-width="2.6" stroke-linecap="round"/>
+    <rect x="18" y="55" width="10" height="10" rx="2.5" fill="#cbd5e1"/>
+    <rect x="26" y="49.5" width="56" height="21" rx="10.5" fill="url(#body-wel)"/>
+    <rect x="38" y="55" width="22" height="10" rx="3" fill="#134e4a"/>
+    <rect x="41" y="57.5" width="2" height="5" rx="1" fill="#5eead4"/><rect x="46" y="57.5" width="2" height="5" rx="1" fill="#5eead4"/><rect x="51" y="57.5" width="2" height="5" rx="1" fill="#5eead4"/>
+    <rect x="55.5" y="56.5" width="3" height="7" rx="1.2" fill="#fbbf24"/>
+    <rect x="66" y="49.5" width="5" height="21" fill="#fbbf24" opacity=".9"/>
+    <rect x="82" y="52.5" width="12" height="15" rx="4" fill="url(#acc-wel)"/>
+    <rect x="94" y="55.5" width="6" height="9" rx="2" fill="#d97706"/>
+  </g></svg></div>
         <div>
           <h3 id="welcome-title" class="text-lg font-extrabold text-slate-900 dark:text-white">Bem-vindo(a) ao NutriPen</h3>
           <p class="text-xs font-bold text-amber-700 dark:text-amber-300">Versão de teste</p>
