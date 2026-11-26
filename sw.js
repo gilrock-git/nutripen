@@ -1,5 +1,5 @@
 /* NutriPen — service worker (gerado automaticamente; não editar à mão) */
-const VERSION = 'f3123652a4';
+const VERSION = '6375323f8b';
 const SHELL_CACHE = `nutripen-shell-${VERSION}`;
 const FONT_CACHE = 'nutripen-fonts-v1';
 const SHELL_FILES = [

@@ -1437,61 +1437,90 @@
     }
 
     // Normaliza e "higieniza" o estado (dados antigos, backups importados ou corrompidos)
-    function normalizeState(s) {
-      const out = (s && typeof s === 'object') ? s : {};
-      const p = out.profile = (out.profile && typeof out.profile === 'object') ? out.profile : {};
-      p.name = String(p.name || 'Paciente').slice(0, 60);
-      p.age = num(p.age, 40); p.sex = p.sex === 'M' ? 'M' : 'F';
-      p.height = num(p.height, 170); p.weight = num(p.weight, 80);
-      p.initialWeight = num(p.initialWeight, p.weight); p.goalWeight = num(p.goalWeight, p.weight);
-      p.activityLevel = ACTIVITY_MULTIPLIERS[p.activityLevel] ? p.activityLevel : 'light';
-      p.medication = LEGACY_MED_ALIASES[p.medication] || p.medication;
-      if (!MEDICATIONS[p.medication]) p.medication = OTHER_MED;
-      p.dose = normalizeDose(p.dose) || getMedInfo(p.medication).doses[0];
-      p.intervalDays = clampInterval(p.intervalDays) || defaultIntervalFor(p.medication);
-      p.injectionDay = Math.min(6, Math.max(0, num(p.injectionDay, 5)));
-      p.proteinFactor = num(p.proteinFactor, 1.8);
-      p.customGeminiKey = String(p.customGeminiKey || '');
-      const r = (p.reminder && typeof p.reminder === 'object') ? p.reminder : {};
-      p.reminder = { enabled: !!r.enabled, time: /^([01]\d|2[0-3]):[0-5]\d$/.test(r.time) ? r.time : '09:00', eve: r.eve !== false };
-      p.conditions = { ...defaultConditions(), ...(p.conditions || {}) };
-      Object.keys(defaultConditions()).forEach(k => { if (k !== 'clinicalNotes') p.conditions[k] = !!p.conditions[k]; });
-      p.conditions.clinicalNotes = String(p.conditions.clinicalNotes || '');
+    // ---- Validação de tudo que vem do armazenamento ou de um backup importado ----
+    // IDs vão para atributos onclick e datas/horas para o HTML: só formatos estritos são aceitos.
+    const SAFE_ID = /^[A-Za-z0-9_-]{1,64}$/;
+    const ISO_DATE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+    const HHMM = /^([01]\d|2[0-3]):[0-5]\d$/;
+    const safeId = (v, prefix) => (typeof v === 'string' && SAFE_ID.test(v) ? v : uid(prefix));
+    const safeDate = v => (typeof v === 'string' && ISO_DATE.test(v) && !Number.isNaN(Date.parse(v + 'T12:00:00')) ? v : null);
+    const safeTime = v => (typeof v === 'string' && HHMM.test(v) ? v : '');
+    const safeText = (v, max) => String(v ?? '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').slice(0, max);
+    const inRange = (v, min, max, d) => { const n = num(v, NaN); return Number.isFinite(n) && n >= min && n <= max ? n : d; };
+    const rangeOrNull = (v, min, max) => { const n = numOrNull(v); return n !== null && n >= min && n <= max ? n : null; };
+    const MEAL_SLOT_NAMES = MEAL_SLOTS.map(s => s[0]);
+    const WEIGHT_MOMENTS = ['🌅 Jejum / Manhã', '☀️ Tarde', '🌙 Noite', '🏋️ Pós-treino'];
+    const GLUCOSE_CONTEXTS = ['🌅 Jejum', '🕒 Pré-refeição', '🍽️ Pós-prandial 2h', '🌙 Antes de dormir'];
 
-      out.isDemo = !!out.isDemo;
-      out.dailyLogs = (out.dailyLogs && typeof out.dailyLogs === 'object') ? out.dailyLogs : {};
-      Object.keys(out.dailyLogs).forEach(date => {
-        const l = out.dailyLogs[date] || {};
-        const q = l.quickMacros || {};
+    function normalizeState(s) {
+      const src = (s && typeof s === 'object' && !Array.isArray(s)) ? s : {};
+      const out = { isDemo: !!src.isDemo };
+      const pin = (src.profile && typeof src.profile === 'object') ? src.profile : {};
+      const p = out.profile = {};
+      p.name = safeText(pin.name, 60).trim() || 'Paciente';
+      p.age = inRange(pin.age, 14, 115, 40); p.sex = pin.sex === 'M' ? 'M' : 'F';
+      p.height = inRange(pin.height, 100, 250, 170); p.weight = inRange(pin.weight, 30, 400, 80);
+      p.initialWeight = inRange(pin.initialWeight, 30, 400, p.weight); p.goalWeight = inRange(pin.goalWeight, 30, 400, p.weight);
+      p.activityLevel = Object.prototype.hasOwnProperty.call(ACTIVITY_MULTIPLIERS, pin.activityLevel) ? pin.activityLevel : 'light';
+      const med = LEGACY_MED_ALIASES[pin.medication] || pin.medication;
+      p.medication = Object.prototype.hasOwnProperty.call(MEDICATIONS, med) ? med : OTHER_MED;
+      p.dose = normalizeDose(pin.dose) || getMedInfo(p.medication).doses[0];
+      p.intervalDays = clampInterval(pin.intervalDays) || defaultIntervalFor(p.medication);
+      p.injectionDay = Math.round(inRange(pin.injectionDay, 0, 6, 5));
+      p.proteinFactor = [1.6, 1.8, 2.0].includes(Number(pin.proteinFactor)) ? Number(pin.proteinFactor) : 1.8;
+      p.customGeminiKey = safeText(pin.customGeminiKey, 200);
+      const r = (pin.reminder && typeof pin.reminder === 'object') ? pin.reminder : {};
+      p.reminder = { enabled: r.enabled === true, time: HHMM.test(r.time) ? r.time : '09:00', eve: r.eve !== false };
+      const cin = (pin.conditions && typeof pin.conditions === 'object') ? pin.conditions : {};
+      p.conditions = defaultConditions();
+      Object.keys(p.conditions).forEach(k => { if (k !== 'clinicalNotes') p.conditions[k] = cin[k] === true; });
+      p.conditions.clinicalNotes = safeText(cin.clinicalNotes, 500);
+
+      out.dailyLogs = {};
+      const logs = (src.dailyLogs && typeof src.dailyLogs === 'object') ? src.dailyLogs : {};
+      Object.keys(logs).forEach(date => {
+        if (!safeDate(date)) return; // descarta chaves inválidas (inclusive "__proto__")
+        const l = (logs[date] && typeof logs[date] === 'object') ? logs[date] : {};
+        const q = (l.quickMacros && typeof l.quickMacros === 'object') ? l.quickMacros : {};
+        const habits = {};
+        if (l.habits && typeof l.habits === 'object') Object.keys(l.habits).forEach(k => { if (SAFE_ID.test(k) && l.habits[k] === true) habits[k] = true; });
         out.dailyLogs[date] = {
-          quickMacros: { protein: num(q.protein), water: num(q.water), fiber: num(q.fiber), kcal: num(q.kcal) },
-          electrolytes: !!l.electrolytes,
-          habits: (l.habits && typeof l.habits === 'object') ? l.habits : {},
-          meals: (Array.isArray(l.meals) ? l.meals : []).map(m => ({
-            id: String(m.id || uid('meal')), slot: String(m.slot || 'Almoço'), time: String(m.time || ''), desc: String(m.desc || 'Refeição'),
-            kcal: num(m.kcal), protein: num(m.protein), fiber: num(m.fiber), carbs: num(m.carbs), fat: num(m.fat),
+          quickMacros: { protein: inRange(q.protein, 0, 1000, 0), water: inRange(q.water, 0, 20000, 0), fiber: inRange(q.fiber, 0, 500, 0), kcal: inRange(q.kcal, 0, 20000, 0) },
+          electrolytes: l.electrolytes === true,
+          habits,
+          meals: (Array.isArray(l.meals) ? l.meals : []).filter(m => m && typeof m === 'object').slice(0, 100).map(m => ({
+            id: safeId(m.id, 'meal'), slot: MEAL_SLOT_NAMES.includes(m.slot) ? m.slot : 'Almoço', time: safeTime(m.time),
+            desc: safeText(m.desc, 200) || 'Refeição',
+            kcal: inRange(m.kcal, 0, 10000, 0), protein: inRange(m.protein, 0, 500, 0), fiber: inRange(m.fiber, 0, 300, 0),
+            carbs: inRange(m.carbs, 0, 1000, 0), fat: inRange(m.fat, 0, 500, 0),
             digest: ['Leve', 'Moderada', 'Pesada'].includes(m.digest) ? m.digest : 'Leve'
           }))
         };
       });
-      const arr = v => (Array.isArray(v) ? v : []);
-      out.diaryEntries = arr(out.diaryEntries).filter(e => e && e.date).map(e => ({
-        id: String(e.id || uid('de')), date: String(e.date), time: String(e.time || ''),
+      const arr = v => (Array.isArray(v) ? v.filter(x => x && typeof x === 'object') : []);
+      out.diaryEntries = arr(src.diaryEntries).filter(e => safeDate(e.date)).slice(0, 5000).map(e => ({
+        id: safeId(e.id, 'de'), date: e.date, time: safeTime(e.time),
         bowelStatus: BOWEL_OPTIONS.some(b => b.id === e.bowelStatus) ? e.bowelStatus : 'none',
-        symptomChips: arr(e.symptomChips).filter(c => SYMPTOM_CHIPS.some(x => x.id === c)), notes: String(e.notes || '')
+        symptomChips: (Array.isArray(e.symptomChips) ? e.symptomChips : []).filter(c => SYMPTOM_CHIPS.some(x => x.id === c)),
+        notes: safeText(e.notes, 300)
       }));
-      out.glucoseLogs = arr(out.glucoseLogs).filter(g => g && g.date && num(g.value) > 0).map(g => ({
-        id: String(g.id || uid('gl')), date: String(g.date), time: String(g.time || ''), value: num(g.value), context: String(g.context || '')
+      out.glucoseLogs = arr(src.glucoseLogs).filter(g => safeDate(g.date) && rangeOrNull(g.value, 20, 600) !== null).slice(0, 5000).map(g => ({
+        id: safeId(g.id, 'gl'), date: g.date, time: safeTime(g.time), value: Math.round(Number(g.value)),
+        context: GLUCOSE_CONTEXTS.includes(g.context) ? g.context : '🕒 Pré-refeição'
       }));
-      out.injections = arr(out.injections).filter(i => i && i.date).map(i => ({
-        id: String(i.id || uid('inj')), date: String(i.date),
-        medication: MEDICATIONS[LEGACY_MED_ALIASES[i.medication] || i.medication] ? (LEGACY_MED_ALIASES[i.medication] || i.medication) : p.medication,
-        dose: normalizeDose(i.dose) || p.dose, intervalDays: clampInterval(i.intervalDays),
-        site: INJECTION_SITES.includes(i.site) ? i.site : ''
-      }));
-      out.weights = arr(out.weights).filter(w => w && w.date && num(w.weight) > 0).map(w => ({
-        id: String(w.id || uid('w')), date: String(w.date), time: String(w.time || ''), moment: String(w.moment || ''),
-        weight: num(w.weight), waistNarrow: numOrNull(w.waistNarrow), waist: numOrNull(w.waist), arm: numOrNull(w.arm), thigh: numOrNull(w.thigh), dose: String(w.dose || '')
+      out.injections = arr(src.injections).filter(i => safeDate(i.date)).slice(0, 2000).map(i => {
+        const m = LEGACY_MED_ALIASES[i.medication] || i.medication;
+        return {
+          id: safeId(i.id, 'inj'), date: i.date,
+          medication: Object.prototype.hasOwnProperty.call(MEDICATIONS, m) ? m : p.medication,
+          dose: normalizeDose(i.dose) || p.dose, intervalDays: clampInterval(i.intervalDays),
+          site: INJECTION_SITES.includes(i.site) ? i.site : ''
+        };
+      });
+      out.weights = arr(src.weights).filter(w => safeDate(w.date) && rangeOrNull(w.weight, 30, 400) !== null).slice(0, 5000).map(w => ({
+        id: safeId(w.id, 'w'), date: w.date, time: safeTime(w.time), moment: WEIGHT_MOMENTS.includes(w.moment) ? w.moment : '',
+        weight: Number(w.weight), waistNarrow: rangeOrNull(w.waistNarrow, 30, 250), waist: rangeOrNull(w.waist, 30, 250),
+        arm: rangeOrNull(w.arm, 10, 100), thigh: rangeOrNull(w.thigh, 20, 150), dose: normalizeDose(w.dose) || ''
       }));
       return out;
     }
@@ -3257,7 +3286,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
             actionLabel: 'Restaurar', silentUndo: true, duration: 12000, onAction: () => {
               const key = appState.profile.customGeminiKey;
               appState = normalizeState(parsed);
-              if (!appState.profile.customGeminiKey) appState.profile.customGeminiKey = key;
+              appState.profile.customGeminiKey = key; // a chave da IA nunca vem de um arquivo importado
               ensureTodayLog(); saveState();
               syncInjectionFormSelects(true);
               renderAll();

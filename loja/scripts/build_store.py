@@ -13,8 +13,9 @@ import json, re, shutil, subprocess, sys
 from pathlib import Path
 
 LOJA = Path(__file__).resolve().parent.parent
-SRC = LOJA.parent / 'fonte' / 'nutripen.html'
-OUT = LOJA / 'www'
+import os
+SRC = Path(os.environ.get('NUTRIPEN_SRC') or (LOJA.parent / 'fonte' / 'nutripen.html'))
+OUT = Path(os.environ.get('NUTRIPEN_WWW') or (LOJA / 'www'))
 NODE = LOJA / 'node_modules'
 
 html = SRC.read_text(encoding='utf-8')
@@ -44,6 +45,8 @@ sub(r'\s*<!-- Tailwind v3.*?</script>\s*<script>\s*tailwind\.config = .*?</scrip
 sub(r'\s*<style type="text/tailwindcss">.*?</style>', '')
 sub(r'<script src="https://unpkg\.com/lucide@[^"]+"></script>', '<script src="vendor/lucide.min.js"></script>')
 rep('<title>NutriPen — Diário da Caneta</title>', '<title>NutriPen</title>')
+# Política de segurança de conteúdo: só arquivos do próprio app; nenhuma conexão externa
+rep('<meta charset="UTF-8" />', '<meta charset="UTF-8" />\n  <meta http-equiv="Content-Security-Policy" content="default-src \'self\'; script-src \'self\' \'unsafe-inline\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: blob:; font-src \'self\'; connect-src \'self\'; object-src \'none\'; base-uri \'none\'; form-action \'none\'" />')
 sub(r"\n\s*window\.addEventListener\('online',[^\n]*", '')
 sub(r"\n\s*window\.addEventListener\('offline',[^\n]*", '')
 rep('    body { font-family:', '    header.sticky { padding-top: env(safe-area-inset-top, 0px); }\n    body { font-family:')

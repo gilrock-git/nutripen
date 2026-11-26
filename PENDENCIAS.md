@@ -4,7 +4,7 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
 
 ## Pedidas pelo usuário (prioridade)
 
-- [ ] **Doses fracionadas.** Hoje a dose é escolhida numa lista fixa por medicação
+- [x] **Doses fracionadas.** Hoje a dose é escolhida numa lista fixa por medicação
   (ex.: tirzepatida 2,5 / 5 / 7,5 mg…). Permitir doses intermediárias, como as usadas
   ao fracionar a caneta (ex.: 1,25 mg, 3,75 mg, 6 mg):
   - campo de dose livre em mg (com vírgula), mantendo a lista como atalho;
@@ -12,7 +12,7 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
   - gráficos, titulação no relatório e marcadores de troca de dose devem aceitar esses valores.
   - Telas afetadas: Meu Perfil, Iniciar perfil, Aplicação (Diário) e Peso (Medidas).
 
-- [ ] **Intervalo entre aplicações configurável.** Nem sempre é 1x por semana — no fim do
+- [x] **Intervalo entre aplicações configurável.** Nem sempre é 1x por semana — no fim do
   tratamento é comum espaçar (ex.: a cada 10, 14 dias). Hoje o app só tem "dia da semana".
   - No perfil: **intervalo em dias** (7 por padrão; aceitar qualquer valor) em vez de só o dia da semana;
   - próxima aplicação = **data da última aplicação + intervalo** (contagem e aviso de atraso
@@ -21,7 +21,7 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
     (o intervalo pode mudar ao longo do tratamento);
   - relatório: mostrar a evolução de dose **e** de intervalo (ex.: "5 mg a cada 7 dias → 5 mg a cada 14 dias").
 
-- [ ] **Alarme / lembrete da aplicação.** Hoje o app só mostra a contagem quando é aberto.
+- [x] **Alarme / lembrete da aplicação.** Hoje o app só mostra a contagem quando é aberto.
   - Versão Android: notificação local agendada (plugin `@capacitor/local-notifications`), que
     funciona sem internet e não altera a "Segurança dos dados";
   - lembrete no dia, no horário escolhido (ex.: 9h), e opcional na véspera à noite;
@@ -30,14 +30,14 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
   - não usar "alarme exato" (permissão restrita pelo Google Play); alguns minutos de atraso são aceitáveis;
   - versão web: sem notificação confiável → oferecer "Adicionar à agenda" (.ics), que toca pelo app de calendário.
 
-- [ ] **Revisão de segurança** proporcional ao app (ver seção abaixo).
+- [x] **Revisão de segurança** proporcional ao app (ver seção abaixo).
 
 ## Decisões em aberto
 
-- [ ] **Nome na loja:** proposta "NutriPen: Diário da Caneta" (26 caracteres), com "caneta
+- [x] **Nome na loja:** proposta "NutriPen: Diário da Caneta" (26 caracteres), com "caneta
   emagrecedora" na descrição curta e na descrição completa (evitar no nome: risco de reprovação
   e de parecer promessa de resultado). Trocar "GLP-1/GIP" por "caneta" nos textos que o usuário
-  lê dentro do app; manter o termo técnico no relatório. *Aguardando confirmação.*
+  lê dentro do app; manter o termo técnico no relatório. *Confirmado e aplicado (26/11/2026).*
 
 ## Já sugeridas anteriormente
 
@@ -47,7 +47,7 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
 - [ ] Cadastrar alimentos próprios na tabela.
 - [ ] Sintomas × dias após a aplicação (padrão de náusea/constipação).
 - [ ] Estoque da caneta (doses restantes, quando comprar).
-- [ ] Lembrete da aplicação via calendário (.ics).
+- [x] Lembrete da aplicação via calendário (.ics).
 - [ ] Tela de sinais de alerta (pancreatite, vesícula, desidratação).
 - [ ] Exames laboratoriais (HbA1c, B12, ferritina, vitamina D) no relatório.
 - [ ] Resumo semanal de adesão.
@@ -59,14 +59,29 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
 O NutriPen não tem servidor, login nem internet na versão Android — a superfície de ataque é pequena,
 mas ainda há pontos a verificar antes de publicar:
 
-- [ ] **Importação de backup:** arquivo malicioso não pode executar código (XSS) nem travar o app
+- [x] **Importação de backup:** arquivo malicioso não pode executar código (XSS) nem travar o app
       (tamanho, campos inesperados, textos com HTML). Testes automatizados com arquivos "envenenados".
-- [ ] **Escapar textos** digitados pelo usuário em todas as telas e no relatório.
-- [ ] **Política de segurança de conteúdo (CSP)** na versão da loja: proibir scripts externos e conexões.
-- [ ] **Android:** permissões (nenhuma), componentes exportados, FileProvider, depuração do WebView
+- [x] **Escapar textos** digitados pelo usuário em todas as telas e no relatório.
+- [x] **Política de segurança de conteúdo (CSP)** na versão da loja: proibir scripts externos e conexões.
+- [x] **Android:** permissões (nenhuma), componentes exportados, FileProvider, depuração do WebView
       desligada em produção, backup automático do Android (decidir se fica ligado).
-- [ ] **Dependências:** `npm audit` e versões fixas.
-- [ ] **GitHub:** secrets da chave de assinatura, permissões mínimas do workflow, ações fixadas por versão
+- [x] **Dependências:** `npm audit` e versões fixas.
+- [x] **GitHub:** secrets da chave de assinatura, permissões mínimas do workflow, ações fixadas por versão
       exata (hash), proteção da branch main.
-- [ ] **Versão web (testadores):** chave do Gemini guardada no navegador — aviso claro e nunca no backup.
+- [x] **Versão web (testadores):** chave do Gemini guardada no navegador — aviso claro e nunca no backup.
+
+### Resultado da revisão (26/11/2026)
+
+- **Corrigido — execução de código via backup adulterado:** IDs de registros iam para atributos
+  `onclick` (o escape HTML não protege nesse contexto) e datas eram exibidas sem escape. Agora todo
+  campo importado passa por validação estrita (IDs, datas, horas, números em faixas, textos com limite).
+- **Corrigido — troca da chave da IA por backup:** a chave do Gemini nunca é lida de arquivo importado.
+- **Adicionado — CSP** nas duas versões: a loja não conecta em nada; a web só nas fontes do Google e no Gemini.
+- **Android:** sem internet; permissões só de notificação/reinício (lembrete); alarme exato removido;
+  1 componente exportado (tela principal); depuração do WebView desligada; backup automático do Android
+  mantido (documentado na política de privacidade).
+- **Dependências:** `npm audit` sem vulnerabilidades. **Workflow:** actions fixadas por hash, permissão só de leitura.
+- **Testes:** `testes/seguranca.js` (15 verificações) roda no GitHub antes de gerar o app; a versão anterior às
+  correções reprova em 9 delas.
+- **Pendente (ação do dono do repositório):** proteger a branch `main` em Settings → Branches.
 
