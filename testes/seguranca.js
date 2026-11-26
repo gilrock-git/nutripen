@@ -32,8 +32,20 @@ const poisoned = {
                  { id: 'ok1', date: X, time: '08:00', bowelStatus: 'normal', notes: 'data maliciosa' }],
   glucoseLogs: [{ id: JS, date: today, time: '07:00', value: 95, context: X }, { id: 'g2', date: X, value: 90 }],
   injections: [{ id: JS, date: today, medication: X, dose: X, intervalDays: X, site: X }],
-  weights: [{ id: JS, date: today, time: X, moment: X, weight: 80, waist: X, dose: X }, { id: 'w2', date: X, weight: 79 }]
+  weights: [{ id: JS, date: today, time: X, moment: X, weight: 80, waist: X, dose: X }, { id: 'w2', date: X, weight: 79 }],
+  exams: [{ id: JS, date: today, values: { hba1c: X, ldl: 1e9, hdl: 50 } }, { id: 'e2', date: X, values: { hba1c: 6 } }],
+  appointments: [{ id: JS, date: today, time: X, type: X, who: X, place: X, notes: X }],
+  questions: [{ id: JS, text: X, done: X }],
+  notifSeen: { [X]: true, ok_1: true },
+  lastBackupAt: X
 };
+poisoned.profile.pen = { dosesPerPen: X, remaining: -5 };
+poisoned.profile.cycle = { enabled: true, lastStart: X, length: 999 };
+poisoned.profile.waterReminder = { enabled: true, every: X, start: X, end: X };
+poisoned.profile.treatmentStart = X;
+poisoned.dailyLogs[today].hunger = X;
+poisoned.dailyLogs[today].activity = { type: X, minutes: 1e9 };
+poisoned.injections[0].skipped = X;
 
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? '✅' : '❌'} ${name}${detail ? ' — ' + detail : ''}`); };
@@ -61,10 +73,11 @@ const check = (name, ok, detail = '') => { results.push({ name, ok }); console.l
   await page.waitForTimeout(400);
 
   // Passa por todas as abas e aciona excluir/repetir
-  for (const tab of ['hoje', 'refeicoes', 'alimentos', 'caneta', 'evolucao', 'relatorio']) {
+  await page.evaluate(() => document.querySelectorAll('details[data-fold]').forEach(d => { d.open = true; }));
+  for (const tab of ['diario', 'refeicoes', 'alimentos', 'caneta', 'evolucao', 'mais', 'relatorio']) {
     await page.evaluate(t => switchTab(t), tab); await page.waitForTimeout(120);
   }
-  for (const tab of ['refeicoes', 'caneta', 'evolucao']) {
+  for (const tab of ['refeicoes', 'caneta', 'evolucao', 'mais']) {
     await page.evaluate(t => switchTab(t), tab);
     const btns = await page.$$('button[onclick^="delete"], button[onclick^="duplicate"]');
     for (const b of btns.slice(0, 3)) { try { await b.click({ timeout: 500 }); } catch (e) {} }
@@ -89,6 +102,12 @@ const check = (name, ok, detail = '') => { results.push({ name, ok }); console.l
   check('Datas inválidas descartadas (registros e chaves dos dias)', st.dates.every(d => /^\d{4}-\d{2}-\d{2}$/.test(d)) && st.logKeys.every(d => /^\d{4}-\d{2}-\d{2}$/.test(d)), st.logKeys.join(','));
   check('IDs inválidos substituídos por IDs seguros', st.ids.every(i => /^[A-Za-z0-9_-]{1,64}$/.test(i)));
   check('Sem poluição de protótipo (__proto__)', st.proto === undefined);
+  const st2 = await page.evaluate(() => ({ ex: appState.exams, ap: appState.appointments, q: appState.questions, seen: Object.keys(appState.notifSeen), pen: appState.profile.pen, cyc: appState.profile.cycle, wr: appState.profile.waterReminder, ts: appState.profile.treatmentStart, day: appState.dailyLogs[Object.keys(appState.dailyLogs)[0]], lb: appState.lastBackupAt }));
+  check('Exames: só valores numéricos dentro da faixa', st2.ex.length === 1 && st2.ex[0].values.hdl === 50 && st2.ex[0].values.hba1c === undefined && st2.ex[0].values.ldl === undefined);
+  check('Consultas/perguntas: IDs seguros e tipo válido', st2.ap.every(a => /^[A-Za-z0-9_-]+$/.test(a.id) && ['medico', 'nutricionista', 'outro'].includes(a.type)) && st2.q.every(q => /^[A-Za-z0-9_-]+$/.test(q.id)));
+  check('Avisos vistos: chaves inválidas descartadas', st2.seen.length === 1 && st2.seen[0] === 'ok_1', st2.seen.join(','));
+  check('Estoque, ciclo, água e início do tratamento saneados', st2.pen.dosesPerPen === null && st2.pen.remaining === null && st2.cyc.lastStart === null && st2.cyc.length === 28 && st2.wr.every === 2 && st2.wr.start === '08:00' && st2.ts === null && st2.lb === null);
+  check('Fome e atividade inválidas descartadas', st2.day.hunger === null && st2.day.activity === null);
   check('Lembrete com valores válidos', st.reminder.enabled === false && st.reminder.time === '09:00');
   check('Texto malicioso exibido apenas como texto', (await page.evaluate(() => document.getElementById('header-patient-summary').textContent)).includes('<img'));
 

@@ -99,6 +99,12 @@
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
     }
 
+    details.fold > summary { list-style: none; cursor: pointer; }
+    details.fold > summary::-webkit-details-marker { display: none; }
+    details.fold > summary .chev { transition: transform .2s; }
+    details.fold[open] > summary .chev { transform: rotate(90deg); }
+    html[data-font="lg"] { font-size: 112.5%; }
+    html[data-font="xl"] { font-size: 125%; }
     .mobile-nav { padding-bottom: calc(0.375rem + env(safe-area-inset-bottom)); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { scrollbar-width: none; }
@@ -133,67 +139,35 @@
           </svg>
         </div>
         <div class="min-w-0">
-          <div class="flex items-center gap-2">
-            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-none">
-              Nutri<span class="text-brand-600 dark:text-brand-400">Pen</span>
-            </h1>
-            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300 border border-brand-200 dark:border-brand-800">Diário da caneta</span>
-          </div>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate" id="header-conditions-subtitle">Acompanhamento Nutricional</p>
+          <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-none">Nutri<span class="text-brand-600 dark:text-brand-400">Pen</span></h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate" id="header-conditions-subtitle"></p>
         </div>
       </div>
-
       <div class="flex items-center gap-1.5 shrink-0">
         <span id="header-patient-summary" class="hidden lg:inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700"></span>
-
-        <button type="button" onclick="openProfileModal()" class="btn btn-sm btn-primary" title="Idade, condições clínicas, cirurgias e medicação">
-          <i data-lucide="user-cog" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">Meu Perfil</span>
-          <span class="sm:hidden sr-only">Meu Perfil</span>
-        </button>
-
-        <button id="btn-theme-toggle" type="button" aria-label="Alternar tema claro/escuro" class="icon-btn bg-slate-100 dark:bg-slate-800">
-          <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
-          <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
-        </button>
-
-        <!-- Menu de ações secundárias -->
         <div class="relative">
-          <button id="btn-more-menu" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="more-menu" aria-label="Mais opções" class="icon-btn bg-slate-100 dark:bg-slate-800">
-            <i data-lucide="more-vertical" class="w-4 h-4"></i>
+          <button id="bell-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="notif-panel" aria-label="Avisos" class="relative icon-btn bg-slate-100 dark:bg-slate-800 w-10 h-10">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+            <span id="bell-badge" class="hidden absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-rose-600 text-white text-[11px] font-bold flex items-center justify-center"></span>
           </button>
-          <div id="more-menu" role="menu" class="hidden absolute right-0 mt-2 w-64 card p-1.5 z-40 shadow-xl">
-            <button role="menuitem" type="button" onclick="closeMoreMenu(); installApp()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-left">
-              <span aria-hidden="true">📲</span> Instalar no celular
-            </button>
-            <button role="menuitem" type="button" onclick="closeMoreMenu(); exportBackupJSON()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-left">
-              <i data-lucide="download" class="w-4 h-4"></i> Baixar backup (JSON)
-            </button>
-            <label role="menuitem" for="input-import-json" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
-              <i data-lucide="upload" class="w-4 h-4"></i> Restaurar backup
-            </label>
-            <button role="menuitem" type="button" onclick="closeMoreMenu(); openWelcomeModal(true)" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-left">
-              <i data-lucide="info" class="w-4 h-4"></i> Sobre & aviso de uso
-            </button>
-            <div class="my-1 border-t border-slate-200 dark:border-slate-700"></div>
-            <button role="menuitem" type="button" onclick="closeMoreMenu(); openResetModal()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold text-amber-800 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/60 text-left">
-              <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Zerar e iniciar meu perfil
-            </button>
+          <div id="notif-panel" class="hidden absolute right-0 mt-2 w-[min(22rem,calc(100vw-2rem))] card p-2 z-40 shadow-xl" role="dialog" aria-label="Avisos">
+            <div class="flex items-center justify-between px-2 py-1.5">
+              <span class="text-sm font-bold">Avisos</span>
+              <button type="button" id="notif-dismiss-all" class="text-xs font-semibold text-brand-700 dark:text-brand-400">Marcar todos como vistos</button>
+            </div>
+            <div id="notif-list" class="space-y-1 max-h-[70vh] overflow-y-auto"></div>
           </div>
-          <input id="input-import-json" type="file" accept=".json,application/json" class="hidden" />
         </div>
+        <button type="button" onclick="openProfileModal()" id="header-avatar" class="w-10 h-10 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold transition" aria-label="Meu perfil">?</button>
       </div>
     </div>
-
-    <!-- Navegação Desktop -->
     <nav class="hidden md:block border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900" aria-label="Seções">
       <div class="max-w-6xl mx-auto px-6 py-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="desktop-nav">
-        <button data-tab="hoje" class="nav-btn"><i data-lucide="layout-dashboard" class="w-4 h-4"></i><span>Hoje</span></button>
-        <button data-tab="refeicoes" class="nav-btn"><i data-lucide="camera" class="w-4 h-4"></i><span>Refeições & IA</span></button>
-        <button data-tab="alimentos" class="nav-btn"><i data-lucide="table-2" class="w-4 h-4"></i><span>Tabela de Alimentos</span></button>
-        <button data-tab="caneta" class="nav-btn"><i data-lucide="syringe" class="w-4 h-4"></i><span>Caneta & Diário</span></button>
-        <button data-tab="evolucao" class="nav-btn"><i data-lucide="line-chart" class="w-4 h-4"></i><span>Medidas & Gráficos</span></button>
-        <button data-tab="relatorio" class="nav-btn"><i data-lucide="file-text" class="w-4 h-4"></i><span>Relatório</span></button>
+        <button data-tab="diario" class="nav-btn"><i data-lucide="notebook-pen" class="w-4 h-4"></i><span>Diário</span></button>
+        <button data-tab="refeicoes" class="nav-btn"><i data-lucide="utensils" class="w-4 h-4"></i><span>Refeições</span></button>
+        <button data-tab="evolucao" class="nav-btn"><i data-lucide="line-chart" class="w-4 h-4"></i><span>Evolução</span></button>
+        <button data-tab="caneta" class="nav-btn"><i data-lucide="syringe" class="w-4 h-4"></i><span>Caneta</span></button>
+        <button data-tab="mais" class="nav-btn"><i data-lucide="menu" class="w-4 h-4"></i><span>Mais</span></button>
       </div>
     </nav>
   </header>
@@ -211,30 +185,19 @@
     </div>
   </div>
 
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-5 space-y-6">
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 space-y-6">
 
-    <!-- =================================================================== -->
-    <!-- ABA 1: HOJE                                                         -->
-    <!-- =================================================================== -->
-    <section id="tab-hoje" class="tab-panel space-y-6" aria-labelledby="greeting-title">
-
-      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-3">
+    <section id="tab-diario" class="tab-panel space-y-4 max-w-2xl mx-auto" aria-labelledby="greeting-title">
+      <div class="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h2 class="page-title" id="greeting-title">Olá!</h2>
           <p class="page-sub" id="today-date-label"></p>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
-          <button type="button" onclick="switchTab('caneta')" id="dashboard-bowel-pill" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border transition"></button>
-          <div class="inline-flex items-center gap-2 pl-3 pr-1 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold">
-            <span id="dashboard-glucose-text" class="text-slate-700 dark:text-slate-200">🩸 Glicemia: --</span>
-            <button type="button" onclick="openGlucoseModal()" class="px-2.5 py-1 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold transition">+ Glicemia</button>
-          </div>
-        </div>
+        <span id="treatment-counter" class="hidden px-3 py-1 rounded-full text-xs font-bold bg-brand-50 text-brand-800 dark:bg-brand-950 dark:text-brand-300 border border-brand-200 dark:border-brand-800"></span>
       </div>
+      <div id="milestone-banner" class="hidden"></div>
 
-      <!-- Caneta + Dica da Nutri -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div class="lg:col-span-5 rounded-2xl bg-gradient-to-br from-brand-600 to-teal-800 text-white p-5 shadow-md flex flex-col justify-between">
+      <div class="rounded-2xl bg-gradient-to-br from-brand-600 to-teal-800 text-white p-4 shadow-md">
           <div class="flex items-start justify-between gap-3">
             <div class="min-w-0">
               <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/15 text-xs font-semibold">
@@ -248,7 +211,8 @@
               <span class="text-[10px] uppercase tracking-wider text-teal-100 mt-1" id="next-dose-days-unit">dias</span>
             </div>
           </div>
-          <div class="mt-4 pt-3 border-t border-white/20 flex flex-wrap items-center justify-between gap-2 text-xs text-teal-50">
+          <div id="dose-cycle-dots" class="mt-3 flex items-center gap-1.5" aria-hidden="true"></div>
+          <div class="mt-3 pt-3 border-t border-white/20 flex flex-wrap items-center justify-between gap-2 text-xs text-teal-50">
             <span id="last-site-quick-hint"></span>
             <button type="button" onclick="switchTab('caneta')" class="inline-flex items-center gap-1 font-semibold underline underline-offset-2 hover:text-white">
               Registrar aplicação <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
@@ -256,7 +220,55 @@
           </div>
         </div>
 
-        <div id="dashboard-dica-nutri-card" class="lg:col-span-7 rounded-2xl dica-nutri-card border-2 p-5 shadow-sm flex flex-col justify-between">
+      <div class="card p-4">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-bold">Metas de hoje</h3>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400" id="adjusted-weight-note"></span>
+        </div>
+        <div id="goal-rings" class="grid grid-cols-3 gap-2 text-center"></div>
+        <div class="grid grid-cols-3 gap-2 mt-3">
+          <button type="button" onclick="quickAddMacro('protein', 20)" class="py-2 rounded-xl bg-teal-50 dark:bg-teal-950 text-teal-800 dark:text-teal-300 text-xs font-bold">+20 g</button>
+          <button type="button" onclick="quickAddMacro('water', 250)" class="py-2 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-800 dark:text-sky-300 text-xs font-bold">+250 ml</button>
+          <button type="button" onclick="quickAddMacro('fiber', 5)" class="py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-xs font-bold">+5 g</button>
+        </div>
+        <details class="fold mt-3" data-fold="metas">
+          <summary class="flex items-center justify-between text-xs font-semibold text-slate-600 dark:text-slate-300 py-1">Ver todas as metas e tetos<i data-lucide="chevron-right" class="chev w-4 h-4"></i></summary>
+          <div class="pt-3"><div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="macro-cards-grid"></div></div>
+        </details>
+      </div>
+
+      <div id="hunger-card" class="card p-4">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="text-sm font-bold">Como está sua fome hoje?</h3>
+          <span id="hunger-cycle-day" class="text-[11px] text-slate-500 dark:text-slate-400"></span>
+        </div>
+        <div id="hunger-options" class="grid grid-cols-5 gap-1.5 mt-3" role="radiogroup" aria-label="Nível de fome"></div>
+        <p id="hunger-insight" class="hidden mt-3 text-xs rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-900 dark:text-sky-100 p-2.5"></p>
+      </div>
+
+      <div id="activity-card" class="card p-4">
+        <div class="flex items-baseline justify-between gap-2">
+          <h3 class="text-sm font-bold">Atividade física de hoje</h3>
+          <span id="activity-week" class="text-[11px] text-slate-500 dark:text-slate-400 tabular-nums"></span>
+        </div>
+        <div id="activity-options" class="flex flex-wrap gap-2 mt-3"></div>
+        <div id="activity-minutes-row" class="hidden mt-3 flex items-center gap-2">
+          <label for="activity-minutes" class="text-xs font-semibold text-slate-600 dark:text-slate-300">Minutos</label>
+          <input type="number" inputmode="numeric" min="0" max="600" step="5" id="activity-minutes" class="field field-sm w-24" />
+          <div class="flex gap-1">
+            <button type="button" data-min="15" class="act-min px-2 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800">15</button>
+            <button type="button" data-min="30" class="act-min px-2 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800">30</button>
+            <button type="button" data-min="45" class="act-min px-2 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800">45</button>
+            <button type="button" data-min="60" class="act-min px-2 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800">60</button>
+          </div>
+        </div>
+        <div class="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mt-3 overflow-hidden"><div id="activity-week-bar" class="h-full bg-brand-500 rounded-full transition-all" style="width:0%"></div></div>
+      </div>
+
+      <details class="fold rounded-2xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-900 p-4" data-fold="dica">
+        <summary class="flex items-center justify-between gap-3"><span class="text-sm min-w-0"><strong class="text-sky-800 dark:text-sky-300">✨ Dica de hoje:</strong> <span id="dica-summary"></span></span><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+        <div class="pt-3 space-y-3">
+          <div id="dashboard-dica-nutri-card" class="rounded-2xl dica-nutri-card border p-4">
           <div>
             <div class="flex flex-wrap items-center justify-between gap-2">
               <span class="eyebrow dica-heading">✨ Dica da Nutri — conduta de hoje</span>
@@ -267,23 +279,89 @@
           </div>
           <div class="mt-4 pt-3 border-t border-sky-200/70 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2 text-xs dica-text">
             <span>Considera idade, dose, glicemia, evacuações e condições clínicas</span>
-            <button type="button" onclick="switchTab('caneta')" class="dica-heading font-bold hover:underline">Fazer check-in →</button>
+            <button type="button" onclick="openFold('checkin')" class="dica-heading font-bold hover:underline">Fazer check-in →</button>
           </div>
         </div>
-      </div>
-
-      <!-- Metas -->
-      <div>
-        <div class="flex flex-wrap items-end justify-between gap-2 mb-3">
-          <h3 class="section-title"><i data-lucide="target" class="w-5 h-5 text-brand-600"></i> Metas & tetos de hoje</h3>
-          <span class="text-xs font-medium text-slate-600 dark:text-slate-400" id="adjusted-weight-note"></span>
+          <div id="eat-now" class="card p-4"></div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="macro-cards-grid"></div>
-      </div>
+      </details>
 
-      <!-- Checklist + Resumo -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <div class="lg:col-span-7 card p-5">
+      <details class="fold card p-4" data-fold="hoje-registros" open>
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">Registros de hoje <span id="today-log-count" class="text-slate-400 font-semibold"></span></h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div class="flex flex-wrap gap-2 mb-3">
+          <button type="button" onclick="openFold('checkin')" id="dashboard-bowel-pill" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border transition"></button>
+          <div class="inline-flex items-center gap-2 pl-3 pr-1 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold">
+            <span id="dashboard-glucose-text" class="text-slate-700 dark:text-slate-200">🩸 Glicemia: --</span>
+            <button type="button" onclick="openGlucoseModal()" class="px-2.5 py-1 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold transition">+ Glicemia</button>
+          </div>
+        </div><ol id="today-log-list" class="space-y-2.5 text-sm"></ol></div>
+</details>
+
+      <details class="fold card p-4" data-fold="checkin">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">💩 Evacuação, sintomas e peso</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div class="space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="section-title"><span aria-hidden="true">🩺</span> Novo check-in</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Manhã, tarde e noite — quantos quiser</p>
+            </div>
+            <span id="diary-bowel-streak-badge" class="px-2.5 py-1 rounded-full text-xs font-bold border"></span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+            <div><label for="diary-entry-date" class="field-label">Data</label><input type="date" id="diary-entry-date" class="field field-sm" /></div>
+            <div><label for="diary-entry-time" class="field-label">Hora</label><input type="time" id="diary-entry-time" class="field field-sm" /></div>
+          </div>
+
+          <div class="p-3 rounded-xl bg-brand-50/70 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800 space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <label for="diary-weight" class="eyebrow text-brand-800 dark:text-brand-300">⚖️ Peso</label>
+              <span id="diary-weight-last" class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 tabular-nums"></span>
+            </div>
+            <div class="flex gap-2">
+              <div class="relative flex-1 min-w-0">
+                <input type="number" inputmode="decimal" step="0.1" min="35" max="300" id="diary-weight" placeholder="Ex.: 80.8" class="field pr-10 text-base font-bold" />
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-500 dark:text-slate-400 pointer-events-none">kg</span>
+              </div>
+              <button type="button" onclick="addDiaryWeight()" class="btn btn-md btn-primary shrink-0"><i data-lucide="scale" class="w-4 h-4"></i> Salvar peso</button>
+            </div>
+            <p class="text-[11px] text-slate-600 dark:text-slate-400">Usa a data e a hora acima. Cintura, braço e coxa ficam em <button type="button" onclick="switchTab('evolucao')" class="font-bold text-brand-700 dark:text-brand-400 underline">Medidas</button>.</p>
+          </div>
+
+          <div class="space-y-2">
+            <span class="eyebrow text-slate-700 dark:text-slate-300 block">1. Evacuação neste horário</span>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="bowel-options-grid" role="radiogroup" aria-label="Evacuação"></div>
+          </div>
+          <div class="space-y-2">
+            <span class="eyebrow text-slate-700 dark:text-slate-300 block">2. Sintomas & disposição</span>
+            <div class="flex flex-wrap gap-2" id="symptom-emojis-grid"></div>
+          </div>
+          <div class="space-y-2">
+            <label for="symptom-notes" class="eyebrow text-slate-700 dark:text-slate-300 block">3. Observação (opcional)</label>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input type="text" id="symptom-notes" placeholder="Ex.: evacuação após o café, digestão ótima..." class="field flex-1" />
+              <button type="button" onclick="addDiaryCheckIn()" class="btn btn-md btn-primary shrink-0"><i data-lucide="plus-circle" class="w-4 h-4"></i> Salvar check-in</button>
+            </div>
+          </div>
+
+          <div class="dica-nutri-card rounded-2xl border-2 p-4 space-y-2">
+            <span class="eyebrow dica-heading">✨ Dica da Nutri</span>
+            <ul id="immediate-symptom-advice-list" class="dica-text text-xs sm:text-sm space-y-1.5 leading-relaxed font-medium"></ul>
+          </div>
+
+          <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="eyebrow text-slate-600 dark:text-slate-300">Linha do tempo (check-ins e pesagens)</span>
+              <span id="diary-entries-count-badge" class="text-[11px] font-semibold text-slate-500 dark:text-slate-400"></span>
+            </div>
+            <div id="diary-timeline-list" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
+          </div>
+        </div></div>
+</details>
+
+      <details class="fold card p-4" data-fold="checklist">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">✅ Checklist de hoje</h3><span id="checklist-summary-badge" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950 text-brand-800 dark:text-brand-300"></span><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div class="">
           <div class="flex items-start justify-between gap-3 mb-4">
             <div>
               <h3 class="section-title"><i data-lucide="check-square" class="w-5 h-5 text-brand-600"></i> Checklist do dia</h3>
@@ -295,33 +373,10 @@
             <div id="habits-progress-bar" class="h-full bg-brand-500 rounded-full transition-all duration-500" style="width:0%"></div>
           </div>
           <div class="space-y-2.5" id="habits-checklist-container"></div>
-        </div>
-
-        <div class="lg:col-span-5 card p-5 flex flex-col justify-between gap-4">
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <h3 class="section-title"><i data-lucide="calculator" class="w-5 h-5 text-brand-600"></i> Contabilidade clínica</h3>
-              <button type="button" onclick="openProfileModal()" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline">Editar →</button>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-xs space-y-1.5">
-              <div class="flex justify-between gap-3"><span class="text-slate-500 dark:text-slate-400">Paciente</span><strong class="text-right" id="summary-card-patient"></strong></div>
-              <div class="flex justify-between gap-3"><span class="text-slate-500 dark:text-slate-400">Caneta / dose</span><strong class="text-right text-brand-700 dark:text-brand-400" id="summary-card-med"></strong></div>
-              <div class="flex justify-between gap-3"><span class="text-slate-500 dark:text-slate-400">Inicial → atual / meta</span><strong class="text-right tabular-nums" id="summary-card-weights"></strong></div>
-              <div class="flex justify-between gap-3"><span class="text-slate-500 dark:text-slate-400">IMC / TMB</span><strong class="text-right tabular-nums" id="dashboard-bmi-pill"></strong></div>
-            </div>
-            <div id="dashboard-active-conditions-badges" class="flex flex-wrap gap-1.5"></div>
-            <div>
-              <span class="eyebrow text-slate-500 dark:text-slate-400 block mb-2">Ajustes aplicados às suas metas</span>
-              <ul id="dashboard-accounting-rules-list" class="space-y-1.5 text-xs text-slate-700 dark:text-slate-200"></ul>
-            </div>
-          </div>
-        </div>
-      </div>
+        </div></div>
+</details>
     </section>
 
-    <!-- =================================================================== -->
-    <!-- ABA 2: REFEIÇÕES                                                    -->
-    <!-- =================================================================== -->
     <section id="tab-refeicoes" class="tab-panel hidden space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
@@ -497,15 +552,13 @@
           <div id="today-meals-list" class="space-y-3"></div>
         </div>
       </div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- ABA 3: TABELA DE ALIMENTOS                                          -->
-    <!-- =================================================================== -->
-    <section id="tab-alimentos" class="tab-panel hidden space-y-5">
+    
+      <details class="fold card p-4" data-fold="tabela">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">📋 Tabela de alimentos <span class="text-slate-400 font-semibold">(50 itens)</span></h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="tab-alimentos" class="space-y-5">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <h2 class="page-title">Tabela de alimentos</h2>
+          <h3 class="section-title">Tabela de alimentos</h3>
           <p class="page-sub">Valores aproximados por porção • adicione com 1 toque</p>
         </div>
         <div class="flex items-center gap-2 card p-1.5 self-start sm:self-auto" role="group" aria-label="Multiplicador de porção">
@@ -551,156 +604,15 @@
         </div>
         <div id="food-cards-mobile" class="sm:hidden space-y-2"></div>
       </div>
+    </div></div>
+</details>
     </section>
 
-    <!-- =================================================================== -->
-    <!-- ABA 4: CANETA & DIÁRIO                                              -->
-    <!-- =================================================================== -->
-    <section id="tab-caneta" class="tab-panel hidden space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-        <div>
-          <h2 class="page-title">Diário: peso, caneta, evacuação & sintomas</h2>
-          <p class="page-sub">Vários check-ins por dia e rodízio dos locais de aplicação</p>
-        </div>
-        <button type="button" onclick="openGlucoseModal()" class="btn btn-md btn-rose self-start sm:self-auto">🩸 Registrar glicemia</button>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <div class="lg:col-span-7 card p-5 space-y-5">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <h3 class="section-title"><span aria-hidden="true">🩺</span> Novo check-in</h3>
-              <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Manhã, tarde e noite — quantos quiser</p>
-            </div>
-            <span id="diary-bowel-streak-badge" class="px-2.5 py-1 rounded-full text-xs font-bold border"></span>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
-            <div><label for="diary-entry-date" class="field-label">Data</label><input type="date" id="diary-entry-date" class="field field-sm" /></div>
-            <div><label for="diary-entry-time" class="field-label">Hora</label><input type="time" id="diary-entry-time" class="field field-sm" /></div>
-          </div>
-
-          <div class="p-3 rounded-xl bg-brand-50/70 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800 space-y-2">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <label for="diary-weight" class="eyebrow text-brand-800 dark:text-brand-300">⚖️ Peso</label>
-              <span id="diary-weight-last" class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 tabular-nums"></span>
-            </div>
-            <div class="flex gap-2">
-              <div class="relative flex-1 min-w-0">
-                <input type="number" inputmode="decimal" step="0.1" min="35" max="300" id="diary-weight" placeholder="Ex.: 80.8" class="field pr-10 text-base font-bold" />
-                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-500 dark:text-slate-400 pointer-events-none">kg</span>
-              </div>
-              <button type="button" onclick="addDiaryWeight()" class="btn btn-md btn-primary shrink-0"><i data-lucide="scale" class="w-4 h-4"></i> Salvar peso</button>
-            </div>
-            <p class="text-[11px] text-slate-600 dark:text-slate-400">Usa a data e a hora acima. Cintura, braço e coxa ficam em <button type="button" onclick="switchTab('evolucao')" class="font-bold text-brand-700 dark:text-brand-400 underline">Medidas</button>.</p>
-          </div>
-
-          <div class="space-y-2">
-            <span class="eyebrow text-slate-700 dark:text-slate-300 block">1. Evacuação neste horário</span>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="bowel-options-grid" role="radiogroup" aria-label="Evacuação"></div>
-          </div>
-          <div class="space-y-2">
-            <span class="eyebrow text-slate-700 dark:text-slate-300 block">2. Sintomas & disposição</span>
-            <div class="flex flex-wrap gap-2" id="symptom-emojis-grid"></div>
-          </div>
-          <div class="space-y-2">
-            <label for="symptom-notes" class="eyebrow text-slate-700 dark:text-slate-300 block">3. Observação (opcional)</label>
-            <div class="flex flex-col sm:flex-row gap-2">
-              <input type="text" id="symptom-notes" placeholder="Ex.: evacuação após o café, digestão ótima..." class="field flex-1" />
-              <button type="button" onclick="addDiaryCheckIn()" class="btn btn-md btn-primary shrink-0"><i data-lucide="plus-circle" class="w-4 h-4"></i> Salvar check-in</button>
-            </div>
-          </div>
-
-          <div class="dica-nutri-card rounded-2xl border-2 p-4 space-y-2">
-            <span class="eyebrow dica-heading">✨ Dica da Nutri</span>
-            <ul id="immediate-symptom-advice-list" class="dica-text text-xs sm:text-sm space-y-1.5 leading-relaxed font-medium"></ul>
-          </div>
-
-          <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <span class="eyebrow text-slate-600 dark:text-slate-300">Linha do tempo (check-ins e pesagens)</span>
-              <span id="diary-entries-count-badge" class="text-[11px] font-semibold text-slate-500 dark:text-slate-400"></span>
-            </div>
-            <div id="diary-timeline-list" class="space-y-2 max-h-80 overflow-y-auto pr-1"></div>
-          </div>
-        </div>
-
-        <div class="lg:col-span-5 card p-5 space-y-5 self-start">
-          <div>
-            <h3 class="section-title"><i data-lucide="syringe" class="w-5 h-5 text-brand-600"></i> Aplicação & rodízio</h3>
-            <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Alternar o local reduz o risco de nódulos e lipodistrofia.</p>
-          </div>
-          <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-700 text-xs text-amber-950 dark:text-amber-200 flex items-start gap-2.5">
-            <i data-lucide="refresh-cw" class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
-            <div id="rotation-recommendation-text"></div>
-          </div>
-          <div class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
-            <div class="flex flex-col sm:flex-row items-center gap-4">
-              <div class="w-32 h-44 shrink-0">
-                <svg viewBox="0 0 140 200" class="w-full h-full" aria-hidden="true">
-                  <circle cx="70" cy="24" r="14" class="fill-slate-300 dark:fill-slate-600" />
-                  <path d="M46 46 Q70 40 94 46 L104 98 L92 102 L86 64 L86 116 L90 185 L74 185 L70 126 L66 185 L50 185 L54 116 L54 64 L48 102 L36 98 Z" class="fill-slate-300 dark:fill-slate-600" />
-                  <circle cx="70" cy="88" r="2" class="fill-slate-500" />
-                  <circle data-site="Braço Dir" cx="42" cy="76" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
-                  <circle data-site="Braço Esq" cx="98" cy="76" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
-                  <circle data-site="Abdômen Dir" cx="60" cy="92" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
-                  <circle data-site="Abdômen Esq" cx="80" cy="92" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
-                  <circle data-site="Coxa Dir" cx="59" cy="136" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
-                  <circle data-site="Coxa Esq" cx="81" cy="136" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
-                </svg>
-                <p class="text-[10px] text-center text-slate-500 dark:text-slate-400 -mt-1">Vista de frente (Dir = seu lado direito)</p>
-              </div>
-              <div class="flex-1 w-full grid grid-cols-2 gap-2" id="injection-sites-grid" role="radiogroup" aria-label="Local da aplicação"></div>
-            </div>
-          </div>
-
-          <form id="injection-form" class="space-y-3">
-            <input type="hidden" id="inj-site" value="Abdômen Esq" />
-            <div class="grid grid-cols-2 gap-2.5">
-              <div><label for="inj-date" class="field-label">Data</label><input type="date" id="inj-date" required class="field field-sm" /></div>
-              <div><label for="inj-med" class="field-label">Caneta</label><select id="inj-med" class="field field-sm"></select></div>
-              <div><label for="inj-dose" class="field-label">Dose</label><select id="inj-dose" class="field field-sm"></select></div>
-              <div><label for="inj-interval" class="field-label">Próxima em (dias)</label><input type="number" inputmode="numeric" min="1" max="90" step="1" id="inj-interval" class="field field-sm" /></div>
-            </div>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 -mt-1" id="inj-interval-hint"></p>
-            <button type="submit" class="w-full btn btn-md btn-primary"><i data-lucide="check-circle-2" class="w-4 h-4"></i> Registrar em <strong id="selected-site-btn-label"></strong></button>
-          </form>
-
-          <div id="reminder-card" class="p-3.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-900 space-y-3">
-            <div class="flex items-start justify-between gap-3">
-              <div class="min-w-0">
-                <span class="text-sm font-bold text-slate-900 dark:text-white">🔔 Lembrete da aplicação</span>
-                <p id="reminder-status" class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5"></p>
-              </div>
-              <label id="reminder-toggle-wrap" class="relative inline-flex items-center cursor-pointer shrink-0 hidden">
-                <input type="checkbox" id="reminder-enabled" class="sr-only peer" />
-                <span class="w-11 h-6 bg-slate-300 dark:bg-slate-600 rounded-full transition peer-checked:bg-brand-600 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:shadow after:transition peer-checked:after:translate-x-5"></span>
-                <span class="sr-only">Ativar lembrete da aplicação</span>
-              </label>
-            </div>
-            <div class="grid grid-cols-2 gap-2 items-end">
-              <div><label for="reminder-time" class="field-label">Horário</label><input type="time" id="reminder-time" value="09:00" class="field field-sm" /></div>
-              <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300 pb-2.5 cursor-pointer"><input type="checkbox" id="reminder-eve" checked class="w-4 h-4 rounded accent-teal-600" /> Avisar na véspera (20h)</label>
-            </div>
-            <button type="button" id="reminder-ics" class="hidden w-full btn btn-sm btn-soft">📅 Adicionar à agenda do celular</button>
-          </div>
-
-          <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
-            <h4 class="eyebrow text-slate-500 dark:text-slate-400 mb-2">Últimas aplicações</h4>
-            <div id="injections-history-list" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- ABA 5: MEDIDAS & GRÁFICOS                                           -->
-    <!-- =================================================================== -->
     <section id="tab-evolucao" class="tab-panel hidden space-y-6">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <h2 class="page-title">Medidas, glicemia & gráficos</h2>
-          <p class="page-sub">Vários registros por dia, com data, hora e momento</p>
+          <h2 class="page-title">Evolução</h2>
+          <p class="page-sub">Peso, medidas, glicemia, exames, fome e o seu mês</p>
         </div>
         <button type="button" onclick="switchTab('relatorio')" class="btn btn-md bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm self-start sm:self-auto">📲 Gerar relatório</button>
       </div>
@@ -777,14 +689,123 @@
           </div>
         </div>
       </div>
+    
+      <details class="fold card p-4" data-fold="resumo-semana" open>
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">🏆 Resumo da semana</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="weekly-summary"></div></div>
+</details>
+      <details class="fold card p-4" data-fold="exames">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">🧪 Exames de laboratório</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="exams-section"></div></div>
+</details>
+      <details class="fold card p-4" data-fold="fome-ciclo">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">😋 Fome × dias após a aplicação</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="hunger-cycle-chart"></div></div>
+</details>
+      <details class="fold card p-4" data-fold="calendario">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">📅 Calendário do mês</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="month-calendar"></div></div>
+</details>
+      <details class="fold card p-4" data-fold="fotos">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">📷 Fotos de progresso</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="progress-photos"></div></div>
+</details>
     </section>
 
-    <!-- =================================================================== -->
-    <!-- ABA 6: RELATÓRIO                                                    -->
-    <!-- =================================================================== -->
-    <section id="tab-relatorio" class="tab-panel hidden space-y-6">
+    <section id="tab-caneta" class="tab-panel hidden space-y-4 max-w-3xl mx-auto">
       <div>
-        <h2 class="page-title">Relatório clínico</h2>
+        <h2 class="page-title">Caneta</h2>
+        <p class="page-sub">Aplicações, rodízio dos locais, lembretes e orientações</p>
+      </div>
+      <div id="missed-dose-card" class="hidden"></div>
+      <div id="contraceptive-card" class="hidden"></div>
+      <div class="card p-5 space-y-5">
+          <div>
+            <h3 class="section-title"><i data-lucide="syringe" class="w-5 h-5 text-brand-600"></i> Aplicação & rodízio</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Alternar o local reduz o risco de nódulos e lipodistrofia.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-700 text-xs text-amber-950 dark:text-amber-200 flex items-start gap-2.5">
+            <i data-lucide="refresh-cw" class="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5"></i>
+            <div id="rotation-recommendation-text"></div>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-800/80 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
+            <div class="flex flex-col sm:flex-row items-center gap-4">
+              <div class="w-32 h-44 shrink-0">
+                <svg viewBox="0 0 140 200" class="w-full h-full" aria-hidden="true">
+                  <circle cx="70" cy="24" r="14" class="fill-slate-300 dark:fill-slate-600" />
+                  <path d="M46 46 Q70 40 94 46 L104 98 L92 102 L86 64 L86 116 L90 185 L74 185 L70 126 L66 185 L50 185 L54 116 L54 64 L48 102 L36 98 Z" class="fill-slate-300 dark:fill-slate-600" />
+                  <circle cx="70" cy="88" r="2" class="fill-slate-500" />
+                  <circle data-site="Braço Dir" cx="42" cy="76" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
+                  <circle data-site="Braço Esq" cx="98" cy="76" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
+                  <circle data-site="Abdômen Dir" cx="60" cy="92" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
+                  <circle data-site="Abdômen Esq" cx="80" cy="92" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
+                  <circle data-site="Coxa Dir" cx="59" cy="136" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
+                  <circle data-site="Coxa Esq" cx="81" cy="136" r="7" onclick="selectInjectionSite(this.dataset.site)" class="site-dot cursor-pointer transition-all" />
+                </svg>
+                <p class="text-[10px] text-center text-slate-500 dark:text-slate-400 -mt-1">Vista de frente (Dir = seu lado direito)</p>
+              </div>
+              <div class="flex-1 w-full grid grid-cols-2 gap-2" id="injection-sites-grid" role="radiogroup" aria-label="Local da aplicação"></div>
+            </div>
+          </div>
+
+          <form id="injection-form" class="space-y-3">
+            <input type="hidden" id="inj-site" value="Abdômen Esq" />
+            <div class="grid grid-cols-2 gap-2.5">
+              <div><label for="inj-date" class="field-label">Data</label><input type="date" id="inj-date" required class="field field-sm" /></div>
+              <div><label for="inj-med" class="field-label">Caneta</label><select id="inj-med" class="field field-sm"></select></div>
+              <div><label for="inj-dose" class="field-label">Dose</label><select id="inj-dose" class="field field-sm"></select></div>
+              <div><label for="inj-interval" class="field-label">Próxima em (dias)</label><input type="number" inputmode="numeric" min="1" max="90" step="1" id="inj-interval" class="field field-sm" /></div>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 -mt-1" id="inj-interval-hint"></p>
+            <button type="submit" class="w-full btn btn-md btn-primary"><i data-lucide="check-circle-2" class="w-4 h-4"></i> Registrar em <strong id="selected-site-btn-label"></strong></button>
+          </form>
+
+          <div id="reminder-card" class="p-3.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-900 space-y-3">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <span class="text-sm font-bold text-slate-900 dark:text-white">🔔 Lembrete da aplicação</span>
+                <p id="reminder-status" class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5"></p>
+              </div>
+              <label id="reminder-toggle-wrap" class="relative inline-flex items-center cursor-pointer shrink-0 hidden">
+                <input type="checkbox" id="reminder-enabled" class="sr-only peer" />
+                <span class="w-11 h-6 bg-slate-300 dark:bg-slate-600 rounded-full transition peer-checked:bg-brand-600 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:shadow after:transition peer-checked:after:translate-x-5"></span>
+                <span class="sr-only">Ativar lembrete da aplicação</span>
+              </label>
+            </div>
+            <div class="grid grid-cols-2 gap-2 items-end">
+              <div><label for="reminder-time" class="field-label">Horário</label><input type="time" id="reminder-time" value="09:00" class="field field-sm" /></div>
+              <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300 pb-2.5 cursor-pointer"><input type="checkbox" id="reminder-eve" checked class="w-4 h-4 rounded accent-teal-600" /> Avisar na véspera (20h)</label>
+            </div>
+            <button type="button" id="reminder-ics" class="hidden w-full btn btn-sm btn-soft">📅 Adicionar à agenda do celular</button>
+          </div>
+
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
+            <h4 class="eyebrow text-slate-500 dark:text-slate-400 mb-2">Últimas aplicações</h4>
+            <div id="injections-history-list" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+      <div id="pen-stock-card" class="card p-4"></div>
+      <details class="fold card p-4" data-fold="bula">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">📄 Orientações da bula (resumo)</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="bula-summary" class="space-y-3 text-sm"></div></div>
+</details>
+    </section>
+
+    <section id="tab-mais" class="tab-panel hidden space-y-4 max-w-3xl mx-auto">
+      <div>
+        <h2 class="page-title">Mais</h2>
+        <p class="page-sub">Relatório, consultas, preferências e seus dados</p>
+      </div>
+      <button type="button" onclick="openProfileModal()" class="w-full card p-4 flex items-center gap-3 text-left hover:border-brand-400 transition">
+        <span class="w-11 h-11 rounded-xl bg-brand-600 text-white font-extrabold flex items-center justify-center text-lg" id="mais-avatar">?</span>
+        <span class="min-w-0 flex-1"><strong class="block text-sm" id="mais-profile-name">Meu perfil</strong><span class="block text-xs text-slate-500 dark:text-slate-400 truncate" id="mais-profile-sub">Idade, peso, medicação e condições</span></span>
+        <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+      </button>
+      <details class="fold card p-4" data-fold="relatorio">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">📄 Relatório para a consulta</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="tab-relatorio" class="space-y-6">
+      <div>
+        <h3 class="section-title">Relatório clínico</h3>
         <p class="page-sub">Para levar à consulta: perfil, condições, glicemia, medidas e adesão nutricional</p>
       </div>
 
@@ -827,20 +848,88 @@
           <p class="text-xs sm:text-sm dica-text leading-relaxed">Acima dos 60 anos ou após bariátrica, o risco de perder massa magra é maior. O app acrescenta automaticamente uma margem proteica — combine com treino de força.</p>
         </article>
       </div>
+    </div></div>
+</details>
+      <details class="fold card p-4" data-fold="consultas">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">📅 Consultas</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="appointments-section"></div></div>
+</details>
+      <details class="fold card p-4" data-fold="perguntas">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">❓ Perguntar ao médico</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="questions-section"></div></div>
+</details>
+      <details class="fold card p-4" data-fold="contabilidade">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">🧮 Minhas metas e condições</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div class="space-y-4">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="section-title"><i data-lucide="calculator" class="w-5 h-5 text-brand-600"></i> Contabilidade clínica</h3>
+              <button type="button" onclick="openProfileModal()" class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline">Editar →</button>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-xs space-y-1.5">
+              <div class="flex justify-between gap-3"><span class="text-slate-500 dark:text-slate-400">Paciente</span><strong class="text-right" id="summary-card-patient"></strong></div>
+              <div class="flex justify-between gap-3"><span class="text-slate-500 dark:text-slate-400">Caneta / dose</span><strong class="text-right text-brand-700 dark:text-brand-400" id="summary-card-med"></strong></div>
+              <div class="flex justify-between gap-3"><span class="text-slate-500 dark:text-slate-400">Inicial → atual / meta</span><strong class="text-right tabular-nums" id="summary-card-weights"></strong></div>
+              <div class="flex justify-between gap-3"><span class="text-slate-500 dark:text-slate-400">IMC / TMB</span><strong class="text-right tabular-nums" id="dashboard-bmi-pill"></strong></div>
+            </div>
+            <div id="dashboard-active-conditions-badges" class="flex flex-wrap gap-1.5"></div>
+            <div>
+              <span class="eyebrow text-slate-500 dark:text-slate-400 block mb-2">Ajustes aplicados às suas metas</span>
+              <ul id="dashboard-accounting-rules-list" class="space-y-1.5 text-xs text-slate-700 dark:text-slate-200"></ul>
+            </div>
+          </div>
+        </div></div>
+</details>
+      <details class="fold card p-4" data-fold="preferencias">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">⚙️ Preferências</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="prefs-section" class="space-y-4"></div></div>
+</details>
+      <details class="fold card p-4" data-fold="dados">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">💾 Backup e dados</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div class="space-y-1"><button role="menuitem" type="button" onclick="exportBackupJSON()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-left">
+              <i data-lucide="download" class="w-4 h-4"></i> Baixar backup (JSON)
+            </button><label role="menuitem" for="input-import-json" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer">
+              <i data-lucide="upload" class="w-4 h-4"></i> Restaurar backup
+            </label><input id="input-import-json" type="file" accept=".json,application/json" class="hidden" /><div class="my-1 border-t border-slate-200 dark:border-slate-700"></div><button role="menuitem" type="button" onclick="openResetModal()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold text-amber-800 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/60 text-left">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Zerar e iniciar meu perfil
+            </button></div></div>
+</details>
+      <details class="fold card p-4" data-fold="sobre">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">ℹ️ Sobre o NutriPen</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div class="space-y-1"><button role="menuitem" type="button" onclick="installApp()" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-left">
+              <span aria-hidden="true">📲</span> Instalar no celular
+            </button><button role="menuitem" type="button" onclick="openWelcomeModal(true)" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-left">
+              <i data-lucide="info" class="w-4 h-4"></i> Sobre & aviso de uso
+            </button></div></div>
+</details>
     </section>
   </main>
 
   <!-- Navegação inferior (mobile) -->
   <nav class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-1 pt-1.5 mobile-nav no-print" id="mobile-nav" aria-label="Seções">
-    <div class="grid grid-cols-6 gap-0.5">
-      <button data-tab="hoje" class="mobile-nav-btn"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Hoje</span></button>
-      <button data-tab="refeicoes" class="mobile-nav-btn"><i data-lucide="camera" class="w-5 h-5"></i><span>Refeições</span></button>
-      <button data-tab="alimentos" class="mobile-nav-btn"><i data-lucide="table-2" class="w-5 h-5"></i><span>Tabela</span></button>
-      <button data-tab="caneta" class="mobile-nav-btn"><i data-lucide="syringe" class="w-5 h-5"></i><span>Diário</span></button>
-      <button data-tab="evolucao" class="mobile-nav-btn"><i data-lucide="line-chart" class="w-5 h-5"></i><span>Medidas</span></button>
-      <button data-tab="relatorio" class="mobile-nav-btn"><i data-lucide="file-text" class="w-5 h-5"></i><span>Relatório</span></button>
+    <div class="grid grid-cols-5 gap-0.5">
+      <button data-tab="diario" class="mobile-nav-btn"><i data-lucide="notebook-pen" class="w-5 h-5"></i><span>Diário</span></button>
+      <button data-tab="refeicoes" class="mobile-nav-btn"><i data-lucide="utensils" class="w-5 h-5"></i><span>Refeições</span></button>
+      <button data-tab="evolucao" class="mobile-nav-btn"><i data-lucide="line-chart" class="w-5 h-5"></i><span>Evolução</span></button>
+      <button data-tab="caneta" class="mobile-nav-btn"><i data-lucide="syringe" class="w-5 h-5"></i><span>Caneta</span></button>
+      <button data-tab="mais" class="mobile-nav-btn"><i data-lucide="menu" class="w-5 h-5"></i><span>Mais</span></button>
     </div>
   </nav>
+
+  <!-- Botão + (registro rápido) -->
+  <button type="button" id="fab-add" class="no-print fixed z-30 right-4 bottom-24 md:bottom-8 md:right-8 w-14 h-14 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white shadow-lg flex items-center justify-center transition active:scale-95" aria-label="Registrar">
+    <i data-lucide="plus" class="w-7 h-7"></i>
+  </button>
+  <div id="quick-sheet" class="modal" role="dialog" aria-modal="true" aria-labelledby="quick-sheet-title">
+    <div class="modal-panel max-w-md p-5 pb-8">
+      <div class="w-10 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-auto mb-4 sm:hidden"></div>
+      <div class="flex items-center justify-between mb-3">
+        <h3 id="quick-sheet-title" class="text-base font-bold">O que você quer registrar?</h3>
+        <button type="button" data-close-modal class="icon-btn" aria-label="Fechar"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="quick-grid" class="grid grid-cols-4 gap-2 text-center text-xs font-semibold"></div>
+    </div>
+  </div>
 
   <!-- ===================================================================== -->
   <!-- MODAL: MEU PERFIL                                                     -->
@@ -898,6 +987,18 @@
             <p class="text-xs text-slate-600 dark:text-slate-400">Marque o que se aplica. O app ajusta tetos, alertas e o checklist.</p>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="pm-conditions-grid"></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div><label for="pm-treatment-start" class="field-label">Comecei o tratamento em</label><input type="date" id="pm-treatment-start" class="field" />
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Opcional. Se vazio, conta a partir da primeira aplicação registrada.</p></div>
+          </div>
+          <div id="pm-cycle-box" class="p-3 rounded-xl border border-rose-200 dark:border-rose-900 bg-rose-50/60 dark:bg-rose-950/30 space-y-2">
+            <label class="flex items-start gap-2.5 cursor-pointer"><input type="checkbox" id="pm-cycle-enabled" class="mt-0.5 w-4 h-4 rounded accent-teal-600" />
+              <span class="text-xs"><strong class="block text-slate-900 dark:text-white">🌸 Acompanhar meu ciclo menstrual (opcional)</strong><span class="text-slate-600 dark:text-slate-400">Nos dias antes e durante a menstruação é comum reter líquido e o peso subir um pouco. O app avisa e não trata isso como "piora".</span></span></label>
+            <div id="pm-cycle-fields" class="grid grid-cols-2 gap-2 pl-6">
+              <div><label for="pm-cycle-last" class="field-label">Início da última menstruação</label><input type="date" id="pm-cycle-last" class="field field-sm" /></div>
+              <div><label for="pm-cycle-length" class="field-label">Duração do ciclo (dias)</label><input type="number" inputmode="numeric" min="20" max="45" id="pm-cycle-length" value="28" class="field field-sm" /></div>
+            </div>
+          </div>
           <div>
             <label for="pm-clinical-notes" class="field-label">Observações clínicas (vão no relatório)</label>
             <input type="text" id="pm-clinical-notes" placeholder="Ex.: colecistectomia há 2 anos; esteatose hepática leve..." class="field" />
@@ -1112,6 +1213,8 @@
       { id: 'bariatric', title: '🏥 Bariátrica prévia (Bypass / Sleeve)', desc: 'Proteína mín. 85g, micro-porções (≤ 350 kcal/prato) e checklist de vitaminas.' },
       { id: 'cholecystectomy', title: '🫀 Sem vesícula (colecistectomia)', desc: 'Teto de gordura ≤ 40g/dia e alerta se uma refeição passar de 14g.' },
       { id: 'gerd', title: '🔥 Gastrite / Refluxo (DRGE)', desc: 'Jantar ≤ 25% da meta calórica e janela de 3h antes de deitar.' },
+      { id: 'dyslipidemia', title: '🧈 Colesterol / triglicérides altos', desc: 'Prioriza gorduras boas e fibras solúveis; acompanhe LDL, HDL e triglicérides em Exames.' },
+      { id: 'steatosis', title: '🫘 Gordura no fígado (esteatose)', desc: 'Menos açúcar e álcool; perder 7–10% do peso já ajuda o fígado.' },
       { id: 'hypertension', title: '🩺 Hipertensão / retenção hídrica', desc: 'Sódio ≤ 2.000 mg/dia; eletrólitos com foco em potássio e magnésio.' },
       { id: 'recentSurgery', title: '🩹 Outra cirurgia / condição', desc: 'Ex.: abdominoplastia, ortopédica, esteatose, SOP.', sub: { id: 'surgery90Days', label: 'Cirurgia nos últimos 90 dias (proteína 1.9 g/kg + vit. C/zinco)' } }
     ];
@@ -1119,7 +1222,6 @@
     const BASE_HABITS_DEFINITIONS = [
       { id: 'protein_first', label: 'Comecei a refeição pela proteína 🥩', desc: 'Aminoácidos antes de vegetais e carboidratos' },
       { id: 'slow_satiety', label: 'Comi devagar e parei na primeira saciedade 🎯', desc: 'Mastiguei bem e respeitei o sinal gástrico' },
-      { id: 'strength_training', label: 'Treino de força / caminhada pós-refeição 💪', desc: 'Preserva músculo e melhora a sensibilidade à insulina' },
       { id: 'water_goal', label: 'Bati a meta de água 💧', desc: 'Hidratação fracionada, longe das grandes refeições' },
       { id: 'low_fat', label: 'Respeitei o limite de gordura por refeição 🛡️', desc: 'Menos náusea, refluxo e desconforto biliar' }
     ];
@@ -1138,7 +1240,9 @@
       { id: 'nausea_strong', emoji: '🤮', label: 'Enjoo forte' },
       { id: 'bloating', emoji: '🫃', label: 'Empachamento' },
       { id: 'reflux', emoji: '🔥', label: 'Azia/Refluxo' },
-      { id: 'fatigue', emoji: '😴', label: 'Fadiga' }
+      { id: 'fatigue', emoji: '😴', label: 'Fadiga' },
+      { id: 'period', emoji: '🩸', label: 'Menstruada', female: true },
+      { id: 'pms', emoji: '🌙', label: 'TPM / inchaço', female: true }
     ];
 
     const FOOD_CATEGORIES = ['Todos', '🥩 Proteínas Magras', '🥦 Fibras & Vegetais', '🍎 Frutas', '🍚 Carboidratos', '🥛 Laticínios & Whey', '🍽️ Refeições Prontas'];
@@ -1205,7 +1309,7 @@
 
     // Estado de UI
     let appState = null;
-    let currentTab = 'hoje';
+    let currentTab = 'diario';
     let currentChartMode = 'weight';
     let currentReportType = 'medical';
     let selectedFoodCategory = 'Todos';
@@ -1364,9 +1468,9 @@
     // =========================================================================
     const defaultConditions = () => ({
       diabetes: false, bariatric: false, cholecystectomy: false, gerd: false,
-      hypertension: false, recentSurgery: false, surgery90Days: false, clinicalNotes: ''
+      hypertension: false, recentSurgery: false, surgery90Days: false, dyslipidemia: false, steatosis: false, clinicalNotes: ''
     });
-    const createEmptyDayLog = () => ({ quickMacros: { protein: 0, water: 0, fiber: 0, kcal: 0 }, electrolytes: false, meals: [], habits: {} });
+    const createEmptyDayLog = () => ({ quickMacros: { protein: 0, water: 0, fiber: 0, kcal: 0 }, electrolytes: false, meals: [], habits: {}, hunger: null, activity: null });
 
     function createDemoState() {
       const today = getTodayISO();
@@ -1377,8 +1481,22 @@
           name: 'Mariana', age: 48, sex: 'F', initialWeight: 88.4, weight: 81.2, goalWeight: 68.0, height: 165,
           activityLevel: 'light', medication: 'Tirzepatida (Mounjaro)', dose: '5mg', intervalDays: 7, injectionDay: 5, proteinFactor: 1.8,
           conditions: { ...defaultConditions(), diabetes: true, cholecystectomy: true, clinicalNotes: 'Pré-diabetes (HbA1c 6,1%) e colecistectomia videolaparoscópica prévia' },
-          customGeminiKey: ''
+          customGeminiKey: '',
+          pen: { dosesPerPen: 4, remaining: 2 },
+          treatmentStart: getPastDateISO(38)
         },
+        exams: [
+          { id: 'ex1', date: getPastDateISO(45), values: { hba1c: 6.1, glicemia: 108, colTotal: 214, ldl: 138, hdl: 44, tg: 182 } },
+          { id: 'ex2', date: getPastDateISO(2), values: { hba1c: 5.7, glicemia: 96, colTotal: 192, ldl: 121, hdl: 47, tg: 141 } }
+        ],
+        appointments: [
+          { id: 'ap1', type: 'medico', who: 'Dr. Paulo', date: getPastDateISO(58), time: '10:00', place: '', notes: '' },
+          { id: 'ap2', type: 'nutricionista', who: 'Dra. Ana', date: getPastDateISO(-1), time: '14:00', place: 'Clínica Vida', notes: '' }
+        ],
+        questions: [
+          { id: 'q1', text: 'A fome volta no 5º dia. Posso ajustar o horário da aplicação?', done: false, date: getPastDateISO(3) },
+          { id: 'q2', text: 'Preciso de suplemento de vitamina D?', done: false, date: getPastDateISO(1) }
+        ],
         dailyLogs: {
           [d3]: { quickMacros: { protein: 25, water: 2600, fiber: 6, kcal: 100 }, electrolytes: false, habits: { protein_first: true, slow_satiety: true, water_goal: true, low_fat: true }, meals: [
             { id: 'm10', slot: 'Café da Manhã', time: '08:00', desc: '2 ovos mexidos + 1 fatia de pão integral', protein: 15.3, fiber: 2.1, kcal: 217, carbs: 12.2, fat: 11.8, digest: 'Leve' },
@@ -1416,6 +1534,22 @@
           { id: 'w5', date: today, time: '07:15', moment: '🌅 Jejum / Manhã', weight: 81.2, waistNarrow: 81.0, waist: 91.5, arm: 32.0, thigh: 58.0, dose: '5mg' }
         ]
       };
+    }
+
+    // Exemplo: fome e atividade dos últimos dias, para a demonstração mostrar os padrões
+    function enrichDemoState(s) {
+      // fome por dia após a aplicação: baixa no início do ciclo, sobe perto da próxima dose
+      const byCycleDay = [2, 1, 1, 2, 3, 4, 4];
+      const injDates = s.injections.map(i => i.date).sort();
+      const acts = ['walk', 'strength', 'none', 'walk', 'strength', 'walk', 'none'];
+      for (let i = 0; i < 14; i++) {
+        const d = getPastDateISO(i);
+        s.dailyLogs[d] = s.dailyLogs[d] || createEmptyDayLog();
+        const prev = injDates.filter(x => x <= d).pop();
+        if (i > 0 && prev) s.dailyLogs[d].hunger = byCycleDay[Math.min(6, daysBetweenISO(prev, d))];
+        if (i > 0 && i < 7) s.dailyLogs[d].activity = { type: acts[i], minutes: acts[i] === 'none' ? 0 : acts[i] === 'strength' ? 45 : 30 };
+      }
+      return s;
     }
 
     function createCleanUserState(d, keepGeminiKey) {
@@ -1475,6 +1609,14 @@
       p.conditions = defaultConditions();
       Object.keys(p.conditions).forEach(k => { if (k !== 'clinicalNotes') p.conditions[k] = cin[k] === true; });
       p.conditions.clinicalNotes = safeText(cin.clinicalNotes, 500);
+      p.treatmentStart = safeDate(pin.treatmentStart);
+      const pen = (pin.pen && typeof pin.pen === 'object') ? pin.pen : {};
+      p.pen = { dosesPerPen: rangeOrNull(pen.dosesPerPen, 1, 60) === null ? null : Math.round(pen.dosesPerPen), remaining: rangeOrNull(pen.remaining, 0, 200) === null ? null : Math.round(pen.remaining) };
+      const cyc = (pin.cycle && typeof pin.cycle === 'object') ? pin.cycle : {};
+      p.cycle = { enabled: cyc.enabled === true && p.sex === 'F', lastStart: safeDate(cyc.lastStart), length: Math.round(inRange(cyc.length, 20, 45, 28)) };
+      const wr = (pin.waterReminder && typeof pin.waterReminder === 'object') ? pin.waterReminder : {};
+      p.waterReminder = { enabled: wr.enabled === true, every: [1, 2, 3].includes(Number(wr.every)) ? Number(wr.every) : 2,
+        start: HHMM.test(wr.start) ? wr.start : '08:00', end: HHMM.test(wr.end) ? wr.end : '20:00' };
 
       out.dailyLogs = {};
       const logs = (src.dailyLogs && typeof src.dailyLogs === 'object') ? src.dailyLogs : {};
@@ -1488,6 +1630,9 @@
           quickMacros: { protein: inRange(q.protein, 0, 1000, 0), water: inRange(q.water, 0, 20000, 0), fiber: inRange(q.fiber, 0, 500, 0), kcal: inRange(q.kcal, 0, 20000, 0) },
           electrolytes: l.electrolytes === true,
           habits,
+          hunger: [1, 2, 3, 4, 5].includes(Number(l.hunger)) ? Number(l.hunger) : null,
+          activity: (l.activity && typeof l.activity === 'object' && ACTIVITY_TYPES.some(a => a.id === l.activity.type))
+            ? { type: l.activity.type, minutes: Math.round(inRange(l.activity.minutes, 0, 600, 0)) } : null,
           meals: (Array.isArray(l.meals) ? l.meals : []).filter(m => m && typeof m === 'object').slice(0, 100).map(m => ({
             id: safeId(m.id, 'meal'), slot: MEAL_SLOT_NAMES.includes(m.slot) ? m.slot : 'Almoço', time: safeTime(m.time),
             desc: safeText(m.desc, 200) || 'Refeição',
@@ -1514,7 +1659,7 @@
           id: safeId(i.id, 'inj'), date: i.date,
           medication: Object.prototype.hasOwnProperty.call(MEDICATIONS, m) ? m : p.medication,
           dose: normalizeDose(i.dose) || p.dose, intervalDays: clampInterval(i.intervalDays),
-          site: INJECTION_SITES.includes(i.site) ? i.site : ''
+          site: INJECTION_SITES.includes(i.site) ? i.site : '', skipped: i.skipped === true
         };
       });
       out.weights = arr(src.weights).filter(w => safeDate(w.date) && rangeOrNull(w.weight, 30, 400) !== null).slice(0, 5000).map(w => ({
@@ -1522,6 +1667,20 @@
         weight: Number(w.weight), waistNarrow: rangeOrNull(w.waistNarrow, 30, 250), waist: rangeOrNull(w.waist, 30, 250),
         arm: rangeOrNull(w.arm, 10, 100), thigh: rangeOrNull(w.thigh, 20, 150), dose: normalizeDose(w.dose) || ''
       }));
+      out.exams = arr(src.exams).filter(e => safeDate(e.date)).slice(0, 500).map(e => {
+        const vals = {};
+        const vin = (e.values && typeof e.values === 'object') ? e.values : {};
+        EXAM_DEFS.forEach(d => { const v = rangeOrNull(vin[d.key], d.min, d.max); if (v !== null) vals[d.key] = v; });
+        return { id: safeId(e.id, 'ex'), date: e.date, values: vals };
+      }).filter(e => Object.keys(e.values).length);
+      out.appointments = arr(src.appointments).filter(a => safeDate(a.date)).slice(0, 500).map(a => ({
+        id: safeId(a.id, 'ap'), date: a.date, time: safeTime(a.time), type: ['medico', 'nutricionista', 'outro'].includes(a.type) ? a.type : 'outro',
+        who: safeText(a.who, 60), place: safeText(a.place, 80), notes: safeText(a.notes, 200)
+      }));
+      out.questions = arr(src.questions).slice(0, 300).map(q => ({ id: safeId(q.id, 'q'), text: safeText(q.text, 200), done: q.done === true, date: safeDate(q.date) || getTodayISO() })).filter(q => q.text.trim());
+      out.notifSeen = {};
+      if (src.notifSeen && typeof src.notifSeen === 'object') Object.keys(src.notifSeen).slice(0, 300).forEach(k => { if (/^[A-Za-z0-9_:.-]{1,80}$/.test(k) && src.notifSeen[k] === true) out.notifSeen[k] = true; });
+      out.lastBackupAt = safeDate(src.lastBackupAt);
       return out;
     }
 
@@ -1545,7 +1704,7 @@
           setTimeout(() => showToast('Dados salvos estavam corrompidos. Uma cópia foi preservada; carregamos o exemplo.', 'error'), 600);
         }
       }
-      appState = normalizeState(createDemoState());
+      appState = normalizeState(enrichDemoState(createDemoState()));
       saveState();
     }
 
@@ -1610,6 +1769,8 @@
       if (cond.gerd) rules.push(`🔥 Refluxo: jantar ≤ ${dinnerKcalLimit} kcal e 3h entre jantar e deitar.`);
       const sodiumCeiling = cond.hypertension ? 2000 : 2300;
       if (cond.hypertension) rules.push('🩺 Hipertensão: sódio ≤ 2.000 mg/dia; eletrólitos sem sódio extra (potássio e magnésio — confirme com seu médico se usa diurético ou tem doença renal).');
+      if (cond.dyslipidemia) rules.push('🧈 Colesterol/triglicérides: prefira azeite, peixes e castanhas; aveia e psyllium ajudam o LDL. Acompanhe em Evolução → Exames.');
+      if (cond.steatosis) rules.push('🫘 Gordura no fígado: evite açúcar, refrigerante e álcool; perder 7–10% do peso já melhora o fígado.');
       if (rules.length === 0) rules.push(`✅ Protocolo padrão da caneta: proteína ${factor} g/kg (${proteinGoal}g), água 35 ml/kg e fibras ${fiberGoal}g/dia.`);
 
       const waterGoal = Math.max(2000, Math.round((weight * 35) / 50) * 50);
@@ -1713,8 +1874,11 @@
     const NAV_DESKTOP_BASE = 'nav-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs lg:text-sm font-semibold transition whitespace-nowrap';
     const NAV_MOBILE_BASE = 'mobile-nav-btn relative flex flex-col items-center justify-center gap-0.5 py-1.5 rounded-xl text-[10px] transition';
 
+    const TAB_ALIASES = { hoje: ['diario'], alimentos: ['refeicoes', 'tabela'], relatorio: ['mais', 'relatorio'] };
     function switchTab(tabId, opts = {}) {
-      if (!$(`tab-${tabId}`)) tabId = 'hoje';
+      const alias = TAB_ALIASES[tabId];
+      if (alias) { tabId = alias[0]; if (alias[1]) { setTimeout(() => openFold(alias[1]), 0); opts.keepScroll = true; } }
+      if (!document.querySelector(`section#tab-${tabId}`)) tabId = 'diario';
       currentTab = tabId;
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('hidden', p.id !== `tab-${tabId}`));
       document.querySelectorAll('.nav-btn, .mobile-nav-btn').forEach(btn => {
@@ -1728,7 +1892,7 @@
       });
       try { sessionStorage.setItem(TAB_KEY, tabId); } catch (e) {}
       if (tabId === 'evolucao') renderInteractiveSVGChart();
-      if (tabId === 'relatorio') renderClinicalReport();
+      if (tabId === 'mais') renderClinicalReport();
       if (!opts.keepScroll) window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
       refreshIcons();
     }
@@ -1777,6 +1941,7 @@
 
     function toggleMoreMenu(force) {
       const menu = $('more-menu'), btn = $('btn-more-menu');
+      if (!menu || !btn) return;
       const open = typeof force === 'boolean' ? force : menu.classList.contains('hidden');
       menu.classList.toggle('hidden', !open);
       btn.setAttribute('aria-expanded', String(open));
@@ -1787,6 +1952,7 @@
       const isDark = document.documentElement.classList.toggle('dark');
       try { localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light'); } catch (e) {}
       renderInteractiveSVGChart();
+      renderPrefs();
     }
 
     // ---- Perfil ----
@@ -1810,7 +1976,14 @@
       $('pm-interval').value = p.intervalDays;
       $('pm-activity').value = p.activityLevel; $('pm-protein-factor').value = String(p.proteinFactor);
       $('pm-gemini-key').value = p.customGeminiKey || '';
-      ['diabetes', 'bariatric', 'cholecystectomy', 'gerd', 'hypertension', 'recentSurgery', 'surgery90Days'].forEach(k => { $(`cond-${k}`).checked = !!c[k]; });
+      ['diabetes', 'bariatric', 'cholecystectomy', 'gerd', 'hypertension', 'dyslipidemia', 'steatosis', 'recentSurgery', 'surgery90Days'].forEach(k => { $(`cond-${k}`).checked = !!c[k]; });
+      $('pm-treatment-start').value = p.treatmentStart || '';
+      $('pm-treatment-start').max = getTodayISO();
+      $('pm-cycle-enabled').checked = !!p.cycle.enabled;
+      $('pm-cycle-last').value = p.cycle.lastStart || '';
+      $('pm-cycle-last').max = getTodayISO();
+      $('pm-cycle-length').value = p.cycle.length;
+      syncCycleFieldsVisibility();
       $('pm-clinical-notes').value = c.clinicalNotes || '';
       refreshProfileAccountingPreview();
       openModal('profile-modal', typeof focusId === 'string' ? focusId : null);
@@ -1831,9 +2004,12 @@
         activityLevel: $('pm-activity').value,
         proteinFactor: parseFloat($('pm-protein-factor').value),
         customGeminiKey: $('pm-gemini-key').value.trim(),
+        treatmentStart: $('pm-treatment-start').value || null,
+        cycle: { enabled: $('pm-sex').value === 'F' && $('pm-cycle-enabled').checked, lastStart: $('pm-cycle-last').value || null, length: parseInt($('pm-cycle-length').value, 10) || 28 },
         conditions: {
           diabetes: $('cond-diabetes').checked, bariatric: $('cond-bariatric').checked, cholecystectomy: $('cond-cholecystectomy').checked,
           gerd: $('cond-gerd').checked, hypertension: $('cond-hypertension').checked, recentSurgery: $('cond-recentSurgery').checked,
+          dyslipidemia: $('cond-dyslipidemia').checked, steatosis: $('cond-steatosis').checked,
           surgery90Days: $('cond-recentSurgery').checked && $('cond-surgery90Days').checked,
           clinicalNotes: $('pm-clinical-notes').value.trim()
         }
@@ -1900,6 +2076,8 @@
       renderEvolutionTab();
       renderClinicalReport();
       renderReminderCard();
+      renderMais();
+      renderNotifications();
       scheduleReminderSync();
       refreshIcons();
     }
@@ -1914,6 +2092,12 @@
       if (c.gerd) tags.push('🔥 DRGE');
       if (c.hypertension) tags.push('🩺 HAS');
       if (c.recentSurgery) tags.push('🩹 Pós-cirúrgico');
+      if (c.dyslipidemia) tags.push('🧈 Colesterol');
+      if (c.steatosis) tags.push('🫘 Fígado');
+      const initial = (p.name || '?').trim().charAt(0).toUpperCase() || '?';
+      ['header-avatar', 'mais-avatar'].forEach(id => { if ($(id)) $(id).textContent = initial; });
+      if ($('mais-profile-name')) $('mais-profile-name').textContent = p.name;
+      if ($('mais-profile-sub')) $('mais-profile-sub').textContent = `${p.age} anos • ${getMedInfo(p.medication).short} ${fmtDose(p.dose)} • ${fmtInterval(p.intervalDays)}`;
       $('header-conditions-subtitle').textContent = `${getMedInfo(p.medication).short} ${fmtDose(p.dose)}${tags.length ? ' • ' + tags.join(' • ') : ''}`;
     }
 
@@ -2006,6 +2190,8 @@
       $('dashboard-active-conditions-badges').innerHTML = pills.join('');
       $('dashboard-accounting-rules-list').innerHTML = targets.accountingRules
         .map(r => `<li class="p-2 rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700 leading-snug">${escapeHTML(r)}</li>`).join('');
+      renderDiaryHome();
+      renderNotifications();
     }
 
     function macroCard(o) {
@@ -2105,6 +2291,7 @@
           </label>`;
       }).join('');
       $('habits-score-badge').textContent = `${done}/${habits.length} feitos`;
+      if ($('checklist-summary-badge')) $('checklist-summary-badge').textContent = `${done}/${habits.length}`;
       $('habits-progress-bar').style.width = `${habits.length ? Math.round((done / habits.length) * 100) : 0}%`;
     }
 
@@ -2166,6 +2353,7 @@
       if (type === 'water' && getDayTotals(dayLog).water >= targets.waterGoal) dayLog.habits.water_goal = true;
       saveState();
       renderTodayTab(); renderMealsTab(); renderClinicalReport();
+      if (type === 'water') syncWaterReminders();
       const unit = type === 'water' ? 'ml' : 'g';
       const label = type === 'protein' ? 'proteína' : type === 'water' ? 'água' : 'fibras';
       showToast(`${applied > 0 ? '+' : '−'}${Math.abs(applied)}${unit} de ${label}`, 'success', {
@@ -2704,7 +2892,11 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const sorted = getSortedInjections();
       $('injections-history-list').innerHTML = sorted.length === 0
         ? '<p class="text-xs text-slate-500 dark:text-slate-400 py-3">Nenhuma aplicação registrada ainda.</p>'
-        : sorted.map(inj => `
+        : sorted.map(inj => inj.skipped ? `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-xs">
+            <div><span class="font-bold">${formatDateBR(inj.date)}</span> <span class="mx-1 text-slate-400">•</span> <span class="font-semibold text-amber-800 dark:text-amber-300">⏭️ Dose pulada</span></div>
+            <button type="button" onclick="deleteInjection('${escapeHTML(inj.id)}')" class="icon-btn-danger" aria-label="Excluir registro"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </div>` : `
           <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-xs">
             <div>
               <span class="font-bold text-slate-900 dark:text-white">${formatDateBR(inj.date)}</span>
@@ -2717,6 +2909,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       renderDiaryWeightHint();
       renderDiarySelectors();
       renderDiaryTimeline();
+      renderCanetaExtras();
       refreshIcons();
     }
 
@@ -2731,7 +2924,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         return `<button type="button" role="radio" aria-checked="${on}" onclick="selectDiaryBowelOption('${o.id}')" class="p-3 rounded-xl border text-left transition flex flex-col gap-1 ${on ? 'bg-brand-50 dark:bg-brand-950 border-brand-500 text-brand-950 dark:text-brand-100 ring-1 ring-brand-500' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-brand-300'}"><span class="text-xl" aria-hidden="true">${o.emoji}</span><span class="text-xs font-bold leading-tight">${o.label}</span></button>`;
       }).join('');
 
-      $('symptom-emojis-grid').innerHTML = SYMPTOM_CHIPS.map(c => {
+      $('symptom-emojis-grid').innerHTML = SYMPTOM_CHIPS.filter(c => !c.female || appState.profile.sex === 'F').map(c => {
         const on = selectedDiarySymptoms.includes(c.id);
         return `<button type="button" aria-pressed="${on}" onclick="toggleDiarySymptomChip('${c.id}')" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition ${on ? 'bg-slate-900 text-white border-slate-900 dark:bg-brand-600 dark:border-brand-600' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-slate-400'}"><span aria-hidden="true">${c.emoji}</span>${c.label}</button>`;
       }).join('');
@@ -2787,6 +2980,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const time = $('diary-entry-time').value || getCurrentTimeHM();
       const entry = { id: uid('de'), date, time, bowelStatus: selectedDiaryBowel, symptomChips: [...selectedDiarySymptoms], notes: $('symptom-notes').value.trim().slice(0, 300) };
       appState.diaryEntries.push(entry);
+      noteCycleFromCheckIn(entry);
       $('symptom-notes').value = '';
       $('diary-entry-time').value = getCurrentTimeHM();
       selectedDiaryBowel = 'normal'; selectedDiarySymptoms = ['none'];
@@ -2962,6 +3156,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
             <button type="button" onclick="deleteGlucoseEntry('${escapeHTML(g.id)}')" class="icon-btn-danger" aria-label="Excluir glicemia"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </div>`;
       }).join('');
+      renderEvolutionExtras();
       refreshIcons();
     }
 
@@ -3047,6 +3242,14 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         const y180 = getY(180), y70 = getY(70);
         svg += `<rect x="${padL}" y="${y180}" width="${plotW}" height="${y70 - y180}" fill="#10b981" opacity="${isDark ? 0.12 : 0.09}"/><text x="${W - padR - 4}" y="${y180 + 12}" text-anchor="end" fill="#059669" font-size="9" font-weight="700">faixa 70–180</text>`;
       }
+      if (currentChartMode === 'weight' && appState.profile.cycle.enabled && chartPoints.length > 1) {
+        const startD = chartPoints[0].date, endD = chartPoints[chartPoints.length - 1].date;
+        for (let d = startD; d <= endD; d = addDaysISO(d, 1)) {
+          const ph = cyclePhase(d); if (!ph || ph.phase === 'other') continue;
+          const x0 = getX(Date.parse(`${d}T00:00:00`)), x1 = getX(Date.parse(`${addDaysISO(d, 1)}T00:00:00`));
+          svg += `<rect x="${Math.max(padL, x0)}" y="${padT}" width="${Math.max(0, Math.min(W - padR, x1) - Math.max(padL, x0))}" height="${plotH}" fill="${ph.phase === 'menstrual' ? '#f43f5e' : '#ec4899'}" opacity="${isDark ? 0.14 : 0.08}"/>`;
+        }
+      }
       if (currentChartMode === 'weight') {
         const goal = num(appState.profile.goalWeight);
         if (goal >= minV && goal <= maxV) {
@@ -3104,7 +3307,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const profile = appState.profile, cond = profile.conditions;
       const targets = calculateClinicalTargets(profile);
       const weights = [...appState.weights].sort(sortChronologicalAsc);
-      const injections = [...appState.injections].sort(sortChronologicalAsc);
+      const injections = appState.injections.filter(i => !i.skipped).sort(sortChronologicalAsc);
       const diary = [...appState.diaryEntries].sort(sortChronologicalAsc);
       const gl = [...appState.glucoseLogs].sort(sortChronologicalAsc);
 
@@ -3158,7 +3361,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const count = id => recent.filter(e => e.bowelStatus === id).length;
       const symptomCounts = {};
       recent.forEach(e => e.symptomChips.forEach(id => {
-        if (id !== 'none' && id !== 'good_energy') { const l = SYMPTOM_CHIPS.find(c => c.id === id)?.label || id; symptomCounts[l] = (symptomCounts[l] || 0) + 1; }
+        if (!['none', 'good_energy', 'period', 'pms'].includes(id)) { const l = SYMPTOM_CHIPS.find(c => c.id === id)?.label || id; symptomCounts[l] = (symptomCounts[l] || 0) + 1; }
       }));
       const symptoms = Object.keys(symptomCounts).length ? Object.entries(symptomCounts).map(([k, v]) => `${k} (${v}x)`).join(', ') : 'Nenhum efeito GI relevante relatado';
 
@@ -3208,6 +3411,26 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         `Calorias: ${fmt(d.avgKcal, 0)} kcal/dia — meta ${t.kcalGoal} kcal`,
         `Hidratação: ${fmt(d.avgWater, 0)} ml/dia — meta ${fmt(t.waterGoal, 0)} ml`
       ] : ['Sem registros alimentares nos últimos 7 dias.'] });
+      // Tratamento, aderência à caneta, atividade e fome
+      const tStart = getTreatmentStart(), tDay = getTreatmentDay();
+      const skipped = appState.injections.filter(i => i.skipped);
+      const wk = weeklyStats(); const hc = hungerByCycleDay();
+      const peak = hc.rows.filter(r => r.n >= 1).sort((a, b) => b.avg - a.avg)[0];
+      sections[0].lines.splice(3, 0, `Tempo de tratamento: ${tDay ? `${tDay} dias (desde ${formatDateBR(tStart)})` : 'sem data de início'}${skipped.length ? ` | Doses puladas: ${skipped.length} (${skipped.map(s => formatShortDateBR(s.date)).join(', ')})` : ''}`);
+      sections.push({ title: 'Estilo de vida (últimos 7 dias)', lines: [
+        `Atividade física: ${wk.minutes} min (meta OMS 150 min) · treino de força: ${wk.strength} dia(s) (meta 2)`,
+        `Fome: ${wk.hunger !== null ? `média ${fmt(wk.hunger)} de 5` : 'sem registros'}${peak && hc.days >= 6 ? ` · maior fome no dia ${peak.day} após a aplicação (média ${fmt(peak.avg)})` : ''}`
+      ] });
+      const exLines = EXAM_DEFS.map(def => {
+        const vals = appState.exams.filter(e => e.values[def.key] !== undefined).sort((a, b) => a.date.localeCompare(b.date));
+        if (!vals.length) return null;
+        const f = vals[0], l = vals[vals.length - 1];
+        return vals.length === 1 ? `${def.short}: ${fmt(l.values[def.key], def.dec)} ${def.unit} (${formatShortDateBR(l.date)})`
+          : `${def.short}: ${fmt(f.values[def.key], def.dec)} → ${fmt(l.values[def.key], def.dec)} ${def.unit} (${formatShortDateBR(f.date)} → ${formatShortDateBR(l.date)})`;
+      }).filter(Boolean);
+      if (exLines.length) sections.push({ title: 'Exames de laboratório (antes → agora)', lines: exLines });
+      const openQ = appState.questions.filter(q => !q.done);
+      if (openQ.length) sections.push({ title: 'Perguntas para a consulta', lines: openQ.map(q => q.text) });
       sections.push({ title: 'Metas & ajustes aplicados pelo app', lines: t.accountingRules });
 
       let plain = `*${d.title}*\nGerado pelo NutriPen em ${todayBR}\n\n`;
@@ -3262,6 +3485,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const copy = JSON.parse(JSON.stringify(appState));
       copy.profile.customGeminiKey = ''; // nunca exporta a chave
       copy.exportedAt = new Date().toISOString();
+      appState.lastBackupAt = getTodayISO(); saveState(); renderNotifications();
       const blob = new Blob([JSON.stringify(copy, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -3377,7 +3601,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
     function scheduleReminderSync() {
       if (!nativeReminders) return;
       clearTimeout(reminderSyncTimer);
-      reminderSyncTimer = setTimeout(syncReminders, 300);
+      reminderSyncTimer = setTimeout(() => { syncReminders(); syncWaterReminders(); syncAppointmentReminders(); }, 300);
     }
 
     function buildReminderList() {
@@ -3433,7 +3657,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         } catch (err) { console.warn(err); }
       }
       r.enabled = on;
-      saveState(); await syncReminders();
+      saveState(); await syncReminders(); syncAppointmentReminders();
       if (on) showToast(appState.injections.length ? 'Lembrete ativado 🔔' : 'Lembrete ativado. Registre uma aplicação para o app calcular a data.');
     }
 
@@ -3493,6 +3717,753 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
     }
 
     // =========================================================================
+    // NOVAS FUNÇÕES (v1.1): Diário, fome, atividade, exames, consultas, avisos…
+    // =========================================================================
+    const ACTIVITY_TYPES = [
+      { id: 'none', emoji: '🚫', label: 'Não pratiquei' },
+      { id: 'walk', emoji: '🚶', label: 'Caminhada' },
+      { id: 'strength', emoji: '🏋️', label: 'Musculação' },
+      { id: 'other', emoji: '➕', label: 'Outra' }
+    ];
+    const HUNGER_LEVELS = [[1, '😌', 'Nenhuma'], [2, '🙂', 'Pouca'], [3, '😐', 'Normal'], [4, '😋', 'Bastante'], [5, '🤤', 'Muita']];
+    const EXAM_DEFS = [
+      { key: 'hba1c', label: 'Hemoglobina glicada (HbA1c)', short: 'HbA1c', unit: '%', min: 3, max: 20, dec: 1, ref: 'normal < 5,7% · pré-diabetes 5,7–6,4% · diabetes ≥ 6,5%', hi: 5.7, main: true },
+      { key: 'glicemia', label: 'Glicemia de jejum (laboratório)', short: 'Glicemia', unit: 'mg/dL', min: 30, max: 600, dec: 0, ref: 'normal < 100 · pré-diabetes 100–125', hi: 100, lo: 70, main: true },
+      { key: 'colTotal', label: 'Colesterol total', short: 'Col. total', unit: 'mg/dL', min: 50, max: 600, dec: 0, ref: 'desejável < 190', hi: 190, main: true },
+      { key: 'ldl', label: 'LDL ("ruim")', short: 'LDL', unit: 'mg/dL', min: 10, max: 400, dec: 0, ref: 'referência geral < 130 (a meta depende do seu risco)', hi: 130, main: true },
+      { key: 'hdl', label: 'HDL ("bom")', short: 'HDL', unit: 'mg/dL', min: 5, max: 200, dec: 0, ref: 'desejável > 40', lo: 40, main: true },
+      { key: 'tg', label: 'Triglicérides', short: 'Triglic.', unit: 'mg/dL', min: 10, max: 5000, dec: 0, ref: 'desejável < 150 (jejum)', hi: 150, main: true },
+      { key: 'tgp', label: 'TGP / ALT (fígado)', short: 'TGP', unit: 'U/L', min: 1, max: 2000, dec: 0, ref: 'conforme o laboratório (geralmente < 40)', hi: 40 },
+      { key: 'tgo', label: 'TGO / AST (fígado)', short: 'TGO', unit: 'U/L', min: 1, max: 2000, dec: 0, ref: 'conforme o laboratório (geralmente < 40)', hi: 40 },
+      { key: 'vitD', label: 'Vitamina D', short: 'Vit. D', unit: 'ng/mL', min: 1, max: 200, dec: 0, ref: 'geralmente > 20 (grupos de risco > 30)', lo: 20 },
+      { key: 'b12', label: 'Vitamina B12', short: 'B12', unit: 'pg/mL', min: 50, max: 3000, dec: 0, ref: 'conforme o laboratório (geralmente > 200)', lo: 200 },
+      { key: 'ferritina', label: 'Ferritina', short: 'Ferritina', unit: 'ng/mL', min: 1, max: 3000, dec: 0, ref: 'conforme o laboratório' },
+      { key: 'creatinina', label: 'Creatinina (rins)', short: 'Creatinina', unit: 'mg/dL', min: 0.1, max: 20, dec: 2, ref: 'conforme o laboratório' }
+    ];
+    const APPT_TYPES = { medico: { label: 'Médico(a)', emoji: '🩺', returnDays: 60 }, nutricionista: { label: 'Nutricionista', emoji: '🥗', returnDays: 45 }, outro: { label: 'Outro profissional', emoji: '👤', returnDays: null } };
+
+    // ---- Resumos de bula: sempre com fonte e convite a conferir a versão vigente ----
+    const BULARIO = nome => `https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=${encodeURIComponent(nome)}`;
+    const BULA_INFO = {
+      'Tirzepatida (Mounjaro)': { produtos: [['Mounjaro', BULARIO('Mounjaro')]], esquecida: { tipo: 'janela', dias: 4,
+        texto: 'Aplique assim que lembrar, se passaram até 4 dias da data prevista. Passou de 4 dias: pule esta dose e aplique na próxima data. Entre duas aplicações, mantenha pelo menos 3 dias.' },
+        anticoncepcional: true },
+      'Semaglutida (Ozempic / Wegovy)': { produtos: [['Ozempic', BULARIO('Ozempic')], ['Wegovy', BULARIO('Wegovy')]], esquecida: { tipo: 'janela', dias: 5,
+        texto: 'Ozempic: aplique assim que lembrar em até 5 dias; depois disso, pule. Wegovy: aplique se faltarem mais de 2 dias para a próxima dose; se faltarem menos, pule.' } },
+      'Liraglutida (Saxenda)': { produtos: [['Saxenda', BULARIO('Saxenda')]], esquecida: { tipo: 'diaria',
+        texto: 'Não dobre a dose. Aplique a próxima no horário normal. Se ficar mais de 3 dias sem aplicar, fale com seu médico antes de retomar (pode ser preciso recomeçar com dose menor).' } }
+    };
+    const BULA_FONTE = 'Resumo da bula aprovada pela ANVISA. Confira a data da versão vigente no Bulário Eletrônico — a bula pode ter sido atualizada.';
+
+    // ---------- Seções que expandem (lembram o estado) ----------
+    const FOLD_KEY = 'nutripen_secoes';
+    function openFold(key, scroll = true) {
+      const d = document.querySelector(`details[data-fold="${key}"]`);
+      if (!d) return;
+      const sec = d.closest('section.tab-panel');
+      if (sec && sec.classList.contains('hidden')) switchTab(sec.id.replace('tab-', ''), { keepScroll: true });
+      d.open = true;
+      if (scroll) setTimeout(() => d.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+    }
+    function initFolds() {
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem(FOLD_KEY) || '{}') || {}; } catch (e) {}
+      document.querySelectorAll('details[data-fold]').forEach(d => {
+        const k = d.dataset.fold;
+        if (typeof saved[k] === 'boolean') d.open = saved[k];
+        d.addEventListener('toggle', () => {
+          try { const s = JSON.parse(localStorage.getItem(FOLD_KEY) || '{}') || {}; s[k] = d.open; localStorage.setItem(FOLD_KEY, JSON.stringify(s)); } catch (e) {}
+          if (d.open && k === 'relatorio') renderClinicalReport();
+          if (d.open) refreshIcons();
+        });
+      });
+    }
+    function scrollToId(id) { const el = $(id); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('ring-2', 'ring-brand-400'); setTimeout(() => el.classList.remove('ring-2', 'ring-brand-400'), 1400); } }
+
+    // ---------- Tratamento e ciclo da caneta ----------
+    function getTreatmentStart() {
+      if (appState.profile.treatmentStart) return appState.profile.treatmentStart;
+      const real = appState.injections.filter(i => !i.skipped).map(i => i.date).sort();
+      return real[0] || null;
+    }
+    function getTreatmentDay() {
+      const s = getTreatmentStart();
+      if (!s) return null;
+      const d = daysBetweenISO(s, getTodayISO()) + 1;
+      return d >= 1 ? d : null;
+    }
+    const MILESTONES = [7, 30, 60, 90, 180, 365];
+    function cycleDayOf(dateISO) {
+      // dias desde a última aplicação (real ou pulada) anterior ou igual à data
+      const prev = appState.injections.filter(i => i.date <= dateISO).sort((a, b) => b.date.localeCompare(a.date))[0];
+      return prev ? daysBetweenISO(prev.date, dateISO) : null;
+    }
+
+    // ---------- Diário (tela inicial) ----------
+    function ringSVG(label, value, goal, display, color) {
+      const pct = goal > 0 ? Math.min(1, value / goal) : 0, r = 30, c = 2 * Math.PI * r;
+      return `<div>
+        <div class="relative w-20 h-20 mx-auto">
+          <svg viewBox="0 0 72 72" class="w-20 h-20 -rotate-90" aria-hidden="true">
+            <circle cx="36" cy="36" r="${r}" fill="none" stroke-width="8" class="stroke-slate-100 dark:stroke-slate-700"/>
+            <circle cx="36" cy="36" r="${r}" fill="none" stroke-width="8" stroke-linecap="round" stroke="${color}" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${(c * (1 - pct)).toFixed(1)}" style="transition:stroke-dashoffset .4s"/>
+          </svg>
+          <span class="absolute inset-0 flex items-center justify-center text-sm font-extrabold tabular-nums">${Math.round(pct * 100)}%</span>
+        </div>
+        <p class="text-xs font-bold mt-1">${label}</p><p class="text-[11px] text-slate-500 dark:text-slate-400 tabular-nums">${display}</p></div>`;
+    }
+
+    function renderDiaryHome() {
+      const p = appState.profile, dayLog = ensureTodayLog();
+      const targets = calculateClinicalTargets(p), totals = getDayTotals(dayLog);
+      // contador de tratamento
+      const td = getTreatmentDay(), tc = $('treatment-counter');
+      if (td) {
+        tc.classList.remove('hidden');
+        tc.textContent = MILESTONES.includes(td) ? `🎉 ${td}º dia de tratamento!` : `${td}º dia de tratamento`;
+      } else tc.classList.add('hidden');
+      // bolinhas do ciclo
+      const s = getDoseSchedule(p), dots = $('dose-cycle-dots');
+      if (s.hasLast && s.interval > 1) {
+        const passed = Math.min(s.interval, Math.max(0, s.daysSinceLast));
+        dots.innerHTML = s.interval <= 14
+          ? Array.from({ length: s.interval }, (_, i) => `<span class="h-1.5 flex-1 rounded-full ${i < passed ? 'bg-white' : 'bg-white/30'}"></span>`).join('')
+          : `<span class="h-1.5 flex-1 rounded-full bg-white/30 overflow-hidden"><span class="block h-full bg-white" style="width:${Math.round((passed / s.interval) * 100)}%"></span></span>`;
+        dots.insertAdjacentHTML('beforeend', `<span class="text-[11px] text-teal-100 ml-1 whitespace-nowrap">dia ${passed} de ${s.interval}</span>`);
+      } else dots.innerHTML = '';
+      // anéis
+      $('goal-rings').innerHTML =
+        ringSVG('Proteína', totals.protein, targets.proteinGoal, `${fmt(totals.protein, 0)} / ${targets.proteinGoal} g`, '#0d9488') +
+        ringSVG('Água', totals.water, targets.waterGoal, `${fmt(totals.water / 1000)} / ${fmt(targets.waterGoal / 1000)} L`, '#0ea5e9') +
+        ringSVG('Fibras', totals.fiber, targets.fiberGoal, `${fmt(totals.fiber, 0)} / ${targets.fiberGoal} g`, '#10b981');
+      // dica resumida
+      $('dica-summary').textContent = $('smart-tip-title').textContent || '';
+      renderHunger(); renderActivity(); renderEatNow(targets, totals); renderTodayLog();
+    }
+
+    function renderTodayLog() {
+      const t = getTodayISO(), items = [];
+      const dayLog = ensureTodayLog();
+      dayLog.meals.forEach(m => items.push([m.time || '', `${(MEAL_SLOTS.find(s => s[0] === m.slot) || [0, '🍽️'])[1]} ${escapeHTML(m.desc)} <span class="text-xs text-slate-500">· ${fmt(m.protein)} g prot</span>`]));
+      appState.weights.filter(w => w.date === t).forEach(w => items.push([w.time, `⚖️ Peso <strong class="tabular-nums">${fmt(w.weight)} kg</strong>`]));
+      appState.glucoseLogs.filter(g => g.date === t).forEach(g => items.push([g.time, `🩸 Glicemia <strong class="tabular-nums">${g.value} mg/dL</strong> <span class="text-xs text-slate-500">${escapeHTML(g.context)}</span>`]));
+      appState.diaryEntries.filter(e => e.date === t).forEach(e => {
+        const b = BOWEL_OPTIONS.find(x => x.id === e.bowelStatus);
+        const sy = e.symptomChips.filter(c => c !== 'none').map(id => SYMPTOM_CHIPS.find(c => c.id === id)).filter(Boolean).map(c => `${c.emoji} ${c.label}`).join(' · ');
+        items.push([e.time, `${b ? b.emoji + ' ' + b.short : ''}${sy ? ' · ' + escapeHTML(sy) : ''}`]);
+      });
+      appState.injections.filter(i => i.date === t).forEach(i => items.push(['', i.skipped ? '⏭️ Dose pulada' : `💉 Aplicação ${escapeHTML(fmtDose(i.dose))}${i.site ? ' · ' + escapeHTML(i.site) : ''}`]));
+      if (dayLog.activity) { const a = ACTIVITY_TYPES.find(x => x.id === dayLog.activity.type); items.push(['', `${a.emoji} ${a.label}${dayLog.activity.minutes ? ` · ${dayLog.activity.minutes} min` : ''}`]); }
+      if (dayLog.hunger) { const hl = HUNGER_LEVELS.find(x => x[0] === dayLog.hunger); items.push(['', `${hl[1]} Fome: ${hl[2].toLowerCase()}`]); }
+      items.sort((a, b) => (a[0] || '99').localeCompare(b[0] || '99'));
+      $('today-log-count').textContent = `(${items.length})`;
+      $('today-log-list').innerHTML = items.length ? items.map(([tm, html]) => `<li class="flex gap-3"><span class="tabular-nums text-xs text-slate-500 dark:text-slate-400 w-10 pt-0.5 shrink-0">${escapeHTML(tm)}</span><span class="min-w-0 break-words">${html}</span></li>`).join('')
+        : '<li class="text-sm text-slate-500 dark:text-slate-400">Nada registrado ainda hoje. Toque no <strong>+</strong> para começar.</li>';
+    }
+
+    // ---------- Fome ----------
+    function renderHunger() {
+      const dayLog = ensureTodayLog();
+      const cd = cycleDayOf(getTodayISO());
+      $('hunger-cycle-day').textContent = cd === null ? '' : cd === 0 ? 'dia da aplicação' : `dia ${cd} após a aplicação`;
+      $('hunger-options').innerHTML = HUNGER_LEVELS.map(([v, e, l]) => `<button type="button" role="radio" aria-checked="${dayLog.hunger === v}" onclick="setHunger(${v})"
+        class="flex flex-col items-center gap-0.5 py-2 rounded-xl border text-[11px] font-semibold transition ${dayLog.hunger === v ? 'bg-brand-600 border-brand-600 text-white' : 'border-slate-200 dark:border-slate-700 hover:border-brand-400'}"><span class="text-xl" aria-hidden="true">${e}</span>${l}</button>`).join('');
+      const box = $('hunger-insight');
+      const stats = hungerByCycleDay();
+      if (dayLog.hunger && stats.days >= 6) {
+        const peak = stats.rows.filter(r => r.n >= 1).sort((a, b) => b.avg - a.avg)[0];
+        box.innerHTML = peak ? `📈 <strong>Seu padrão:</strong> a fome costuma ser maior no <strong>dia ${peak.day}</strong> após a aplicação (média ${fmt(peak.avg)}). Planeje lanches com proteína nesses dias e leve isso à consulta.` : '';
+        box.classList.toggle('hidden', !peak);
+      } else if (dayLog.hunger) {
+        box.textContent = 'Registrado 👍 Com alguns dias de registro, o app mostra em que dia do ciclo da caneta sua fome aumenta.';
+        box.classList.remove('hidden');
+      } else box.classList.add('hidden');
+    }
+    function setHunger(v) {
+      const dayLog = ensureTodayLog();
+      dayLog.hunger = dayLog.hunger === v ? null : v;
+      saveState(); renderHunger(); renderTodayLog(); renderEvolutionExtras();
+    }
+    function hungerByCycleDay() {
+      const acc = {};
+      let days = 0;
+      Object.keys(appState.dailyLogs).forEach(d => {
+        const hv = appState.dailyLogs[d].hunger; if (!hv) return;
+        const cd = cycleDayOf(d); if (cd === null || cd > 30) return;
+        days++; (acc[cd] = acc[cd] || []).push(hv);
+      });
+      const rows = Object.keys(acc).map(Number).sort((a, b) => a - b).map(day => ({ day, n: acc[day].length, avg: acc[day].reduce((s, x) => s + x, 0) / acc[day].length }));
+      return { days, rows };
+    }
+
+    // ---------- Atividade física ----------
+    function weekRange(dateISO = getTodayISO()) {
+      const d = new Date(dateISO + 'T12:00:00'); const dow = (d.getDay() + 6) % 7; // segunda = 0
+      const start = addDaysISO(dateISO, -dow);
+      return Array.from({ length: 7 }, (_, i) => addDaysISO(start, i));
+    }
+    function activityWeek(dateISO) {
+      let minutes = 0, strength = 0;
+      weekRange(dateISO).forEach(d => { const a = appState.dailyLogs[d] && appState.dailyLogs[d].activity; if (!a || a.type === 'none') return; minutes += a.minutes || 0; if (a.type === 'strength') strength++; });
+      return { minutes, strength };
+    }
+    function renderActivity() {
+      const a = ensureTodayLog().activity;
+      $('activity-options').innerHTML = ACTIVITY_TYPES.map(t => `<button type="button" onclick="setActivity('${t.id}')" aria-pressed="${!!a && a.type === t.id}"
+        class="px-3 py-2 rounded-xl border text-xs font-semibold transition ${a && a.type === t.id ? 'bg-slate-900 dark:bg-brand-600 text-white border-transparent' : 'border-slate-200 dark:border-slate-700 hover:border-brand-400'}">${t.emoji} ${t.label}</button>`).join('');
+      const showMin = !!a && a.type !== 'none';
+      $('activity-minutes-row').classList.toggle('hidden', !showMin);
+      if (showMin && document.activeElement !== $('activity-minutes')) $('activity-minutes').value = a.minutes || '';
+      const w = activityWeek();
+      $('activity-week').textContent = `semana: ${w.minutes}/150 min · força ${w.strength}/2`;
+      $('activity-week-bar').style.width = `${Math.min(100, Math.round((w.minutes / 150) * 100))}%`;
+    }
+    function setActivity(type) {
+      const dayLog = ensureTodayLog();
+      if (dayLog.activity && dayLog.activity.type === type) dayLog.activity = null;
+      else dayLog.activity = { type, minutes: type === 'none' ? 0 : (dayLog.activity && dayLog.activity.minutes) || (type === 'strength' ? 45 : 30) };
+      saveState(); renderActivity(); renderTodayLog(); renderEvolutionExtras();
+      if (dayLog.activity) showToast(type === 'none' ? 'Tudo bem — amanhã é outro dia 🙂' : type === 'strength' ? 'Ótimo! Treino de força protege seus músculos 💪' : 'Atividade registrada ✓');
+    }
+    function setActivityMinutes(v) {
+      const dayLog = ensureTodayLog(); if (!dayLog.activity || dayLog.activity.type === 'none') return;
+      dayLog.activity.minutes = Math.round(inRange(v, 0, 600, 0)); saveState(); renderActivity(); renderTodayLog();
+    }
+
+    // ---------- O que comer agora ----------
+    function renderEatNow(targets, totals) {
+      const box = $('eat-now'), cond = appState.profile.conditions;
+      const needP = Math.round(targets.proteinGoal - totals.protein), needF = Math.round(targets.fiberGoal - totals.fiber);
+      if (needP <= 0 && needF <= 0) { box.innerHTML = '<p class="text-sm font-semibold">🎉 Proteína e fibras do dia batidas! Agora é manter a água.</p>'; return; }
+      const ok = f => !(cond.cholecystectomy && f.fat > 14) && !(cond.diabetes && f.carbs > 30) && !(cond.bariatric && f.kcal > 350);
+      const sugg = [];
+      if (needP > 0) {
+        FOOD_DATABASE.filter(f => f.protein >= 9 && ok(f)).sort((a, b) => (b.protein / b.kcal) - (a.protein / a.kcal))
+          .slice(0, 12).sort((a, b) => Math.abs(a.protein - Math.min(needP, 35)) - Math.abs(b.protein - Math.min(needP, 35)))
+          .slice(0, 3).forEach(f => sugg.push([f, `${fmt(f.protein)} g prot`]));
+      }
+      if (needF > 6) FOOD_DATABASE.filter(f => ['f19', 'f21', 'f23', 'f30'].includes(f.id) && ok(f)).slice(0, 2).forEach(f => sugg.push([f, `${fmt(f.fiber)} g fibra`]));
+      box.innerHTML = `<p class="text-sm font-bold mb-2">🍽️ O que comer agora <span class="font-normal text-slate-500 dark:text-slate-400">— faltam ${needP > 0 ? `${needP} g de proteína` : ''}${needP > 0 && needF > 0 ? ' e ' : ''}${needF > 0 ? `${needF} g de fibras` : ''}</span></p>
+        <ul class="space-y-2">${sugg.map(([f, tag]) => `<li class="flex items-center justify-between gap-2 text-sm"><span class="min-w-0">${escapeHTML(f.name)} <span class="text-xs text-slate-500">· ${escapeHTML(f.portion)} · ${tag}</span></span>
+          <button type="button" onclick="eatNowAdd('${f.id}')" class="shrink-0 px-2.5 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold">+ Comi</button></li>`).join('')}</ul>`;
+    }
+    function eatNowAdd(id) {
+      const f = FOOD_DATABASE.find(x => x.id === id); if (!f) return;
+      addMealToToday({ slot: suggestSlotByTime(), desc: `${f.name} (${f.portion})`, kcal: f.kcal, protein: f.protein, fiber: f.fiber, carbs: f.carbs, fat: f.fat, digest: f.digest });
+    }
+
+    // ---------- Botão + ----------
+    const QUICK_ACTIONS = [
+      ['⚖️', 'Peso', () => { openFold('checkin'); setTimeout(() => $('diary-weight').focus(), 350); }],
+      ['💧', 'Água', () => quickAddMacro('water', 250)],
+      ['🍽️', 'Refeição', () => { switchTab('refeicoes'); setTimeout(() => { $('meal-form-card').scrollIntoView({ behavior: 'smooth' }); $('meal-desc').focus(); }, 120); }],
+      ['🩸', 'Glicemia', () => openGlucoseModal()],
+      ['🏃', 'Atividade', () => { switchTab('diario', { keepScroll: true }); scrollToId('activity-card'); }],
+      ['🤢', 'Sintoma', () => openFold('checkin')],
+      ['😋', 'Fome', () => { switchTab('diario', { keepScroll: true }); scrollToId('hunger-card'); }],
+      ['💉', 'Aplicação', () => { switchTab('caneta'); setTimeout(() => scrollToId('injection-form'), 120); }],
+      ['🧪', 'Exame', () => openFold('exames')],
+      ['📅', 'Consulta', () => openFold('consultas')],
+      ['❓', 'Pergunta', () => { openFold('perguntas'); setTimeout(() => $('question-input') && $('question-input').focus(), 350); }],
+      ['📷', 'Foto', () => openFold('fotos')]
+    ];
+    function openQuickSheet() {
+      $('quick-grid').innerHTML = QUICK_ACTIONS.map(([e, l], i) => `<button type="button" data-quick="${i}" class="flex flex-col items-center gap-1 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-brand-950 transition"><span class="text-2xl" aria-hidden="true">${e}</span>${l}</button>`).join('');
+      openModal('quick-sheet');
+    }
+
+    // ---------- Central de avisos (sininho) ----------
+    function buildNotifications() {
+      const p = appState.profile, list = [], today = getTodayISO();
+      const s = getDoseSchedule(p);
+      if (s.hasLast && s.overdue) list.push({ id: `late-${s.nextDate}`, icon: '⏰', title: `Aplicação atrasada há ${s.daysLate} ${s.daysLate === 1 ? 'dia' : 'dias'}`, body: 'Veja o que fazer na aba Caneta (orientação da bula).', action: ['Ver orientação', "switchTab('caneta')"] });
+      else if (s.hasLast && s.daysUntil === 0 && !s.injectedToday) list.push({ id: `today-${s.nextDate}`, icon: '💉', title: 'Hoje é dia da aplicação', body: `${getMedInfo(p.medication).short} ${fmtDose(p.dose)}`, action: ['Registrar', "switchTab('caneta')"] });
+      else if (s.hasLast && s.daysUntil === 1) list.push({ id: `tomorrow-${s.nextDate}`, icon: '📆', title: 'Amanhã é dia da aplicação', body: 'Deixe a caneta separada e prefira um jantar leve hoje.' });
+      if (p.pen.dosesPerPen && p.pen.remaining !== null && p.pen.remaining <= 2) list.push({ id: `pen-${p.pen.remaining}-${appState.injections.length}`, icon: '🖊️', title: p.pen.remaining === 0 ? 'A caneta acabou' : `Restam ${p.pen.remaining} ${p.pen.remaining === 1 ? 'aplicação' : 'aplicações'} na caneta`, body: 'Hora de encomendar a próxima para não ficar sem.', action: ['Comprei nova caneta', 'penBought()'] });
+      appState.appointments.filter(a => a.date >= today && daysBetweenISO(today, a.date) <= 2).forEach(a => {
+        const t = APPT_TYPES[a.type]; const n = appState.questions.filter(q => !q.done).length;
+        list.push({ id: `appt-${a.id}`, icon: '📅', title: `Consulta ${daysBetweenISO(today, a.date) === 0 ? 'hoje' : daysBetweenISO(today, a.date) === 1 ? 'amanhã' : 'em 2 dias'}${a.time ? ' às ' + a.time : ''}`, body: `${t.label}${a.who ? ' — ' + a.who : ''}${n ? ` · ${n} ${n === 1 ? 'pergunta anotada' : 'perguntas anotadas'}` : ''}`, action: ['Ver', "openFold('consultas')"] });
+      });
+      ['medico', 'nutricionista'].forEach(type => {
+        const past = appState.appointments.filter(a => a.type === type && a.date < today).sort((a, b) => b.date.localeCompare(a.date))[0];
+        const future = appState.appointments.some(a => a.type === type && a.date >= today);
+        if (past && !future && daysBetweenISO(past.date, today) >= APPT_TYPES[type].returnDays) list.push({ id: `return-${type}-${past.date}`, icon: APPT_TYPES[type].emoji, title: `Última consulta com ${type === 'medico' ? 'o médico' : 'a nutricionista'}: há ${daysBetweenISO(past.date, today)} dias`, body: 'Lembre de agendar o retorno.', action: ['Agendar', "openFold('consultas')"] });
+      });
+      const td = getTreatmentDay();
+      if (td && MILESTONES.includes(td)) list.push({ id: `milestone-${td}`, icon: '🎉', title: `${td} dias de tratamento!`, body: milestoneSummary(), action: ['Ver resumo', "openFold('resumo-semana')"] });
+      if (!appState.isDemo) {
+        const last = appState.lastBackupAt;
+        if (!last || daysBetweenISO(last, today) >= 30) list.push({ id: `backup-${today.slice(0, 7)}`, icon: '💾', title: last ? `Último backup há ${daysBetweenISO(last, today)} dias` : 'Você ainda não fez backup', body: 'Seus dados ficam só neste aparelho. Salve uma cópia.', action: ['Fazer backup', 'exportBackupJSON()'] });
+      }
+      if (p.conditions.diabetes) {
+        const lastA1c = appState.exams.filter(e => e.values.hba1c !== undefined).sort((a, b) => b.date.localeCompare(a.date))[0];
+        if (!lastA1c || daysBetweenISO(lastA1c.date, today) >= 120) list.push({ id: `a1c-${today.slice(0, 7)}`, icon: '🧪', title: lastA1c ? `Hemoglobina glicada: último exame há ${daysBetweenISO(lastA1c.date, today)} dias` : 'Registre sua hemoglobina glicada', body: 'Para quem tem diabetes ou pré-diabetes, costuma ser pedida a cada 3–6 meses.', action: ['Abrir exames', "openFold('exames')"] });
+      }
+      const regain = maintenanceRegain();
+      if (regain) list.push({ id: `regain-${today.slice(0, 7)}`, icon: '🌱', title: 'Atenção carinhosa ao peso', body: regain, action: ['Ver evolução', "switchTab('evolucao')"] });
+      if (new Date().getDay() === 1) list.push({ id: `week-${today}`, icon: '🏆', title: 'Seu resumo da semana está pronto', body: 'Veja como foram proteína, água e atividade.', action: ['Ver', "openFold('resumo-semana')"] });
+      return list;
+    }
+    function renderNotifications() {
+      const list = buildNotifications(), seen = appState.notifSeen;
+      const unseen = list.filter(n => !seen[n.id]);
+      const badge = $('bell-badge');
+      badge.textContent = unseen.length; badge.classList.toggle('hidden', !unseen.length); badge.classList.toggle('flex', !!unseen.length);
+      $('bell-btn').setAttribute('aria-label', unseen.length ? `Avisos (${unseen.length} novos)` : 'Avisos');
+      $('notif-list').innerHTML = list.length ? list.map(n => `<div class="flex gap-3 p-2.5 rounded-xl ${seen[n.id] ? 'opacity-60' : 'bg-slate-50 dark:bg-slate-800/70'}">
+          <span class="text-xl" aria-hidden="true">${n.icon}</span>
+          <div class="text-sm min-w-0"><strong class="block">${escapeHTML(n.title)}</strong><p class="text-xs text-slate-600 dark:text-slate-300 mt-0.5">${escapeHTML(n.body)}</p>
+          ${n.action ? `<button type="button" onclick="closeNotifPanel(); ${n.action[1]}" class="mt-1 text-xs font-bold text-brand-700 dark:text-brand-400">${escapeHTML(n.action[0])} ▸</button>` : ''}</div></div>`).join('')
+        : '<p class="text-sm text-slate-500 dark:text-slate-400 p-3">Nenhum aviso por enquanto. ✨</p>';
+    }
+    function toggleNotifPanel(force) {
+      const panel = $('notif-panel'), open = typeof force === 'boolean' ? force : panel.classList.contains('hidden');
+      panel.classList.toggle('hidden', !open); $('bell-btn').setAttribute('aria-expanded', String(open));
+      if (open) refreshIcons();
+    }
+    const closeNotifPanel = () => toggleNotifPanel(false);
+    function dismissAllNotifications() {
+      buildNotifications().forEach(n => { appState.notifSeen[n.id] = true; });
+      const ids = Object.keys(appState.notifSeen); if (ids.length > 200) ids.slice(0, ids.length - 200).forEach(k => delete appState.notifSeen[k]);
+      saveState(); renderNotifications();
+    }
+
+    // ---------- Manutenção e marcos ----------
+    function maintenanceRegain() {
+      const p = appState.profile, s = getDoseSchedule(p);
+      const spaced = p.intervalDays >= 14 || (s.hasLast && s.daysSinceLast > 28);
+      if (!spaced) return null;
+      const recent = appState.weights.filter(w => daysBetweenISO(w.date, getTodayISO()) <= 60).sort(sortChronologicalAsc);
+      if (recent.length < 3) return null;
+      const min = Math.min(...recent.map(w => w.weight)), last = recent[recent.length - 1].weight;
+      if (last >= min * 1.02) return `Na fase de espaçar a caneta, seu peso subiu ${fmt(last - min)} kg em relação ao menor valor dos últimos 2 meses. Vale reforçar proteína, fibras e atividade — e conversar com seu médico.`;
+      return null;
+    }
+    function milestoneSummary() {
+      const start = getTreatmentStart(); if (!start) return '';
+      const ws = appState.weights.filter(w => w.date >= addDaysISO(start, -7)).sort(sortChronologicalAsc);
+      if (ws.length < 2) return 'Continue registrando para ver sua evolução.';
+      const d = ws[ws.length - 1].weight - ws[0].weight;
+      return `Desde o início: ${d <= 0 ? '−' : '+'}${fmt(Math.abs(d))} kg. Parabéns pela constância!`;
+    }
+
+    // ---------- Caneta: estoque, dose esquecida, bula, anticoncepcional ----------
+    function consumePenDose() {
+      const pen = appState.profile.pen;
+      if (pen.dosesPerPen && pen.remaining !== null && pen.remaining > 0) pen.remaining -= 1;
+    }
+    function penBought() {
+      const pen = appState.profile.pen;
+      if (!pen.dosesPerPen) { switchTab('caneta'); setTimeout(() => scrollToId('pen-stock-card'), 120); return; }
+      pen.remaining = (pen.remaining || 0) + pen.dosesPerPen; saveState(); renderAll();
+      showToast(`Estoque atualizado: ${pen.remaining} aplicações.`);
+    }
+    function savePenStock() {
+      const per = rangeOrNull($('pen-per').value, 1, 60), rem = rangeOrNull($('pen-rem').value, 0, 200);
+      if (per === null) { showToast('Informe quantas aplicações tem uma caneta (ex.: 4).', 'error'); return; }
+      appState.profile.pen = { dosesPerPen: Math.round(per), remaining: rem === null ? Math.round(per) : Math.round(rem) };
+      saveState(); renderAll(); showToast('Estoque da caneta salvo ✓');
+    }
+    function renderCanetaExtras() {
+      const p = appState.profile, pen = p.pen, s = getDoseSchedule(p);
+      // estoque
+      $('pen-stock-card').innerHTML = pen.dosesPerPen
+        ? `<div class="flex items-center justify-between gap-3"><div><h3 class="text-sm font-bold">🖊️ Estoque da caneta</h3><p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Restam <strong class="tabular-nums">${pen.remaining ?? 0}</strong> de ${pen.dosesPerPen} aplicações. O app desconta a cada aplicação registrada.</p></div>
+           <button type="button" onclick="penBought()" class="btn btn-sm btn-soft shrink-0">Comprei nova</button></div>
+           <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded-full mt-3 overflow-hidden"><div class="h-full ${(pen.remaining ?? 0) <= 2 ? 'bg-amber-500' : 'bg-brand-500'} rounded-full" style="width:${Math.min(100, Math.round(((pen.remaining ?? 0) / pen.dosesPerPen) * 100))}%"></div></div>
+           <button type="button" onclick="appState.profile.pen={dosesPerPen:null,remaining:null};saveState();renderAll()" class="mt-2 text-[11px] text-slate-500 underline">Alterar configuração</button>`
+        : `<h3 class="text-sm font-bold">🖊️ Estoque da caneta</h3><p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5 mb-3">Informe quantas aplicações tem cada caneta para o app avisar a hora de encomendar.</p>
+           <div class="grid grid-cols-2 gap-2 items-end"><div><label for="pen-per" class="field-label">Aplicações por caneta</label><input id="pen-per" type="number" inputmode="numeric" min="1" max="60" placeholder="Ex.: 4" class="field field-sm" /></div>
+           <div><label for="pen-rem" class="field-label">Restam agora</label><input id="pen-rem" type="number" inputmode="numeric" min="0" max="200" placeholder="Ex.: 3" class="field field-sm" /></div></div>
+           <button type="button" onclick="savePenStock()" class="btn btn-sm btn-primary w-full mt-3">Salvar estoque</button>`;
+      // dose esquecida
+      const md = $('missed-dose-card'), info = BULA_INFO[p.medication];
+      if (s.hasLast && s.overdue) {
+        const std = getMedInfo(p.medication).frequency === 'daily' ? 1 : 7;
+        let rule;
+        if (s.daysSinceLast >= 14) rule = `<p class="font-semibold">Faz ${s.daysSinceLast} dias desde a última aplicação. Com 2 semanas ou mais sem aplicar, <strong>fale com seu médico antes de voltar</strong> — retomar a mesma dose pode causar enjoo forte.</p>`;
+        else if (s.interval !== std) rule = '<p>Seu intervalo foi ajustado pelo médico. <strong>Siga a orientação dele</strong> para a dose atrasada.</p>';
+        else if (info && info.esquecida.tipo === 'janela') rule = `<p class="font-semibold">${s.daysLate <= info.esquecida.dias ? `✅ Ainda dá tempo: está ${s.daysLate} ${s.daysLate === 1 ? 'dia' : 'dias'} atrasada (limite da bula: ${info.esquecida.dias} dias).` : `⏭️ Passou do limite de ${info.esquecida.dias} dias da bula: o indicado é pular esta dose.`}</p><p class="mt-1">${info.esquecida.texto}</p>`;
+        else if (info) rule = `<p>${info.esquecida.texto}</p>`;
+        else rule = '<p>Consulte a bula da sua caneta ou seu médico sobre a dose esquecida.</p>';
+        md.className = 'rounded-2xl border-2 border-amber-400 bg-amber-50 dark:bg-amber-950/60 p-4 space-y-3 text-sm text-amber-950 dark:text-amber-100';
+        md.innerHTML = `<div class="flex items-start gap-3"><span class="text-2xl" aria-hidden="true">💛</span><div><h3 class="font-bold">Esqueceu a aplicação? Acontece.</h3><p class="text-xs mt-0.5">Prevista para ${formatDateBR(s.nextDate)}. Na maioria dos casos isso não atrapalha o tratamento — veja o que fazer:</p></div></div>
+          <div class="rounded-xl bg-white/70 dark:bg-slate-900/50 p-3">${rule}<p class="text-[11px] mt-2 opacity-80">${escapeHTML(BULA_FONTE)} Nunca aplique duas doses para compensar.</p></div>
+          <div class="grid grid-cols-2 gap-2"><button type="button" onclick="markAppliedLate()" class="btn btn-sm btn-primary">💉 Já apliquei</button><button type="button" onclick="skipDose()" class="btn btn-sm btn-soft">⏭️ Vou pular esta dose</button></div>`;
+      } else { md.className = 'hidden'; md.innerHTML = ''; }
+      // anticoncepcional (tirzepatida)
+      const cc = $('contraceptive-card');
+      const relevant = info && info.anticoncepcional && p.sex === 'F' && p.age <= 52;
+      const start = getTreatmentStart();
+      const lastIncrease = (() => { const real = appState.injections.filter(i => !i.skipped).sort((a, b) => a.date.localeCompare(b.date)); let d = null; for (let i = 1; i < real.length; i++) if (parseDoseMg(real[i].dose) > parseDoseMg(real[i - 1].dose)) d = real[i].date; return d; })();
+      const recent = (start && daysBetweenISO(start, getTodayISO()) <= 28) || (lastIncrease && daysBetweenISO(lastIncrease, getTodayISO()) <= 28);
+      if (relevant && recent) {
+        cc.className = 'rounded-2xl border border-rose-300 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/50 p-4 text-sm text-rose-950 dark:text-rose-100';
+        cc.innerHTML = `<h3 class="font-bold">🌸 Usa anticoncepcional em comprimido?</h3><p class="mt-1">A bula da tirzepatida informa que ela pode diminuir o efeito do anticoncepcional oral <strong>nas 4 semanas após começar e após cada aumento de dose</strong>. Nesse período, a bula orienta usar também um método de barreira (camisinha) ou trocar por um método não oral. Converse com seu médico.</p><p class="text-[11px] mt-2 opacity-80">${escapeHTML(BULA_FONTE)}</p>`;
+      } else { cc.className = 'hidden'; cc.innerHTML = ''; }
+      // resumo da bula
+      const bs = $('bula-summary');
+      if (!info) { bs.innerHTML = '<p class="text-slate-600 dark:text-slate-300">Para "Outra caneta", consulte a bula do seu medicamento no Bulário Eletrônico da ANVISA.</p><a class="btn btn-sm btn-soft mt-2" target="_blank" rel="noopener noreferrer" href="https://consultas.anvisa.gov.br/#/bulario/">📄 Abrir Bulário da ANVISA</a>'; return; }
+      bs.innerHTML = `
+        <div class="list-item"><strong class="block mb-1">⏰ Se esquecer uma dose</strong><p>${escapeHTML(info.esquecida.texto)}</p></div>
+        <div class="list-item"><strong class="block mb-1">🚫 Nunca dobre a dose</strong><p>Não aplique duas doses para compensar a esquecida.</p></div>
+        ${info.anticoncepcional ? '<div class="list-item"><strong class="block mb-1">🌸 Anticoncepcional oral</strong><p>Pode ter o efeito reduzido nas 4 semanas após o início e após cada aumento de dose; use também método de barreira ou um método não oral nesse período.</p></div>' : ''}
+        <div class="list-item"><strong class="block mb-1">🚨 Procure atendimento se</strong><p>Dor forte e persistente na barriga (que pode ir para as costas), com ou sem vômitos; vômitos ou diarreia que não param; sinais de desidratação; dor no lado direito da barriga com febre ou pele amarelada.</p></div>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400">${escapeHTML(BULA_FONTE)}</p>
+        <div class="flex flex-wrap gap-2">${info.produtos.map(([n, u]) => `<a class="btn btn-sm btn-soft" target="_blank" rel="noopener noreferrer" href="${u}">📄 Bula oficial: ${escapeHTML(n)}</a>`).join('')}</div>`;
+    }
+    function markAppliedLate() { switchTab('caneta', { keepScroll: true }); $('inj-date').value = getTodayISO(); updateInjIntervalHint(); scrollToId('injection-form'); showToast('Confira a data da aplicação e toque em "Registrar".'); }
+    function skipDose() {
+      const p = appState.profile, s = getDoseSchedule(p); if (!s.hasLast) return;
+      const entry = { id: uid('inj'), date: s.nextDate, medication: p.medication, dose: p.dose, intervalDays: s.interval, site: '', skipped: true };
+      appState.injections.push(entry); saveState(); renderAll();
+      showToast(`Dose de ${formatShortDateBR(s.nextDate)} marcada como pulada. Próxima: ${formatShortDateBR(addDaysISO(s.nextDate, s.interval))}.`, 'success', { actionLabel: 'Desfazer', onAction: () => deleteInjection(entry.id) });
+    }
+
+    // ---------- Ciclo menstrual ----------
+    function syncCycleFieldsVisibility() {
+      const female = $('pm-sex').value === 'F';
+      $('pm-cycle-box').classList.toggle('hidden', !female);
+      $('pm-cycle-fields').classList.toggle('hidden', !$('pm-cycle-enabled').checked);
+    }
+    function cyclePhase(dateISO) {
+      const c = appState.profile.cycle; if (!c.enabled || !c.lastStart || appState.profile.sex !== 'F') return null;
+      let diff = daysBetweenISO(c.lastStart, dateISO); if (diff < 0) return null;
+      const day = (diff % c.length) + 1;
+      if (day <= 5) return { day, phase: 'menstrual' };
+      if (day > c.length - 7) return { day, phase: 'pre' };
+      return { day, phase: 'other' };
+    }
+    function noteCycleFromCheckIn(entry) {
+      const c = appState.profile.cycle;
+      if (!entry.symptomChips.includes('period') || appState.profile.sex !== 'F') return;
+      if (!c.lastStart || daysBetweenISO(c.lastStart, entry.date) > 12) {
+        c.lastStart = entry.date;
+        if (!c.enabled) { c.enabled = true; setTimeout(() => showToast('Acompanhamento do ciclo ativado. Pode desligar em Meu Perfil.'), 3500); }
+      }
+    }
+    function cycleWeightNote(dateISO) {
+      const ph = cyclePhase(dateISO);
+      return ph && ph.phase !== 'other' ? 'Nesses dias do ciclo é comum reter líquido e o peso subir de 0,5 a 2 kg. Não é gordura — olhe a tendência das próximas semanas. 🌸' : null;
+    }
+    addDiaryWeight = (orig => function () {
+      const ids = new Set(appState.weights.map(w => w.id));
+      orig();
+      const added = appState.weights.find(w => !ids.has(w.id));
+      if (!added) return;
+      const prev = appState.weights.filter(w => w.id !== added.id && sortChronologicalAsc(w, added) < 0).sort(sortChronologicalDesc)[0];
+      if (prev && added.weight > prev.weight) { const note = cycleWeightNote(added.date); if (note) setTimeout(() => showToast(note, 'success', { duration: 7000 }), 1200); }
+    })(addDiaryWeight);
+
+    // ---------- Evolução: resumo, exames, fome × ciclo, calendário, fotos ----------
+    let examChartKey = 'hba1c';
+    let calMonth = getTodayISO().slice(0, 7);
+    function renderEvolutionExtras() { renderWeeklySummary(); renderExams(); renderHungerChart(); renderCalendar(); renderPhotos(); }
+
+    function weeklyStats(endISO = getTodayISO()) {
+      const p = appState.profile, t = calculateClinicalTargets(p);
+      const days = Array.from({ length: 7 }, (_, i) => addDaysISO(endISO, i - 6));
+      let prot = 0, water = 0, logged = 0, minutes = 0, strength = 0, hungerSum = 0, hungerN = 0;
+      days.forEach(d => { const l = appState.dailyLogs[d]; if (!l) return; const tt = getDayTotals(l);
+        if (tt.protein || tt.water || tt.kcal) logged++;
+        if (tt.protein >= t.proteinGoal) prot++; if (tt.water >= t.waterGoal) water++;
+        if (l.activity && l.activity.type !== 'none') { minutes += l.activity.minutes || 0; if (l.activity.type === 'strength') strength++; }
+        if (l.hunger) { hungerSum += l.hunger; hungerN++; } });
+      const ws = appState.weights.filter(w => w.date >= days[0] && w.date <= endISO).sort(sortChronologicalAsc);
+      const wDelta = ws.length >= 2 ? ws[ws.length - 1].weight - ws[0].weight : null;
+      return { prot, water, logged, minutes, strength, hunger: hungerN ? hungerSum / hungerN : null, wDelta };
+    }
+    function renderWeeklySummary() {
+      const w = weeklyStats(), td = getTreatmentDay();
+      const item = (ok, txt) => `<li class="flex gap-2"><span>${ok ? '✅' : '▫️'}</span><span>${txt}</span></li>`;
+      const praise = w.prot >= 5 ? 'Semana excelente de proteína! 💪' : w.logged >= 5 ? 'Boa constância nos registros — é isso que traz resultado.' : 'Cada registro conta. Que tal focar na proteína esta semana?';
+      $('weekly-summary').innerHTML = `<p class="text-sm font-semibold mb-2">${praise}</p><ul class="space-y-1.5 text-sm">
+        ${item(w.prot >= 4, `Proteína batida em <strong>${w.prot} de 7</strong> dias`)}
+        ${item(w.water >= 4, `Água batida em <strong>${w.water} de 7</strong> dias`)}
+        ${item(w.minutes >= 150, `Atividade: <strong>${w.minutes} min</strong> (meta 150) · força <strong>${w.strength}/2</strong>`)}
+        ${w.wDelta !== null ? item(w.wDelta <= 0, `Peso na semana: <strong>${w.wDelta <= 0 ? '−' : '+'}${fmt(Math.abs(w.wDelta))} kg</strong>`) : ''}
+        ${w.hunger !== null ? item(true, `Fome média: <strong>${fmt(w.hunger)}</strong> (1 = nenhuma, 5 = muita)`) : ''}
+        ${td ? item(true, `Tratamento: <strong>${td} dias</strong>${getTreatmentStart() ? ` (desde ${formatDateBR(getTreatmentStart())})` : ''}`) : ''}</ul>`;
+    }
+
+    function renderExams() {
+      const sec = $('exams-section'); if (!sec) return;
+      const exams = [...appState.exams].sort((a, b) => b.date.localeCompare(a.date));
+      const field = d => `<div><label for="ex-${d.key}" class="field-label">${d.short} <span class="font-normal text-slate-400">(${d.unit})</span></label><input id="ex-${d.key}" type="number" inputmode="decimal" step="any" min="${d.min}" max="${d.max}" class="field field-sm" /></div>`;
+      const withData = EXAM_DEFS.filter(d => exams.some(e => e.values[d.key] !== undefined));
+      if (!withData.some(d => d.key === examChartKey) && withData.length) examChartKey = withData[0].key;
+      sec.innerHTML = `
+        <form id="exam-form" class="space-y-3" onsubmit="event.preventDefault(); saveExam();">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2"><div><label for="ex-date" class="field-label">Data do exame</label><input id="ex-date" type="date" required class="field field-sm" value="${getTodayISO()}" max="${getTodayISO()}" /></div>${EXAM_DEFS.filter(d => d.main).map(field).join('')}</div>
+          <details class="fold"><summary class="flex items-center justify-between text-xs font-semibold text-slate-600 dark:text-slate-300 py-1">Outros exames (fígado, vitaminas, rins)<i data-lucide="chevron-right" class="chev w-4 h-4"></i></summary>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2">${EXAM_DEFS.filter(d => !d.main).map(field).join('')}</div></details>
+          <button type="submit" class="btn btn-sm btn-primary w-full">Salvar exame</button>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Preencha só o que constar no seu laudo. As faixas mostradas são referências gerais; a sua meta é definida pelo médico.</p>
+        </form>
+        ${withData.length ? `<div class="mt-5 space-y-3">
+          <div class="flex gap-1 overflow-x-auto no-scrollbar bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">${withData.map(d => `<button type="button" onclick="examChartKey='${d.key}'; renderExams(); refreshIcons();" class="shrink-0 px-2.5 py-1.5 rounded-lg text-xs ${d.key === examChartKey ? 'font-bold bg-white dark:bg-slate-900 shadow-sm' : 'font-semibold text-slate-600 dark:text-slate-400'}">${d.short}</button>`).join('')}</div>
+          <div id="exam-chart" class="w-full h-56 rounded-xl bg-slate-50/60 dark:bg-slate-950/60 border border-slate-200/70 dark:border-slate-800"></div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400" id="exam-ref"></p>
+          <div class="space-y-1.5 text-xs">${exams.map(e => `<div class="list-item flex items-start justify-between gap-2"><div><strong>${formatDateBR(e.date)}</strong><div class="text-slate-600 dark:text-slate-300 mt-0.5">${EXAM_DEFS.filter(d => e.values[d.key] !== undefined).map(d => `${d.short} ${fmt(e.values[d.key], d.dec)} ${d.unit}`).join(' · ')}</div></div><button type="button" onclick="deleteExam('${e.id}')" class="icon-btn-danger" aria-label="Excluir exame"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>`).join('')}</div>
+        </div>` : '<p class="text-xs text-slate-500 dark:text-slate-400 mt-3">Nenhum exame registrado ainda.</p>'}`;
+      if (withData.length) drawExamChart();
+    }
+    function drawExamChart() {
+      const def = EXAM_DEFS.find(d => d.key === examChartKey), box = $('exam-chart'); if (!def || !box) return;
+      const pts = appState.exams.filter(e => e.values[def.key] !== undefined).sort((a, b) => a.date.localeCompare(b.date)).map(e => ({ date: e.date, v: e.values[def.key] }));
+      $('exam-ref').textContent = `${def.label}: ${def.ref}.`;
+      const isDark = document.documentElement.classList.contains('dark'), txt = isDark ? '#94a3b8' : '#475569', grid = isDark ? '#1e293b' : '#e2e8f0';
+      const W = Math.max(280, Math.round(box.getBoundingClientRect().width || 600)), H = 224, pl = 44, pr = 14, pt = 18, pb = 30, pw = W - pl - pr, ph = H - pt - pb;
+      const vals = pts.map(p => p.v).concat([def.hi, def.lo].filter(x => x !== undefined));
+      let mn = Math.min(...vals), mx = Math.max(...vals); if (mn === mx) { mn -= 1; mx += 1; } const sp = mx - mn; mn -= sp * 0.15; mx += sp * 0.15;
+      const t0 = Date.parse(pts[0].date), t1 = Date.parse(pts[pts.length - 1].date);
+      const X = t => t1 === t0 ? pl + pw / 2 : pl + ((t - t0) / (t1 - t0)) * pw, Y = v => pt + ph - ((v - mn) / (mx - mn)) * ph;
+      let svg = '';
+      for (let i = 0; i <= 3; i++) { const v = mn + (i / 3) * (mx - mn), y = Y(v); svg += `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="${grid}"/><text x="${pl - 6}" y="${y + 4}" text-anchor="end" fill="${txt}" font-size="10">${fmt(v, def.dec)}</text>`; }
+      if (def.hi !== undefined) { const y = Y(def.hi); svg += `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="#f59e0b" stroke-dasharray="5 4"/><text x="${W - pr}" y="${y - 4}" text-anchor="end" fill="#b45309" font-size="9" font-weight="700">limite ${fmt(def.hi, def.dec)}</text>`; }
+      if (def.lo !== undefined) { const y = Y(def.lo); svg += `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="#10b981" stroke-dasharray="5 4"/><text x="${W - pr}" y="${y + 11}" text-anchor="end" fill="#047857" font-size="9" font-weight="700">mínimo ${fmt(def.lo, def.dec)}</text>`; }
+      const c = pts.map(p => [X(Date.parse(p.date)), Y(p.v), p]);
+      if (c.length > 1) svg += `<polyline fill="none" stroke="#0d9488" stroke-width="3" stroke-linejoin="round" points="${c.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ')}"/>`;
+      c.forEach(([x, y, p]) => { const bad = (def.hi !== undefined && p.v >= def.hi) || (def.lo !== undefined && p.v < def.lo);
+        svg += `<circle cx="${x}" cy="${y}" r="5" fill="${bad ? '#e11d48' : '#0d9488'}" stroke="${isDark ? '#0f172a' : '#fff'}" stroke-width="2"/><text x="${x}" y="${y - 9}" text-anchor="middle" fill="${txt}" font-size="10" font-weight="700">${fmt(p.v, def.dec)}</text><text x="${x}" y="${H - 10}" text-anchor="middle" fill="${txt}" font-size="10">${formatShortDateBR(p.date)}</text>`; });
+      box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" class="w-full h-full" role="img" aria-label="Evolução de ${escapeHTML(def.label)}">${svg}</svg>`;
+    }
+    function saveExam() {
+      const date = $('ex-date').value; if (!safeDate(date) || date > getTodayISO()) { showToast('Informe a data do exame.', 'error'); return; }
+      const values = {}; let bad = null;
+      EXAM_DEFS.forEach(d => { const raw = $(`ex-${d.key}`).value; if (raw === '') return; const v = rangeOrNull(String(raw).replace(',', '.'), d.min, d.max); if (v === null) bad = d; else values[d.key] = v; });
+      if (bad) { showToast(`Valor fora do esperado para ${bad.short} (${bad.min}–${bad.max} ${bad.unit}).`, 'error'); $(`ex-${bad.key}`).focus(); return; }
+      if (!Object.keys(values).length) { showToast('Preencha pelo menos um resultado.', 'error'); return; }
+      const ex = { id: uid('ex'), date, values };
+      appState.exams.push(ex); saveState(); examChartKey = Object.keys(values)[0];
+      renderExams(); renderNotifications(); renderClinicalReport(); refreshIcons();
+      showToast('Exame salvo ✓', 'success', { actionLabel: 'Desfazer', onAction: () => deleteExam(ex.id, true) });
+    }
+    function deleteExam(id, silent) {
+      const i = appState.exams.findIndex(e => e.id === id); if (i < 0) return; const [rem] = appState.exams.splice(i, 1);
+      saveState(); renderExams(); renderNotifications(); renderClinicalReport(); refreshIcons();
+      if (!silent) showToast('Exame excluído.', 'success', { actionLabel: 'Desfazer', onAction: () => { appState.exams.push(rem); saveState(); renderExams(); refreshIcons(); } });
+    }
+
+    function renderHungerChart() {
+      const box = $('hunger-cycle-chart'); if (!box) return;
+      const st = hungerByCycleDay();
+      if (st.days < 3) { box.innerHTML = '<p class="text-xs text-slate-500 dark:text-slate-400">Registre a fome por alguns dias (na tela Diário) para ver em que dia do ciclo da caneta ela aumenta.</p>'; return; }
+      const maxDay = Math.max(...st.rows.map(r => r.day));
+      box.innerHTML = `<div class="flex items-end gap-1 h-32">${Array.from({ length: maxDay + 1 }, (_, d) => { const r = st.rows.find(x => x.day === d);
+        return `<div class="flex-1 flex flex-col items-center justify-end h-full gap-1" title="${r ? `Dia ${d}: média ${fmt(r.avg)} (${r.n} registros)` : `Dia ${d}: sem registros`}">
+          <span class="text-[9px] text-slate-500 tabular-nums">${r ? fmt(r.avg) : ''}</span>
+          <div class="w-full rounded-t-md ${r && r.avg >= 3.5 ? 'bg-amber-500' : 'bg-brand-500'}" style="height:${r ? Math.round((r.avg / 5) * 100) : 2}%"></div>
+          <span class="text-[10px] text-slate-500 tabular-nums">${d}</span></div>`; }).join('')}</div>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-2">Média da fome (1 a 5) por dia após a aplicação · ${st.days} dias registrados. Barras âmbar = fome alta.</p>`;
+    }
+
+    function renderCalendar() {
+      const box = $('month-calendar'); if (!box) return;
+      const [y, m] = calMonth.split('-').map(Number);
+      const first = new Date(y, m - 1, 1), daysIn = new Date(y, m, 0).getDate(), lead = (first.getDay() + 6) % 7;
+      const monthName = first.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+      const today = getTodayISO();
+      const cells = [];
+      for (let i = 0; i < lead; i++) cells.push('<div></div>');
+      for (let d = 1; d <= daysIn; d++) {
+        const iso = `${calMonth}-${String(d).padStart(2, '0')}`, l = appState.dailyLogs[iso];
+        const marks = [];
+        const inj = appState.injections.find(i => i.date === iso); if (inj) marks.push(inj.skipped ? '⏭️' : '💉');
+        if (appState.weights.some(w => w.date === iso)) marks.push('⚖️');
+        if (l && l.activity && l.activity.type !== 'none') marks.push('🏃');
+        if (appState.diaryEntries.some(e => e.date === iso && e.symptomChips.some(c => ['nausea_mild', 'nausea_strong', 'bloating', 'reflux', 'fatigue'].includes(c)))) marks.push('🤢');
+        if (appState.appointments.some(a => a.date === iso)) marks.push('📅');
+        const ph = cyclePhase(iso);
+        cells.push(`<button type="button" onclick="showCalendarDay('${iso}')" class="min-h-[52px] rounded-lg p-1 text-left border ${iso === today ? 'border-brand-500' : 'border-slate-200 dark:border-slate-700'} ${ph && ph.phase === 'menstrual' ? 'bg-rose-50 dark:bg-rose-950/40' : ph && ph.phase === 'pre' ? 'bg-pink-50/60 dark:bg-pink-950/20' : 'bg-white dark:bg-slate-900'}">
+          <span class="text-[11px] font-bold ${iso === today ? 'text-brand-700 dark:text-brand-400' : ''}">${d}</span>${l && l.hunger ? `<span class="float-right text-[9px] text-slate-400">${l.hunger}</span>` : ''}<span class="block text-[10px] leading-tight mt-0.5">${marks.join('')}</span></button>`);
+      }
+      box.innerHTML = `<div class="flex items-center justify-between mb-2">
+          <button type="button" onclick="calMonth=shiftMonth(calMonth,-1); renderCalendar()" class="icon-btn" aria-label="Mês anterior">‹</button>
+          <strong class="text-sm capitalize">${monthName}</strong>
+          <button type="button" onclick="calMonth=shiftMonth(calMonth,1); renderCalendar()" class="icon-btn" aria-label="Próximo mês">›</button></div>
+        <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-500 mb-1">${['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map(x => `<span>${x}</span>`).join('')}</div>
+        <div class="grid grid-cols-7 gap-1">${cells.join('')}</div>
+        <p class="text-[10px] text-slate-500 dark:text-slate-400 mt-2">💉 aplicação · ⏭️ pulada · ⚖️ peso · 🏃 atividade · 🤢 sintoma · 📅 consulta · número = fome${appState.profile.cycle.enabled ? ' · rosa = menstruação/pré' : ''}</p>
+        <div id="calendar-day" class="mt-3"></div>`;
+    }
+    function shiftMonth(ym, n) { const [y, m] = ym.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; }
+    function showCalendarDay(iso) {
+      const l = appState.dailyLogs[iso], out = [];
+      if (l) { const t = getDayTotals(l); if (t.protein || t.kcal) out.push(`🥩 ${fmt(t.protein)} g proteína · 🔥 ${t.kcal} kcal · 💧 ${fmt(t.water / 1000)} L`); }
+      appState.weights.filter(w => w.date === iso).forEach(w => out.push(`⚖️ ${fmt(w.weight)} kg`));
+      appState.injections.filter(i => i.date === iso).forEach(i => out.push(i.skipped ? '⏭️ Dose pulada' : `💉 ${escapeHTML(fmtDose(i.dose))} ${escapeHTML(i.site)}`));
+      appState.diaryEntries.filter(e => e.date === iso).forEach(e => out.push(`📝 ${escapeHTML(e.symptomChips.map(id => (SYMPTOM_CHIPS.find(c => c.id === id) || {}).label).filter(Boolean).join(', '))}`));
+      appState.appointments.filter(a => a.date === iso).forEach(a => out.push(`📅 ${APPT_TYPES[a.type].label}${a.who ? ' — ' + escapeHTML(a.who) : ''}`));
+      $('calendar-day').innerHTML = `<div class="list-item text-sm"><strong>${formatDateBR(iso)}</strong>${out.length ? `<ul class="mt-1 space-y-0.5 text-xs">${out.map(x => `<li>${x}</li>`).join('')}</ul>` : '<p class="text-xs text-slate-500 mt-1">Sem registros neste dia.</p>'}</div>`;
+    }
+
+    // Fotos de progresso: ficam só no aparelho (IndexedDB) e não entram no backup
+    const PHOTO_DB = 'nutripen-fotos';
+    function photoDb() {
+      return new Promise((res, rej) => { if (!window.indexedDB) return rej(new Error('sem IndexedDB'));
+        const r = indexedDB.open(PHOTO_DB, 1); r.onupgradeneeded = () => r.result.createObjectStore('fotos', { keyPath: 'id' }); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+    }
+    async function photoOp(mode, fn) { const db = await photoDb(); return new Promise((res, rej) => { const tx = db.transaction('fotos', mode); const st = tx.objectStore('fotos'); const out = fn(st); tx.oncomplete = () => res(out && out.result !== undefined ? out.result : out); tx.onerror = () => rej(tx.error); }); }
+    async function renderPhotos() {
+      const box = $('progress-photos'); if (!box) return;
+      let photos = [];
+      try { photos = (await photoOp('readonly', st => st.getAll())) || []; } catch (e) { box.innerHTML = '<p class="text-xs text-slate-500">Fotos indisponíveis neste navegador.</p>'; return; }
+      photos.sort((a, b) => a.date.localeCompare(b.date));
+      const cmp = photos.length >= 2 ? [photos[0], photos[photos.length - 1]] : null;
+      box.innerHTML = `<p class="text-xs text-slate-600 dark:text-slate-400 mb-3">🔒 As fotos ficam só neste aparelho e <strong>não</strong> entram no backup. Tire sempre na mesma posição e luz.</p>
+        <label for="photo-input" class="btn btn-sm btn-primary cursor-pointer">📷 Adicionar foto<input id="photo-input" type="file" accept="image/*" class="hidden" onchange="addProgressPhoto(this)" /></label>
+        ${cmp ? `<div class="grid grid-cols-2 gap-2 mt-4">${cmp.map((ph, i) => `<figure><img src="${ph.data}" alt="Foto de ${formatDateBR(ph.date)}" class="w-full aspect-[3/4] object-cover rounded-xl" /><figcaption class="text-xs text-center mt-1">${i ? 'Agora' : 'Início'} · ${formatDateBR(ph.date)}</figcaption></figure>`).join('')}</div>` : ''}
+        ${photos.length ? `<div class="grid grid-cols-4 gap-2 mt-4">${photos.map(ph => `<div class="relative"><img src="${ph.data}" alt="Foto de ${formatDateBR(ph.date)}" class="w-full aspect-square object-cover rounded-lg" /><span class="absolute bottom-0.5 left-0.5 text-[9px] bg-black/60 text-white px-1 rounded">${formatShortDateBR(ph.date)}</span><button type="button" onclick="deleteProgressPhoto('${ph.id}')" class="absolute top-0.5 right-0.5 bg-black/60 text-white rounded px-1 text-[10px]" aria-label="Excluir foto">✕</button></div>`).join('')}</div>` : '<p class="text-xs text-slate-500 mt-3">Nenhuma foto ainda.</p>'}`;
+    }
+    function addProgressPhoto(input) {
+      const file = input.files && input.files[0]; input.value = ''; if (!file || !file.type.startsWith('image/')) return;
+      const url = URL.createObjectURL(file), img = new Image();
+      img.onload = async () => {
+        const s = Math.min(1, 1080 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+        c.width = Math.round(img.width * s); c.height = Math.round(img.height * s); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        try { await photoOp('readwrite', st => st.put({ id: uid('foto'), date: getTodayISO(), data: c.toDataURL('image/jpeg', 0.82) })); showToast('Foto guardada neste aparelho 📷'); renderPhotos(); }
+        catch (e) { showToast('Não consegui guardar a foto (sem espaço?).', 'error'); }
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); showToast('Não consegui abrir esta imagem.', 'error'); };
+      img.src = url;
+    }
+    async function deleteProgressPhoto(id) { if (!SAFE_ID.test(id)) return; try { await photoOp('readwrite', st => st.delete(id)); renderPhotos(); showToast('Foto excluída.'); } catch (e) {} }
+
+    // ---------- Mais: consultas, perguntas, preferências ----------
+    function renderMais() { renderAppointments(); renderQuestions(); renderPrefs(); }
+    function renderAppointments() {
+      const sec = $('appointments-section'); if (!sec) return;
+      const today = getTodayISO();
+      const up = appState.appointments.filter(a => a.date >= today).sort(sortChronologicalAsc), past = appState.appointments.filter(a => a.date < today).sort(sortChronologicalDesc).slice(0, 6);
+      const row = a => `<div class="list-item flex items-start justify-between gap-2 text-sm"><div class="min-w-0"><strong>${APPT_TYPES[a.type].emoji} ${APPT_TYPES[a.type].label}${a.who ? ' — ' + escapeHTML(a.who) : ''}</strong>
+        <p class="text-xs text-slate-600 dark:text-slate-300">${formatDateBR(a.date)}${a.time ? ' às ' + escapeHTML(a.time) : ''}${a.place ? ' · ' + escapeHTML(a.place) : ''}</p>${a.notes ? `<p class="text-xs italic text-slate-500">${escapeHTML(a.notes)}</p>` : ''}</div>
+        <button type="button" onclick="deleteAppointment('${a.id}')" class="icon-btn-danger" aria-label="Excluir consulta"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></div>`;
+      sec.innerHTML = `<form class="grid grid-cols-2 gap-2" onsubmit="event.preventDefault(); saveAppointment();">
+          <div><label for="ap-type" class="field-label">Com quem</label><select id="ap-type" class="field field-sm"><option value="medico">🩺 Médico(a)</option><option value="nutricionista">🥗 Nutricionista</option><option value="outro">👤 Outro profissional</option></select></div>
+          <div><label for="ap-who" class="field-label">Nome (opcional)</label><input id="ap-who" maxlength="60" class="field field-sm" placeholder="Ex.: Dra. Ana" /></div>
+          <div><label for="ap-date" class="field-label">Data</label><input id="ap-date" type="date" required class="field field-sm" /></div>
+          <div><label for="ap-time" class="field-label">Hora</label><input id="ap-time" type="time" class="field field-sm" /></div>
+          <div class="col-span-2"><label for="ap-place" class="field-label">Local / observação (opcional)</label><input id="ap-place" maxlength="80" class="field field-sm" placeholder="Ex.: Clínica X, sala 3 · levar exames" /></div>
+          <button type="submit" class="col-span-2 btn btn-sm btn-primary">Salvar consulta</button></form>
+        <h4 class="eyebrow text-slate-500 mt-4 mb-2">Próximas</h4><div class="space-y-1.5">${up.length ? up.map(row).join('') : '<p class="text-xs text-slate-500">Nenhuma consulta agendada.</p>'}</div>
+        ${past.length ? `<h4 class="eyebrow text-slate-500 mt-4 mb-2">Anteriores</h4><div class="space-y-1.5 opacity-80">${past.map(row).join('')}</div>` : ''}
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-3">O 🔔 avisa 2 dias antes e lembra de agendar o retorno (médico: 60 dias; nutricionista: 45 dias).${nativeReminders ? ' Com o lembrete da aplicação ligado, você também recebe notificação na véspera.' : ''}</p>`;
+    }
+    function saveAppointment() {
+      const date = $('ap-date').value; if (!safeDate(date)) { showToast('Informe a data da consulta.', 'error'); return; }
+      const a = { id: uid('ap'), type: $('ap-type').value, who: safeText($('ap-who').value, 60).trim(), date, time: safeTime($('ap-time').value), place: safeText($('ap-place').value, 80).trim(), notes: '' };
+      if (!APPT_TYPES[a.type]) return;
+      appState.appointments.push(a); saveState(); renderAppointments(); renderNotifications(); scheduleReminderSync(); refreshIcons();
+      showToast('Consulta salva 📅', 'success', { actionLabel: 'Desfazer', onAction: () => deleteAppointment(a.id, true) });
+    }
+    function deleteAppointment(id, silent) {
+      const i = appState.appointments.findIndex(a => a.id === id); if (i < 0) return; const [rem] = appState.appointments.splice(i, 1);
+      saveState(); renderAppointments(); renderNotifications(); scheduleReminderSync(); refreshIcons();
+      if (!silent) showToast('Consulta excluída.', 'success', { actionLabel: 'Desfazer', onAction: () => { appState.appointments.push(rem); saveState(); renderAppointments(); renderNotifications(); refreshIcons(); } });
+    }
+    function renderQuestions() {
+      const sec = $('questions-section'); if (!sec) return;
+      const qs = appState.questions;
+      sec.innerHTML = `<form class="flex gap-2" onsubmit="event.preventDefault(); addQuestion();"><input id="question-input" maxlength="200" class="field field-sm flex-1" placeholder="Ex.: Posso espaçar a dose para 10 dias?" aria-label="Nova pergunta" /><button type="submit" class="btn btn-sm btn-primary shrink-0">Anotar</button></form>
+        <ul class="mt-3 space-y-1.5">${qs.length ? qs.map(q => `<li class="list-item flex items-start gap-2 text-sm"><input type="checkbox" ${q.done ? 'checked' : ''} onchange="toggleQuestion('${q.id}')" class="mt-0.5 w-4 h-4 accent-teal-600" aria-label="Marcar como respondida" />
+          <span class="flex-1 ${q.done ? 'line-through text-slate-400' : ''}">${escapeHTML(q.text)}</span><button type="button" onclick="deleteQuestion('${q.id}')" class="icon-btn-danger" aria-label="Excluir pergunta"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></li>`).join('') : '<li class="text-xs text-slate-500">Anote aqui as dúvidas que surgirem. As não respondidas entram no relatório da consulta.</li>'}</ul>`;
+    }
+    function addQuestion() {
+      const t = safeText($('question-input').value, 200).trim(); if (!t) return;
+      appState.questions.push({ id: uid('q'), text: t, done: false, date: getTodayISO() }); saveState(); renderQuestions(); renderClinicalReport(); refreshIcons(); $('question-input').focus();
+    }
+    function toggleQuestion(id) { const q = appState.questions.find(x => x.id === id); if (!q) return; q.done = !q.done; saveState(); renderQuestions(); renderClinicalReport(); refreshIcons(); }
+    function deleteQuestion(id) { appState.questions = appState.questions.filter(q => q.id !== id); saveState(); renderQuestions(); renderClinicalReport(); refreshIcons(); }
+
+    const FONT_KEY = 'nutripen_fonte';
+    function setFontSize(v) { if (!['md', 'lg', 'xl'].includes(v)) return; document.documentElement.dataset.font = v; try { localStorage.setItem(FONT_KEY, v); } catch (e) {} renderPrefs(); renderInteractiveSVGChart(); }
+    function renderPrefs() {
+      const sec = $('prefs-section'); if (!sec) return;
+      const isDark = document.documentElement.classList.contains('dark'), font = document.documentElement.dataset.font || 'md', wr = appState.profile.waterReminder;
+      const segBtn = (on, label, fn) => `<button type="button" onclick="${fn}" aria-pressed="${on}" class="flex-1 py-2 rounded-lg text-sm font-bold ${on ? 'bg-white dark:bg-slate-900 shadow-sm' : 'text-slate-600 dark:text-slate-400'}">${label}</button>`;
+      sec.innerHTML = `
+        <div><span class="field-label">Tema</span><div class="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">${segBtn(!isDark, '☀️ Claro', isDark ? 'toggleTheme()' : '')}${segBtn(isDark, '🌙 Escuro', isDark ? '' : 'toggleTheme()')}</div></div>
+        <div><span class="field-label">Tamanho da letra</span><div class="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">${segBtn(font === 'md', 'A', "setFontSize('md')")}${segBtn(font === 'lg', '<span class="text-lg">A</span>', "setFontSize('lg')")}${segBtn(font === 'xl', '<span class="text-xl">A</span>', "setFontSize('xl')")}</div></div>
+        <div class="p-3 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-900 space-y-2">
+          <div class="flex items-start justify-between gap-3"><div><strong class="text-sm">💧 Lembrete de água</strong><p class="text-[11px] text-slate-600 dark:text-slate-400" id="water-rem-status"></p></div>
+          ${nativeReminders ? `<label class="relative inline-flex items-center cursor-pointer shrink-0"><input type="checkbox" id="water-rem-enabled" ${wr.enabled ? 'checked' : ''} class="sr-only peer" onchange="setWaterReminder(this.checked)" /><span class="w-11 h-6 bg-slate-300 dark:bg-slate-600 rounded-full transition peer-checked:bg-brand-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:shadow after:transition peer-checked:after:translate-x-5"></span><span class="sr-only">Ativar lembrete de água</span></label>` : ''}</div>
+          ${nativeReminders ? `<div class="grid grid-cols-3 gap-2"><div><label for="wr-every" class="field-label">A cada</label><select id="wr-every" class="field field-sm" onchange="updateWaterReminder()">${[1, 2, 3].map(n => `<option value="${n}" ${wr.every === n ? 'selected' : ''}>${n} h</option>`).join('')}</select></div>
+            <div><label for="wr-start" class="field-label">De</label><input id="wr-start" type="time" value="${wr.start}" class="field field-sm" onchange="updateWaterReminder()" /></div>
+            <div><label for="wr-end" class="field-label">Até</label><input id="wr-end" type="time" value="${wr.end}" class="field field-sm" onchange="updateWaterReminder()" /></div></div>` : ''}
+        </div>`;
+      $('water-rem-status').textContent = nativeReminders ? (wr.enabled ? `Ativo: a cada ${wr.every} h, das ${wr.start} às ${wr.end}. Para sozinho quando você bate a meta.` : 'Desligado.') : 'Disponível no app instalado pela Google Play. Aqui, use os botões de água no Diário.';
+    }
+    async function setWaterReminder(on) {
+      if (on && nativeReminders) {
+        try { let perm = await LocalNotif.checkPermissions(); if (perm.display !== 'granted') perm = await LocalNotif.requestPermissions();
+          if (perm.display !== 'granted') { showToast('Sem permissão de notificação.', 'error'); renderPrefs(); return; }
+          await LocalNotif.createChannel({ id: 'agua', name: 'Lembrete de água', description: 'Avisos para beber água ao longo do dia', importance: 3, visibility: 1, vibration: false });
+        } catch (e) {}
+      }
+      appState.profile.waterReminder.enabled = on; saveState(); renderPrefs(); syncWaterReminders();
+      if (on) showToast('Lembrete de água ativado 💧');
+    }
+    function updateWaterReminder() {
+      const wr = appState.profile.waterReminder;
+      wr.every = [1, 2, 3].includes(Number($('wr-every').value)) ? Number($('wr-every').value) : 2;
+      if (HHMM.test($('wr-start').value)) wr.start = $('wr-start').value; if (HHMM.test($('wr-end').value)) wr.end = $('wr-end').value;
+      saveState(); renderPrefs(); syncWaterReminders();
+    }
+    const WATER_ID_MIN = 1100, WATER_ID_MAX = 1199, APPT_ID_MIN = 1200, APPT_ID_MAX = 1299;
+    async function syncWaterReminders() {
+      if (!nativeReminders) return;
+      try {
+        const pending = await LocalNotif.getPending();
+        const ours = (pending.notifications || []).filter(n => n.id >= WATER_ID_MIN && n.id <= WATER_ID_MAX);
+        if (ours.length) await LocalNotif.cancel({ notifications: ours.map(n => ({ id: n.id })) });
+        const wr = appState.profile.waterReminder; if (!wr.enabled) return;
+        const targets = calculateClinicalTargets(appState.profile), today = getTodayISO();
+        const doneToday = getDayTotals(ensureTodayLog()).water >= targets.waterGoal;
+        const list = []; let id = WATER_ID_MIN;
+        [today, addDaysISO(today, 1)].forEach(day => {
+          if (day === today && doneToday) return;
+          const [sh, sm] = wr.start.split(':').map(Number), [eh, em] = wr.end.split(':').map(Number);
+          for (let mins = sh * 60 + sm; mins <= eh * 60 + em; mins += wr.every * 60) {
+            const at = new Date(`${day}T${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}:00`);
+            if (at > Date.now() && id <= WATER_ID_MAX) list.push({ id: id++, title: '💧 Hora de beber água', body: `Meta do dia: ${fmt(targets.waterGoal / 1000)} L. Um copo agora ajuda o intestino e a disposição.`, schedule: { at, allowWhileIdle: true }, isExactNotification: false, channelId: 'agua', extra: { tab: 'diario' } });
+          }
+        });
+        if (list.length) await LocalNotif.schedule({ notifications: list });
+      } catch (e) { console.warn('Lembrete de água não agendado', e); }
+    }
+    async function syncAppointmentReminders() {
+      if (!nativeReminders) return;
+      try {
+        const pending = await LocalNotif.getPending();
+        const ours = (pending.notifications || []).filter(n => n.id >= APPT_ID_MIN && n.id <= APPT_ID_MAX);
+        if (ours.length) await LocalNotif.cancel({ notifications: ours.map(n => ({ id: n.id })) });
+        if (!appState.profile.reminder.enabled) return;
+        const list = []; let id = APPT_ID_MIN;
+        appState.appointments.filter(a => a.date >= getTodayISO()).sort(sortChronologicalAsc).slice(0, 50).forEach(a => {
+          const at = new Date(`${addDaysISO(a.date, -1)}T19:00:00`);
+          if (at > Date.now()) list.push({ id: id++, title: `📅 Amanhã: consulta com ${APPT_TYPES[a.type].label.toLowerCase()}`, body: `${a.time ? 'Às ' + a.time + '. ' : ''}${a.who || ''}`.trim() || 'Confira suas perguntas no NutriPen.', schedule: { at, allowWhileIdle: true }, isExactNotification: false, channelId: 'aplicacao', extra: { tab: 'mais' } });
+        });
+        if (list.length) await LocalNotif.schedule({ notifications: list });
+      } catch (e) { console.warn(e); }
+    }
+
+    function initNewFeatures() {
+      initFolds();
+      try { const f = localStorage.getItem(FONT_KEY); if (['lg', 'xl'].includes(f)) document.documentElement.dataset.font = f; } catch (e) {}
+      $('fab-add').addEventListener('click', openQuickSheet);
+      $('quick-grid').addEventListener('click', e => { const b = e.target.closest('[data-quick]'); if (!b) return; closeModal('quick-sheet'); QUICK_ACTIONS[Number(b.dataset.quick)][2](); });
+      $('bell-btn').addEventListener('click', e => { e.stopPropagation(); toggleNotifPanel(); });
+      $('notif-dismiss-all').addEventListener('click', dismissAllNotifications);
+      document.addEventListener('click', e => { if (!e.target.closest('#notif-panel') && !e.target.closest('#bell-btn')) closeNotifPanel(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNotifPanel(); });
+      $('activity-minutes').addEventListener('change', e => setActivityMinutes(e.target.value));
+      document.querySelectorAll('.act-min').forEach(b => b.addEventListener('click', () => setActivityMinutes(b.dataset.min)));
+      $('pm-sex').addEventListener('change', syncCycleFieldsVisibility);
+      $('pm-cycle-enabled').addEventListener('change', syncCycleFieldsVisibility);
+    }
+
+    // =========================================================================
     // INICIALIZAÇÃO
     // =========================================================================
     document.addEventListener('DOMContentLoaded', () => {
@@ -3506,8 +4477,6 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       syncInjectionFormSelects(true);
 
       document.querySelectorAll('.nav-btn, .mobile-nav-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
-      $('btn-theme-toggle').addEventListener('click', toggleTheme);
-      $('btn-more-menu').addEventListener('click', e => { e.stopPropagation(); toggleMoreMenu(); });
       document.addEventListener('click', e => { if (!e.target.closest('#more-menu') && !e.target.closest('#btn-more-menu')) closeMoreMenu(); });
       $('input-import-json').addEventListener('change', e => { closeMoreMenu(); importBackupJSON(e); });
       $('ai-food-photo-input').addEventListener('change', handlePhotoSelection);
@@ -3582,6 +4551,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         const inj = { id: uid('inj'), date: $('inj-date').value || getTodayISO(), medication: $('inj-med').value, dose, intervalDays, site: $('inj-site').value };
         const dup = appState.injections.find(i => i.date === inj.date && i.medication === inj.medication);
         appState.injections.push(inj);
+        consumePenDose();
         appState.profile.medication = inj.medication;
         appState.profile.dose = inj.dose;
         appState.profile.intervalDays = inj.intervalDays;
@@ -3697,10 +4667,11 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
           switchTab(tab === 'caneta' ? 'caneta' : 'hoje');
         });
       }
+      initNewFeatures();
       registerServiceWorker();
       renderAll();
-      let startTab = 'hoje';
-      try { startTab = sessionStorage.getItem(TAB_KEY) || 'hoje'; } catch (e) {}
+      let startTab = 'diario';
+      try { startTab = sessionStorage.getItem(TAB_KEY) || 'diario'; } catch (e) {}
       const params = new URLSearchParams(location.search);
       if (params.get('aba')) startTab = params.get('aba');
       switchTab(startTab);

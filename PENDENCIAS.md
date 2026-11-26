@@ -32,7 +32,7 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
 
 - [x] **Revisão de segurança** proporcional ao app (ver seção abaixo).
 
-- [ ] **"Esqueci a aplicação" — orientação para dose atrasada.** Quando a aplicação passar da data
+- [x] **"Esqueci a aplicação" — orientação para dose atrasada.** Quando a aplicação passar da data
   (o app já mostra "Aplicação atrasada há X dias"), exibir uma dica acolhedora e um botão/chave
   "Esqueci a aplicação" com a orientação da bula da caneta em uso. Tom: *"Acontece. Na maioria dos
   casos não atrapalha o tratamento — veja o que fazer."*
@@ -52,7 +52,7 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
     (aparece no relatório para o médico) e recalcular a próxima data.
   - O lembrete (notificação) de atraso passa a trazer essa orientação resumida.
 
-- [ ] **Ciclo menstrual (opcional, só para perfil feminino).** No cadastro e em Meu Perfil, para quem marcou
+- [x] **Ciclo menstrual (opcional, só para perfil feminino).** No cadastro e em Meu Perfil, para quem marcou
   sexo feminino: "Quer acompanhar o ciclo menstrual?" (desligado por padrão).
   - Campos: data de início da última menstruação e duração média do ciclo (padrão 28 dias); opções
     "não menstruo / menopausa / uso contínuo de anticoncepcional" para desligar.
@@ -71,7 +71,7 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
 - [ ] **Termo "glicemia capilar".** Avaliar trocar no app por "Glicemia (medida no dedo)" e manter
   "glicemia capilar" só no relatório para o médico. *Aguardando decisão.*
 
-- [ ] **Tela limpa e "árvore" para abrir contextos (redesenho de navegação).** Mostrar só o essencial e
+- [x] **Tela limpa e "árvore" para abrir contextos (redesenho de navegação).** Mostrar só o essencial e
   abrir detalhes sob demanda (seções que expandem ▸), lembrando o que a pessoa deixou aberto.
   - **Hoje:** saudação, cartão da próxima aplicação e só 3 metas (proteína, água, fibras) com "Ver todas
     as metas ▸"; Dica da Nutri em 1 linha que expande; checklist resumido ("4/6 ▸"); contabilidade clínica
@@ -81,49 +81,49 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
   - **Medidas:** abas internas Peso | Medidas | Glicemia | Exames, cada uma com gráfico e "Registrar ▸".
   - **Refeições:** resumo do dia no topo; "Registrar refeição ▸", "Montador ▸", "Diário de hoje (3) ▸".
 
-- [ ] **Diário em primeiro lugar.** É a tela usada todos os dias: deve ser a primeira da navegação e a tela
+- [x] **Diário em primeiro lugar.** É a tela usada todos os dias: deve ser a primeira da navegação e a tela
   inicial do app, fácil de achar e rápida de preencher (registrar em 1–2 toques).
 
-- [ ] **Lembretes de água.** Opcional: avisar a cada X horas (ex.: de 2 em 2 h, das 8h às 20h) com quanto
+- [x] **Lembretes de água.** Opcional: avisar a cada X horas (ex.: de 2 em 2 h, das 8h às 20h) com quanto
   falta para a meta; parar sozinho quando a meta do dia for batida; não avisar à noite. No Android, notificação
   local (mesmo mecanismo do lembrete da aplicação); na web, só o lembrete visual ao abrir o app.
 
-- [ ] **Atividade física.** Registro simples por dia: *Não pratiquei* / *Caminhada* / *Musculação* /
+- [x] **Atividade física.** Registro simples por dia: *Não pratiquei* / *Caminhada* / *Musculação* /
   *Outra*, com minutos opcionais.
   - Meta semanal de referência (OMS): **150 min de atividade moderada + 2 dias de força**; mostrar progresso
     da semana. Destacar **musculação/força** (protege a massa magra durante o emagrecimento com a caneta).
   - Substitui o item "Treino de força / caminhada" do checklist; entra no relatório (média semanal).
   - Se o padrão real ficar diferente do "nível de atividade" do perfil, sugerir atualizar (muda a meta de calorias).
 
-- [ ] **Exames com gráfico de evolução.** Condições novas no cadastro: **colesterol alto** e **gordura no
+- [x] **Exames com gráfico de evolução.** Condições novas no cadastro: **colesterol alto** e **gordura no
   fígado**. Área "Exames" (dentro de Medidas): data + valores de HbA1c, glicemia de jejum (laboratório),
   colesterol total, LDL, HDL, triglicerídeos; opcionais TGO/TGP, vitamina D, B12, ferritina, creatinina.
   Gráfico por exame com faixa de referência geral (meta individual é do médico) e tabela "antes → agora"
   no relatório.
 
-- [ ] **Bulas: só resumos com fonte (decidido).** Não guardar a bula no app. Para cada caneta:
+- [x] **Bulas: só resumos com fonte (decidido).** Não guardar a bula no app. Para cada caneta:
   - resumos curtos do que importa no momento (ex.: dose esquecida, anticoncepcional), sempre com
     *"Fonte: bula [nome] — ANVISA, versão de [data]. Verifique se há atualização."*;
   - botão "📄 Ver bula oficial" que abre o **Bulário Eletrônico da ANVISA** no navegador (sempre atualizado);
   - guardar no código a data da versão consultada e revisar os resumos a cada nova versão da bula.
 
-- [ ] **Central de avisos (sininho 🔔 no topo).** Todos os avisos vão para um só lugar, com contador, para a
+- [x] **Central de avisos (sininho 🔔 no topo).** Todos os avisos vão para um só lugar, com contador, para a
   tela não ficar poluída: comprar/encomendar a caneta, consulta agendada, agendar a próxima consulta, aplicação
   atrasada, exame a refazer, fazer backup. Avisos importantes também podem virar notificação no celular.
 
-- [ ] **Estoque da caneta.** Informar quantas doses tem a caneta (ou cliques) e quantas restam; avisar no sininho
+- [x] **Estoque da caneta.** Informar quantas doses tem a caneta (ou cliques) e quantas restam; avisar no sininho
   quando faltarem ~2 aplicações para dar tempo de encomendar.
 
-- [ ] **Consultas.** Agenda simples: médico, nutricionista e "Outro profissional" (campo livre); data/hora e
+- [x] **Consultas.** Agenda simples: médico, nutricionista e "Outro profissional" (campo livre); data/hora e
   local; aviso na véspera e no dia; após a consulta, lembrar de **agendar a próxima** (ex.: "Sua última consulta
   com a nutricionista foi há 30 dias"). Lista "Perguntar ao médico" ligada à próxima consulta.
   - Decisão: não criar telas específicas para educador físico ou psicólogo (foco do app); o campo livre atende.
 
-- [ ] **Fome e saciedade × dias após a aplicação.** Registro diário de 1 a 5 (1 toque). Gráfico "fome por dia
+- [x] **Fome e saciedade × dias após a aplicação.** Registro diário de 1 a 5 (1 toque). Gráfico "fome por dia
   do ciclo da caneta" (dia 1, 2, 3… após a aplicação) para a pessoa perceber se a fome volta antes da próxima dose;
   entra no relatório para o médico ajustar dose/intervalo.
 
-- [ ] **Contador de dias de tratamento.** Mostrar no Diário, perto da saudação: *"Você está no 15º dia de
+- [x] **Contador de dias de tratamento.** Mostrar no Diário, perto da saudação: *"Você está no 15º dia de
   tratamento"*.
   - Data de início = primeira aplicação registrada; campo "Comecei o tratamento em" no cadastro/perfil para
     quem começou antes de usar o app (editável).
@@ -134,14 +134,14 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
   - Entra no relatório: "Tempo de tratamento: 15 dias (desde 12/11/2026)".
 
 ### Aprovadas para o futuro (26/11/2026)
-- [ ] "O que comer agora?" — sugestões de lanches que fecham a proteína/fibra que falta no dia.
-- [ ] Visão do mês (calendário) com aplicações, peso, sintomas, atividade e fome.
-- [ ] Lista "Perguntar ao médico" (entra no relatório).
-- [ ] Tamanho de letra ajustável (acessibilidade).
-- [ ] Fotos de progresso (só no aparelho).
-- [ ] Fase de manutenção: acompanhar o peso ao espaçar/parar a caneta e avisar com delicadeza se voltar a subir.
-- [ ] Resumo da semana com conquistas, em tom de incentivo.
-- [ ] Navegação em 5 abas: **Diário (tela inicial)** · Refeições · Evolução · Caneta · Mais.
+- [x] "O que comer agora?" — sugestões de lanches que fecham a proteína/fibra que falta no dia.
+- [x] Visão do mês (calendário) com aplicações, peso, sintomas, atividade e fome.
+- [x] Lista "Perguntar ao médico" (entra no relatório).
+- [x] Tamanho de letra ajustável (acessibilidade).
+- [x] Fotos de progresso (só no aparelho).
+- [x] Fase de manutenção: acompanhar o peso ao espaçar/parar a caneta e avisar com delicadeza se voltar a subir.
+- [x] Resumo da semana com conquistas, em tom de incentivo.
+- [x] Navegação em 5 abas: **Diário (tela inicial)** · Refeições · Evolução · Caneta · Mais.
 
 ## Decisões em aberto
 
@@ -195,4 +195,19 @@ mas ainda há pontos a verificar antes de publicar:
 - **Testes:** `testes/seguranca.js` (15 verificações) roda no GitHub antes de gerar o app; a versão anterior às
   correções reprova em 9 delas.
 - **Pendente (ação do dono do repositório):** proteger a branch `main` em Settings → Branches.
+
+## Versão 1.2 (26/11/2026) — implementado
+Diário como tela inicial (5 abas, seções que expandem, botão +, sininho de avisos), contador de dias de
+tratamento, fome × dia do ciclo, atividade física com meta semanal, lembrete de água (Android), "o que comer
+agora", exames com gráficos, consultas e perguntas, estoque da caneta, dose esquecida com resumo da bula e
+opção de pular, aviso de anticoncepcional (tirzepatida), ciclo menstrual com acolhimento no peso, calendário do
+mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho na manutenção e resumo da semana.
+
+### A conferir antes de publicar na loja
+- [ ] **Bulas:** confirmar os resumos (dose esquecida, anticoncepcional, sinais de alerta) com a versão vigente
+  de cada bula no Bulário da ANVISA e registrar a **data da versão** em `BULA_INFO` (hoje o app mostra
+  "confira a data da versão vigente").
+- [ ] **Links do Bulário:** conferir se o formato `consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=...` abre a
+  busca certa no celular.
+- [ ] Faixas de referência dos exames: validar com a nutricionista/médico parceiro.
 

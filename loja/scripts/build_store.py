@@ -65,7 +65,7 @@ sub(r'\s*<div>\s*<span class="eyebrow text-amber-700 dark:text-amber-300">Não u
 sub(r'<div class="pt-1 space-y-1">\s*<label for="pm-gemini-key"', '<div class="hidden">\n          <label for="pm-gemini-key"')
 
 # ---------------------------------------------------------------- menu, relatório, textos
-sub(r'\s*<button role="menuitem" type="button" onclick="closeMoreMenu\(\); installApp\(\)".*?</button>', '')
+sub(r'\s*<button role="menuitem" type="button" onclick="installApp\(\)".*?</button>', '')
 rep('<i data-lucide="download" class="w-4 h-4"></i> Baixar backup (JSON)', '<i data-lucide="share-2" class="w-4 h-4"></i> Salvar backup')
 rep('<i data-lucide="download" class="w-3.5 h-3.5"></i> Baixar backup antes', '<i data-lucide="share-2" class="w-3.5 h-3.5"></i> Salvar backup antes')
 sub(r'<a id="wa-link"[^>]*>📲 WhatsApp</a>',
