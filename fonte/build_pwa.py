@@ -9,6 +9,9 @@ from pathlib import Path
 
 src, node_dir, out = Path(sys.argv[1]), Path(sys.argv[2]), Path(sys.argv[3])
 html = src.read_text(encoding='utf-8')
+# A pasta de saída é apagada e recriada: nunca aceitar a raiz do repositório ou uma pasta que a contenha.
+if (out / '.git').exists() or out.resolve() in Path.cwd().resolve().parents or out.resolve() == Path.cwd().resolve():
+    sys.exit(f'Pasta de saída insegura (seria apagada): {out}. Use uma pasta temporária.')
 if out.exists():
     shutil.rmtree(out)
 (out / 'vendor').mkdir(parents=True)

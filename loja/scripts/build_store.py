@@ -116,6 +116,7 @@ native = r'''
       try {
         const res = await NativePlugins.Filesystem.writeFile({ path: fileName, data: json, directory: 'CACHE', encoding: 'utf8' });
         await NativePlugins.Share.share({ title: 'Backup NutriPen', files: [res.uri], dialogTitle: 'Salvar backup em…' });
+        appState.lastBackupAt = getTodayISO(); saveState(); renderNotifications();
         return;
       } catch (e) {
         if (String(e && e.message).toLowerCase().includes('cancel')) return;
@@ -127,6 +128,7 @@ native = r'''
     const a = document.createElement('a');
     a.href = url; a.download = fileName; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+    appState.lastBackupAt = getTodayISO(); saveState(); renderNotifications();
     showToast('Backup salvo.');
   };
 

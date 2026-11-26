@@ -18,6 +18,7 @@
   <script>
     (function () {
       try {
+        var f = localStorage.getItem('nutripen_fonte'); if (f === 'lg' || f === 'xl') document.documentElement.dataset.font = f;
         var t = localStorage.getItem('nutripen_theme');
         if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
           document.documentElement.classList.add('dark');
@@ -1068,7 +1069,7 @@
 
       <div id="reset-data-warning" class="hidden p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/70 border border-rose-300 dark:border-rose-800 text-xs text-rose-950 dark:text-rose-100 space-y-2">
         <strong class="block">⚠️ Isto apaga TODOS os seus registros atuais.</strong>
-        <p>Refeições, glicemias, aplicações e medidas serão perdidas. Não dá para desfazer.</p>
+        <p>Refeições, glicemias, aplicações, medidas, exames e fotos serão perdidos. Não dá para desfazer.</p>
         <div class="flex flex-wrap items-center gap-2">
           <button type="button" onclick="exportBackupJSON()" class="btn btn-sm btn-dark"><i data-lucide="download" class="w-3.5 h-3.5"></i> Baixar backup antes</button>
           <label class="inline-flex items-center gap-2 font-semibold cursor-pointer"><input type="checkbox" id="reset-confirm-check" class="w-4 h-4 rounded" /> Entendo, pode apagar</label>
@@ -1616,7 +1617,8 @@
           id: safeId(i.id, 'inj'), date: i.date,
           medication: Object.prototype.hasOwnProperty.call(MEDICATIONS, m) ? m : p.medication,
           dose: normalizeDose(i.dose) || p.dose, intervalDays: clampInterval(i.intervalDays),
-          site: INJECTION_SITES.includes(i.site) ? i.site : '', skipped: i.skipped === true
+          site: INJECTION_SITES.includes(i.site) ? i.site : '', skipped: i.skipped === true,
+          catchUp: i.catchUp === true, consumedPen: i.consumedPen === true
         };
       });
       out.weights = arr(src.weights).filter(w => safeDate(w.date) && rangeOrNull(w.weight, 30, 400) !== null).slice(0, 5000).map(w => ({
@@ -1814,12 +1816,14 @@
     function getDoseSchedule(profile) {
       const today = getTodayISO();
       const last = getSortedInjections()[0] || null;
-      const interval = (last && clampInterval(last.intervalDays)) || clampInterval(profile.intervalDays) || defaultIntervalFor(profile.medication);
-      if (!last) return { hasLast: false, interval, last: null };
+      // regular = intervalo do tratamento; interval = distância até a próxima (pode ser menor após aplicação atrasada)
+      const regular = clampInterval(profile.intervalDays) || defaultIntervalFor(profile.medication);
+      const interval = (last && clampInterval(last.intervalDays)) || regular;
+      if (!last) return { hasLast: false, interval, regular, last: null };
       const nextDate = addDaysISO(last.date, interval);
       const daysUntil = daysBetweenISO(today, nextDate);
       return {
-        hasLast: true, last, interval, nextDate, daysUntil,
+        hasLast: true, last, interval, regular, nextDate, daysUntil,
         injectedToday: last.date === today, overdue: daysUntil < 0, daysLate: Math.max(0, -daysUntil),
         daysSinceLast: daysBetweenISO(last.date, today)
       };
@@ -1961,8 +1965,8 @@
         activityLevel: $('pm-activity').value,
         proteinFactor: parseFloat($('pm-protein-factor').value),
         customGeminiKey: $('pm-gemini-key').value.trim(),
-        treatmentStart: $('pm-treatment-start').value || null,
-        cycle: { enabled: $('pm-sex').value === 'F' && $('pm-cycle-enabled').checked, lastStart: $('pm-cycle-last').value || null, length: parseInt($('pm-cycle-length').value, 10) || 28 },
+        treatmentStart: ($('pm-treatment-start').value && $('pm-treatment-start').value <= getTodayISO()) ? $('pm-treatment-start').value : null,
+        cycle: { enabled: $('pm-sex').value === 'F' && $('pm-cycle-enabled').checked, lastStart: $('pm-cycle-last').value || null, length: Math.min(45, Math.max(20, parseInt($('pm-cycle-length').value, 10) || 28)) },
         conditions: {
           diabetes: $('cond-diabetes').checked, bariatric: $('cond-bariatric').checked, cholecystectomy: $('cond-cholecystectomy').checked,
           gerd: $('cond-gerd').checked, hypertension: $('cond-hypertension').checked, recentSurgery: $('cond-recentSurgery').checked,
@@ -2095,7 +2099,7 @@
       const medShort = getMedInfo(profile.medication).short;
       const tEl = $('next-dose-countdown'), sEl = $('next-dose-subtext'), nEl = $('next-dose-days-num'), uEl = $('next-dose-days-unit');
       const nextLabel = sched.hasLast ? `${WEEKDAYS_PT[new Date(sched.nextDate + 'T12:00:00').getDay()]}, ${formatShortDateBR(sched.nextDate)}` : '';
-      const doseTxt = `${medShort} ${fmtDose(profile.dose)} • ${fmtInterval(sched.interval)}`;
+      const doseTxt = `${medShort} ${fmtDose(profile.dose)} • ${fmtInterval(sched.regular)}`;
       if (!sched.hasLast) {
         tEl.textContent = 'Registre sua aplicação';
         sEl.textContent = `${doseTxt} • o app calcula a próxima data`;
@@ -2342,7 +2346,7 @@
       $('meals-tab-fib-summary').textContent = `🥦 ${fmt(totals.fiber)}/${targets.fiberGoal}g`;
       $('meals-tab-carb-summary').textContent = `🍚 ${fmt(totals.carbs)}/${targets.carbCeiling}g`;
       $('meals-tab-fat-summary').textContent = `🥑 ${fmt(totals.fat)}/${targets.fatCeiling}g`;
-      if (!$('meal-time').value) $('meal-time').value = getCurrentTimeHM();
+      refreshAutoDates();
 
       const meals = [...dayLog.meals].sort((a, b) => String(a.time).localeCompare(String(b.time)));
       $('today-meals-count').textContent = `${meals.length} ${meals.length === 1 ? 'refeição' : 'refeições'} • ${fmt(totals.kcal, 0)} kcal`;
@@ -2412,7 +2416,7 @@
 
     function clearMealForm() {
       ['meal-desc', 'meal-kcal', 'meal-protein', 'meal-fiber', 'meal-carbs', 'meal-fat'].forEach(id => { $(id).value = ''; });
-      $('meal-time').value = getCurrentTimeHM();
+      $('meal-time').value = getCurrentTimeHM(); $('meal-time').dataset.auto = '1';
       $('meal-slot').value = suggestSlotByTime();
       const r = document.querySelector('input[name="meal-digest"][value="Leve"]'); if (r) r.checked = true;
       $('meal-form-live-alert').classList.add('hidden');
@@ -2832,13 +2836,28 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
     function updateInjIntervalHint() {
       const n = clampInterval($('inj-interval').value);
       const date = $('inj-date').value || getTodayISO();
-      $('inj-interval-hint').textContent = n ? `Próxima aplicação: ${formatDateBR(addDaysISO(date, n))} (${fmtInterval(n)}).` : 'Informe de 1 a 90 dias.';
+      const catchUp = typeof pendingCatchUp === 'number' && n === pendingCatchUp && date === getTodayISO();
+      $('inj-interval-hint').textContent = !n ? 'Informe de 1 a 90 dias.' : catchUp
+        ? `Aplicação com atraso: a próxima volta ao dia de sempre, ${formatDateBR(addDaysISO(date, n))}. Depois, segue ${fmtInterval(appState.profile.intervalDays)}.`
+        : `Próxima aplicação: ${formatDateBR(addDaysISO(date, n))} (${fmtInterval(n)}).`;
+    }
+
+    // Campos de data/hora preenchidos pelo app acompanham o relógio (virada do dia, app aberto por horas)
+    // até a pessoa mexer neles; depois disso, o valor dela é respeitado.
+    function autoFill(id, value) {
+      const el = $(id); if (!el) return;
+      if (!el.value || (el.dataset.auto === '1' && el.value !== value)) { el.value = value; el.dataset.auto = '1'; }
+    }
+    function refreshAutoDates() {
+      const d = getTodayISO(), t = getCurrentTimeHM();
+      ['diary-entry-date', 'inj-date', 'w-date'].forEach(id => autoFill(id, d));
+      ['diary-entry-time', 'w-time', 'meal-time'].forEach(id => autoFill(id, t));
     }
 
     function renderPenAndDiaryTab() {
-      if (!$('diary-entry-date').value) $('diary-entry-date').value = getTodayISO();
-      if (!$('diary-entry-time').value) $('diary-entry-time').value = getCurrentTimeHM();
-      if (!$('inj-date').value) $('inj-date').value = getTodayISO();
+      refreshAutoDates();
+      refreshAutoDates();
+      refreshAutoDates();
       syncInjectionFormSelects(false);
       if (!$('inj-site').dataset.userSet) {
         const last = getSortedInjections().find(i => i.site);
@@ -2857,7 +2876,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
           <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-xs">
             <div>
               <span class="font-bold text-slate-900 dark:text-white">${formatDateBR(inj.date)}</span>
-              <span class="mx-1 text-slate-400">•</span><span class="font-semibold text-brand-700 dark:text-brand-400">${escapeHTML(fmtDose(inj.dose))}</span>${clampInterval(inj.intervalDays) ? `<span class="text-slate-500 dark:text-slate-400"> • ${escapeHTML(fmtInterval(inj.intervalDays))}</span>` : ''}
+              <span class="mx-1 text-slate-400">•</span><span class="font-semibold text-brand-700 dark:text-brand-400">${escapeHTML(fmtDose(inj.dose))}</span>${inj.catchUp ? '<span class="text-amber-700 dark:text-amber-400"> • aplicada com atraso</span>' : clampInterval(inj.intervalDays) ? `<span class="text-slate-500 dark:text-slate-400"> • ${escapeHTML(fmtInterval(inj.intervalDays))}</span>` : ''}
               <span class="block text-[11px] text-slate-500 dark:text-slate-400">${escapeHTML(inj.site || 'Local não informado')} • ${escapeHTML(getMedInfo(inj.medication).short)}</span>
             </div>
             <button type="button" onclick="deleteInjection('${escapeHTML(inj.id)}')" class="icon-btn-danger" aria-label="Excluir aplicação"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
@@ -2939,7 +2958,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       appState.diaryEntries.push(entry);
       noteCycleFromCheckIn(entry);
       $('symptom-notes').value = '';
-      $('diary-entry-time').value = getCurrentTimeHM();
+      $('diary-entry-time').value = getCurrentTimeHM(); $('diary-entry-time').dataset.auto = '1';
       selectedDiaryBowel = 'normal'; selectedDiarySymptoms = ['none'];
       saveState(); renderTodayTab(); renderPenAndDiaryTab(); renderClinicalReport();
       showToast(`Check-in salvo (${formatShortDateBR(date)} às ${time})`, 'success', { actionLabel: 'Desfazer', onAction: () => deleteDiaryCheckIn(entry.id, true) });
@@ -3013,8 +3032,9 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const idx = appState.injections.findIndex(i => i.id === id);
       if (idx < 0) return;
       const [removed] = appState.injections.splice(idx, 1);
+      restorePenDose(removed);
       saveState(); renderTodayTab(); renderPenAndDiaryTab(); renderClinicalReport();
-      showToast('Aplicação excluída.', 'success', { actionLabel: 'Desfazer', onAction: () => { appState.injections.push(removed); saveState(); renderTodayTab(); renderPenAndDiaryTab(); renderClinicalReport(); } });
+      showToast('Aplicação excluída.', 'success', { actionLabel: 'Desfazer', onAction: () => { appState.injections.push(removed); if (removed.consumedPen) removed.consumedPen = consumePenDose(); saveState(); renderTodayTab(); renderPenAndDiaryTab(); renderClinicalReport(); } });
     }
 
     // =========================================================================
@@ -3038,8 +3058,8 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
     function renderEvolutionTab() {
       const weights = [...appState.weights].sort(sortChronologicalAsc);
       const profile = appState.profile;
-      if (!$('w-date').value) $('w-date').value = getTodayISO();
-      if (!$('w-time').value) $('w-time').value = getCurrentTimeHM();
+      refreshAutoDates();
+      refreshAutoDates();
       renderMomentButtons(); renderChartModeButtons();
 
       const startW = num(profile.initialWeight) || (weights[0] ? weights[0].weight : profile.weight);
@@ -3295,7 +3315,9 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       }
 
       const milestones = [];
-      const ivOf = i => clampInterval(i.intervalDays) || profile.intervalDays;
+      const ivMap = new Map(); let lastIv = profile.intervalDays;
+      injections.forEach(i => { if (!i.catchUp) lastIv = clampInterval(i.intervalDays) || lastIv; ivMap.set(i.id, lastIv); });
+      const ivOf = i => ivMap.get(i.id) || profile.intervalDays;
       injections.forEach(i => {
         const prev = milestones[milestones.length - 1];
         if (!prev || prev.dose !== i.dose || ivOf(prev) !== ivOf(i)) milestones.push(i);
@@ -3376,7 +3398,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       sections[0].lines.splice(3, 0, `Tempo de tratamento: ${tDay ? `${tDay} dias (desde ${formatDateBR(tStart)})` : 'sem data de início'}${skipped.length ? ` | Doses puladas: ${skipped.length} (${skipped.map(s => formatShortDateBR(s.date)).join(', ')})` : ''}`);
       sections.push({ title: 'Estilo de vida (últimos 7 dias)', lines: [
         `Atividade física: ${wk.minutes} min (meta OMS 150 min) · treino de força: ${wk.strength} dia(s) (meta 2)`,
-        `Fome: ${wk.hunger !== null ? `média ${fmt(wk.hunger)} de 5` : 'sem registros'}${peak && hc.days >= 6 ? ` · maior fome no dia ${peak.day} após a aplicação (média ${fmt(peak.avg)})` : ''}`
+        `Fome: ${wk.hunger !== null ? `média ${fmt(wk.hunger)} de 5` : 'sem registros'}${peak && hc.days >= 6 ? ` · maior fome ${peak.day === 0 ? 'no dia da aplicação' : `no dia ${peak.day} após a aplicação`} (média ${fmt(peak.avg)})` : ''}`
       ] });
       const exLines = EXAM_DEFS.map(def => {
         const vals = appState.exams.filter(e => e.values[def.key] !== undefined).sort((a, b) => a.date.localeCompare(b.date));
@@ -3574,12 +3596,12 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         list.push({ ...base, id: REMINDER_ID_MIN, title: 'Aplicação da caneta atrasada', body: 'Se já aplicou, registre no NutriPen. Se perdeu a dose, siga a orientação do seu médico.', schedule: { at, allowWhileIdle: true } });
         return list;
       }
-      const count = s.interval === 1 ? 14 : 4;
+      const count = s.regular === 1 ? 14 : 4;
       for (let k = 0; k < count; k++) {
-        const date = addDaysISO(s.nextDate, k * s.interval);
+        const date = addDaysISO(s.nextDate, k * s.regular);
         const at = new Date(`${date}T${r.time}:00`);
         if (at > now) list.push({ ...base, id: REMINDER_ID_MIN + k, title: '💉 Hoje é dia da aplicação', body: `${doseTxt}. Toque para registrar no NutriPen.`, schedule: { at, allowWhileIdle: true } });
-        if (r.eve && s.interval > 1) {
+        if (r.eve && s.regular > 1) {
           const eve = new Date(`${addDaysISO(date, -1)}T20:00:00`);
           if (eve > now) list.push({ ...base, id: REMINDER_ID_MIN + 50 + k, title: 'Amanhã é dia da aplicação', body: 'Deixe a caneta separada e prefira um jantar leve.', schedule: { at: eve, allowWhileIdle: true } });
         }
@@ -3636,7 +3658,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       } else if (s.overdue) {
         status.textContent = `Ativo • aplicação atrasada: aviso às ${r.time}.`;
       } else {
-        status.textContent = `Ativo • próximo aviso: ${formatShortDateBR(s.nextDate)} às ${r.time}${r.eve && s.interval > 1 ? ' (e na véspera às 20h)' : ''}.`;
+        status.textContent = `Ativo • próximo aviso: ${formatShortDateBR(s.nextDate)} às ${r.time}${r.eve && s.regular > 1 ? ' (e na véspera às 20h)' : ''}.`;
       }
     }
 
@@ -3655,12 +3677,12 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const lines = [
         'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//NutriPen//Diario da Caneta//PT-BR', 'CALSCALE:GREGORIAN',
         'BEGIN:VEVENT', `UID:nutripen-aplicacao-${Date.now()}@nutripen`, `DTSTAMP:${stamp}`,
-        `DTSTART:${dt}`, `DTEND:${dtEnd}`, `RRULE:FREQ=DAILY;INTERVAL=${s.interval}`,
+        `DTSTART:${dt}`, `DTEND:${dtEnd}`, `RRULE:FREQ=DAILY;INTERVAL=${s.regular}`,
         `SUMMARY:Aplicação da caneta (${fmtDose(p.dose).replace(/,/g, '\\,')})`,
         'DESCRIPTION:Lembrete do NutriPen. Registre a aplicação no app.',
         'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Hoje é dia da aplicação', 'TRIGGER:PT0M', 'END:VALARM'
       ];
-      if (r.eve && s.interval > 1) {
+      if (r.eve && s.regular > 1) {
         const mins = Number(hh) * 60 + Number(mm) + (24 * 60 - 20 * 60);
         lines.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Amanhã é dia da aplicação', `TRIGGER:-PT${mins}M`, 'END:VALARM');
       }
@@ -3670,7 +3692,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const a = document.createElement('a');
       a.href = url; a.download = 'nutripen-aplicacao.ics'; document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      showToast(`Abra o arquivo para adicionar à agenda: ${fmtInterval(s.interval)}, às ${r.time}.`, 'success', { duration: 7000 });
+      showToast(`Abra o arquivo para adicionar à agenda: ${fmtInterval(s.regular)}, às ${r.time}.`, 'success', { duration: 7000 });
     }
 
     // =========================================================================
@@ -3705,7 +3727,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       'Tirzepatida (Mounjaro)': { produtos: [['Mounjaro', BULARIO('Mounjaro')]], esquecida: { tipo: 'janela', dias: 4,
         texto: 'Aplique assim que lembrar, se passaram até 4 dias da data prevista. Passou de 4 dias: pule esta dose e aplique na próxima data. Entre duas aplicações, mantenha pelo menos 3 dias.' },
         anticoncepcional: true },
-      'Semaglutida (Ozempic / Wegovy)': { produtos: [['Ozempic', BULARIO('Ozempic')], ['Wegovy', BULARIO('Wegovy')]], esquecida: { tipo: 'janela', dias: 5,
+      'Semaglutida (Ozempic / Wegovy)': { produtos: [['Ozempic', BULARIO('Ozempic')], ['Wegovy', BULARIO('Wegovy')]], esquecida: { tipo: 'semaglutida', dias: 5,
         texto: 'Ozempic: aplique assim que lembrar em até 5 dias; depois disso, pule. Wegovy: aplique se faltarem mais de 2 dias para a próxima dose; se faltarem menos, pule.' } },
       'Liraglutida (Saxenda)': { produtos: [['Saxenda', BULARIO('Saxenda')]], esquecida: { tipo: 'diaria',
         texto: 'Não dobre a dose. Aplique a próxima no horário normal. Se ficar mais de 3 dias sem aplicar, fale com seu médico antes de retomar (pode ser preciso recomeçar com dose menor).' } }
@@ -3731,6 +3753,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         d.addEventListener('toggle', () => {
           try { const s = JSON.parse(localStorage.getItem(FOLD_KEY) || '{}') || {}; s[k] = d.open; localStorage.setItem(FOLD_KEY, JSON.stringify(s)); } catch (e) {}
           if (d.open && k === 'relatorio') renderClinicalReport();
+          if (d.open && k === 'checkin') refreshAutoDates();
           if (d.open && k === 'exames') requestAnimationFrame(drawExamChart);
           if (d.open) refreshIcons();
         });
@@ -3753,7 +3776,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
     const MILESTONES = [7, 30, 60, 90, 180, 365];
     function cycleDayOf(dateISO) {
       // dias desde a última aplicação (real ou pulada) anterior ou igual à data
-      const prev = appState.injections.filter(i => i.date <= dateISO).sort((a, b) => b.date.localeCompare(a.date))[0];
+      const prev = appState.injections.filter(i => !i.skipped && i.date <= dateISO).sort((a, b) => b.date.localeCompare(a.date))[0];
       return prev ? daysBetweenISO(prev.date, dateISO) : null;
     }
 
@@ -3782,12 +3805,12 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       } else tc.classList.add('hidden');
       // bolinhas do ciclo
       const s = getDoseSchedule(p), dots = $('dose-cycle-dots');
-      if (s.hasLast && s.interval > 1) {
-        const passed = Math.min(s.interval, Math.max(0, s.daysSinceLast));
-        dots.innerHTML = s.interval <= 14
-          ? Array.from({ length: s.interval }, (_, i) => `<span class="h-1.5 flex-1 rounded-full ${i < passed ? 'bg-white' : 'bg-white/30'}"></span>`).join('')
-          : `<span class="h-1.5 flex-1 rounded-full bg-white/30 overflow-hidden"><span class="block h-full bg-white" style="width:${Math.round((passed / s.interval) * 100)}%"></span></span>`;
-        dots.insertAdjacentHTML('beforeend', `<span class="text-[11px] text-teal-100 ml-1 whitespace-nowrap">dia ${passed} de ${s.interval}</span>`);
+      if (s.hasLast && s.regular > 1) {
+        const R = s.regular, passed = Math.min(R, Math.max(0, R - s.daysUntil));
+        dots.innerHTML = R <= 14
+          ? Array.from({ length: R }, (_, i) => `<span class="h-1.5 flex-1 rounded-full ${i < passed ? 'bg-white' : 'bg-white/30'}"></span>`).join('')
+          : `<span class="h-1.5 flex-1 rounded-full bg-white/30 overflow-hidden"><span class="block h-full bg-white" style="width:${Math.round((passed / R) * 100)}%"></span></span>`;
+        dots.insertAdjacentHTML('beforeend', `<span class="text-[11px] text-teal-100 ml-1 whitespace-nowrap">dia ${passed} de ${R}</span>`);
       } else dots.innerHTML = '';
       // anéis
       $('goal-rings').innerHTML =
@@ -3830,7 +3853,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const stats = hungerByCycleDay();
       if (dayLog.hunger && stats.days >= 6) {
         const peak = stats.rows.filter(r => r.n >= 1).sort((a, b) => b.avg - a.avg)[0];
-        box.innerHTML = peak ? `📈 <strong>Seu padrão:</strong> a fome costuma ser maior no <strong>dia ${peak.day}</strong> após a aplicação (média ${fmt(peak.avg)}). Planeje lanches com proteína nesses dias e leve isso à consulta.` : '';
+        box.innerHTML = peak ? `📈 <strong>Seu padrão:</strong> a fome costuma ser maior ${peak.day === 0 ? 'no <strong>dia da aplicação</strong>' : `no <strong>dia ${peak.day}</strong> após a aplicação`} (média ${fmt(peak.avg)}). Planeje lanches com proteína nesses dias e leve isso à consulta.` : '';
         box.classList.toggle('hidden', !peak);
       } else if (dayLog.hunger) {
         box.textContent = 'Registrado 👍 Com alguns dias de registro, o app mostra em que dia do ciclo da caneta sua fome aumenta.';
@@ -3912,12 +3935,12 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
 
     // ---------- Botão + ----------
     const QUICK_ACTIONS = [
-      ['⚖️', 'Peso', () => { openFold('checkin'); setTimeout(() => $('diary-weight').focus(), 350); }],
+      ['⚖️', 'Peso', () => { refreshAutoDates(); openFold('checkin'); setTimeout(() => $('diary-weight').focus(), 350); }],
       ['💧', 'Água', () => quickAddMacro('water', 250)],
       ['🍽️', 'Refeição', () => { switchTab('refeicoes'); setTimeout(() => { $('meal-form-card').scrollIntoView({ behavior: 'smooth' }); $('meal-desc').focus(); }, 120); }],
       ['🩸', 'Glicemia', () => openGlucoseModal()],
       ['🏃', 'Atividade', () => { switchTab('diario', { keepScroll: true }); scrollToId('activity-card'); }],
-      ['🤢', 'Sintoma', () => openFold('checkin')],
+      ['🤢', 'Sintoma', () => { refreshAutoDates(); openFold('checkin'); }],
       ['😋', 'Fome', () => { switchTab('diario', { keepScroll: true }); scrollToId('hunger-card'); }],
       ['💉', 'Aplicação', () => { switchTab('caneta'); setTimeout(() => scrollToId('injection-form'), 120); }],
       ['🧪', 'Exame', () => openFold('exames')],
@@ -4008,7 +4031,12 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
     // ---------- Caneta: estoque, dose esquecida, bula, anticoncepcional ----------
     function consumePenDose() {
       const pen = appState.profile.pen;
-      if (pen.dosesPerPen && pen.remaining !== null && pen.remaining > 0) pen.remaining -= 1;
+      if (pen.dosesPerPen && pen.remaining !== null && pen.remaining > 0) { pen.remaining -= 1; return true; }
+      return false;
+    }
+    function restorePenDose(inj) {
+      const pen = appState.profile.pen;
+      if (inj && inj.consumedPen && pen.dosesPerPen && pen.remaining !== null) pen.remaining += 1;
     }
     function penBought() {
       const pen = appState.profile.pen;
@@ -4040,7 +4068,14 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         const std = getMedInfo(p.medication).frequency === 'daily' ? 1 : 7;
         let rule;
         if (s.daysSinceLast >= 14) rule = `<p class="font-semibold">Faz ${s.daysSinceLast} dias desde a última aplicação. Com 2 semanas ou mais sem aplicar, <strong>fale com seu médico antes de voltar</strong> — retomar a mesma dose pode causar enjoo forte.</p>`;
-        else if (s.interval !== std) rule = '<p>Seu intervalo foi ajustado pelo médico. <strong>Siga a orientação dele</strong> para a dose atrasada.</p>';
+        else if (s.regular !== std) rule = '<p>Seu intervalo foi ajustado pelo médico. <strong>Siga a orientação dele</strong> para a dose atrasada.</p>';
+        else if (info && info.esquecida.tipo === 'semaglutida') {
+          const follow = s.regular - s.daysLate; // dias até a dose seguinte (no dia de sempre)
+          const head = s.daysLate > 5 ? '⏭️ Passou de 5 dias: o indicado é pular esta dose e aplicar na próxima data.'
+            : follow > 2 ? `✅ Ainda dá tempo (${s.daysLate} ${s.daysLate === 1 ? 'dia' : 'dias'} de atraso), tanto para Ozempic quanto para Wegovy.`
+            : `⚠️ Depende da caneta: <strong>Ozempic</strong> ainda permite aplicar (até 5 dias); <strong>Wegovy</strong> manda pular, porque faltam só ${follow} ${follow === 1 ? 'dia' : 'dias'} para a próxima dose.`;
+          rule = `<p class="font-semibold">${head}</p><p class="mt-1">${info.esquecida.texto}</p>`;
+        }
         else if (info && info.esquecida.tipo === 'janela') rule = `<p class="font-semibold">${s.daysLate <= info.esquecida.dias ? `✅ Ainda dá tempo: está ${s.daysLate} ${s.daysLate === 1 ? 'dia' : 'dias'} atrasada (limite da bula: ${info.esquecida.dias} dias).` : `⏭️ Passou do limite de ${info.esquecida.dias} dias da bula: o indicado é pular esta dose.`}</p><p class="mt-1">${info.esquecida.texto}</p>`;
         else if (info) rule = `<p>${info.esquecida.texto}</p>`;
         else rule = '<p>Consulte a bula da sua caneta ou seu médico sobre a dose esquecida.</p>';
@@ -4070,12 +4105,23 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         <p class="text-[11px] text-slate-500 dark:text-slate-400">${escapeHTML(BULA_FONTE)}</p>
         <div class="flex flex-wrap gap-2">${info.produtos.map(([n, u]) => `<a class="btn btn-sm btn-soft" target="_blank" rel="noopener noreferrer" href="${u}">📄 Bula oficial: ${escapeHTML(n)}</a>`).join('')}</div>`;
     }
-    function markAppliedLate() { switchTab('caneta', { keepScroll: true }); $('inj-date').value = getTodayISO(); updateInjIntervalHint(); scrollToId('injection-form'); showToast('Confira a data da aplicação e toque em "Registrar".'); }
+    let pendingCatchUp = null; // distância (dias) até o dia de sempre, quando a dose atrasada é aplicada hoje
+    const MIN_GAP = med => (med.startsWith('Tirzepatida') ? 3 : med.startsWith('Semaglutida') ? 2 : 1);
+    function markAppliedLate() {
+      const p = appState.profile, s = getDoseSchedule(p), today = getTodayISO();
+      const gap = s.hasLast && s.overdue ? s.regular - s.daysLate : 0;
+      pendingCatchUp = gap >= MIN_GAP(p.medication) ? gap : null;
+      switchTab('caneta', { keepScroll: true });
+      $('inj-date').value = today; $('inj-date').dataset.auto = '';
+      $('inj-interval').value = pendingCatchUp || s.regular; $('inj-interval').dataset.touched = '1';
+      updateInjIntervalHint(); scrollToId('injection-form');
+      showToast(pendingCatchUp ? `Pela bula, a próxima volta ao dia de sempre: ${formatShortDateBR(addDaysISO(today, pendingCatchUp))}. Confira e toque em "Registrar".` : 'Confira a data da aplicação e toque em "Registrar".', 'success', { duration: 6000 });
+    }
     function skipDose() {
       const p = appState.profile, s = getDoseSchedule(p); if (!s.hasLast) return;
-      const entry = { id: uid('inj'), date: s.nextDate, medication: p.medication, dose: p.dose, intervalDays: s.interval, site: '', skipped: true };
+      const entry = { id: uid('inj'), date: s.nextDate, medication: p.medication, dose: p.dose, intervalDays: s.regular, site: '', skipped: true };
       appState.injections.push(entry); saveState(); renderAll();
-      showToast(`Dose de ${formatShortDateBR(s.nextDate)} marcada como pulada. Próxima: ${formatShortDateBR(addDaysISO(s.nextDate, s.interval))}.`, 'success', { actionLabel: 'Desfazer', onAction: () => deleteInjection(entry.id) });
+      showToast(`Dose de ${formatShortDateBR(s.nextDate)} marcada como pulada. Próxima: ${formatShortDateBR(addDaysISO(s.nextDate, s.regular))}.`, 'success', { actionLabel: 'Desfazer', onAction: () => deleteInjection(entry.id) });
     }
 
     // ---------- Ciclo menstrual ----------
@@ -4192,6 +4238,8 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       EXAM_DEFS.forEach(d => { const raw = $(`ex-${d.key}`).value; if (raw === '') return; const v = rangeOrNull(String(raw).replace(',', '.'), d.min, d.max); if (v === null) bad = d; else values[d.key] = v; });
       if (bad) { showToast(`Valor fora do esperado para ${bad.short} (${bad.min}–${bad.max} ${bad.unit}).`, 'error'); $(`ex-${bad.key}`).focus(); return; }
       if (!Object.keys(values).length) { showToast('Preencha pelo menos um resultado.', 'error'); return; }
+      const same = appState.exams.find(e => e.date === date);
+      if (same) { Object.assign(same.values, values); saveState(); examChartKey = Object.keys(values)[0]; renderExams(); renderNotifications(); renderClinicalReport(); refreshIcons(); showToast(`Resultados somados ao exame de ${formatDateBR(date)} ✓`); return; }
       const ex = { id: uid('ex'), date, values };
       appState.exams.push(ex); saveState(); examChartKey = Object.keys(values)[0];
       renderExams(); renderNotifications(); renderClinicalReport(); refreshIcons();
@@ -4286,6 +4334,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       img.onerror = () => { URL.revokeObjectURL(url); showToast('Não consegui abrir esta imagem.', 'error'); };
       img.src = url;
     }
+    async function clearProgressPhotos() { try { await photoOp('readwrite', st => st.clear()); } catch (e) {} }
     async function deleteProgressPhoto(id) { if (!SAFE_ID.test(id)) return; try { await photoOp('readwrite', st => st.delete(id)); renderPhotos(); showToast('Foto excluída.'); } catch (e) {} }
 
     // ---------- Mais: consultas, perguntas, preferências ----------
@@ -4507,12 +4556,15 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         const intervalDays = clampInterval($('inj-interval').value);
         if (!intervalDays) { showToast('Informe em quantos dias será a próxima aplicação (1 a 90).', 'error'); $('inj-interval').focus(); return; }
         const inj = { id: uid('inj'), date: $('inj-date').value || getTodayISO(), medication: $('inj-med').value, dose, intervalDays, site: $('inj-site').value };
+        const catchUp = typeof pendingCatchUp === 'number' && intervalDays === pendingCatchUp && inj.date === getTodayISO();
+        if (catchUp) inj.catchUp = true;
+        pendingCatchUp = null;
         const dup = appState.injections.find(i => i.date === inj.date && i.medication === inj.medication);
+        inj.consumedPen = consumePenDose();
         appState.injections.push(inj);
-        consumePenDose();
         appState.profile.medication = inj.medication;
         appState.profile.dose = inj.dose;
-        appState.profile.intervalDays = inj.intervalDays;
+        if (!inj.catchUp) appState.profile.intervalDays = inj.intervalDays;
         $('inj-site').dataset.userSet = '';
         syncInjectionFormSelects(true);
         saveState(); renderAll();
@@ -4531,7 +4583,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         appState.weights.push(entry);
         syncProfileWeightFromHistory();
         ['w-val', 'w-waist-narrow', 'w-waist', 'w-arm', 'w-thigh'].forEach(id => { $(id).value = ''; });
-        $('w-time').value = getCurrentTimeHM();
+        $('w-time').value = getCurrentTimeHM(); $('w-time').dataset.auto = '1';
         saveState(); renderAll();
         showToast(`Registro salvo (${formatShortDateBR(date)} às ${time})`, 'success', { actionLabel: 'Desfazer', onAction: () => deleteWeightEntry(entry.id) });
       });
@@ -4595,6 +4647,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         if (!data.intervalDays) { showToast('Informe o intervalo entre aplicações (1 a 90 dias).', 'error'); $('ob-interval').focus(); return; }
         if (data.lastDate && data.lastDate > getTodayISO()) data.lastDate = '';
         appState = normalizeState(createCleanUserState(data, appState.profile.customGeminiKey));
+        clearProgressPhotos().then(renderPhotos);
         saveState(); closeResetModal();
         $('onboarding-reset-form').reset();
         syncInjectionFormSelects(true);
@@ -4603,7 +4656,8 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       });
 
       // Virada do dia com o app aberto
-      document.addEventListener('visibilitychange', () => { if (!document.hidden && getTodayISO() !== lastRenderedDay) renderAll(); });
+      document.addEventListener('visibilitychange', () => { if (document.hidden) return; if (getTodayISO() !== lastRenderedDay) renderAll(); else refreshAutoDates(); });
+      ['diary-entry-date', 'diary-entry-time', 'inj-date', 'w-date', 'w-time', 'meal-time'].forEach(id => ['input', 'change'].forEach(ev => $(id).addEventListener(ev, e => { if (e.isTrusted) $(id).dataset.auto = ''; })));
       window.addEventListener('online', () => showToast('Conexão restabelecida — IA disponível.'));
       let resizeTimer;
       window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (currentTab === 'evolucao') renderInteractiveSVGChart(); }, 150); });
@@ -4622,7 +4676,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       if (nativeReminders) {
         LocalNotif.addListener('localNotificationActionPerformed', a => {
           const tab = a && a.notification && a.notification.extra && a.notification.extra.tab;
-          switchTab(tab === 'caneta' ? 'caneta' : 'hoje');
+          switchTab(['caneta', 'mais', 'diario'].includes(tab) ? tab : 'diario');
         });
       }
       initNewFeatures();

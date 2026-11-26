@@ -203,6 +203,19 @@ agora", exames com gráficos, consultas e perguntas, estoque da caneta, dose esq
 opção de pular, aviso de anticoncepcional (tirzepatida), ciclo menstrual com acolhimento no peso, calendário do
 mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho na manutenção e resumo da semana.
 
+### Revisão da 1.2 (26/11/2026) — corrigido
+- **Aplicação atrasada:** "Já apliquei" agora faz a próxima voltar ao dia de sempre (respeitando o intervalo
+  mínimo da bula) e não muda o intervalo do tratamento; no histórico aparece "aplicada com atraso".
+- **Estoque da caneta:** excluir uma aplicação devolve a dose; "Desfazer" desconta de novo.
+- **Semaglutida:** com atraso, o aviso separa Ozempic (até 5 dias) e Wegovy (pular se faltarem 2 dias ou menos).
+- **Datas automáticas:** data e hora do check-in, peso, refeição e aplicação acompanham a virada do dia
+  (app aberto de um dia para o outro); o que a pessoa digitou é respeitado.
+- **Zerar perfil** apaga também as fotos guardadas no aparelho.
+- Backup na versão Android registra a data (o aviso "faça backup" some); exames na mesma data são somados;
+  fome no "dia da aplicação"; ciclo da fome conta só doses aplicadas; toque na notificação abre a aba certa;
+  letra maior aplicada antes de a tela aparecer; perfil não aceita início do tratamento no futuro.
+- `build_pwa.py` recusa pasta de saída que contenha o repositório (ela é apagada no build).
+
 ### A conferir antes de publicar na loja
 - [ ] **Bulas:** confirmar os resumos (dose esquecida, anticoncepcional, sinais de alerta) com a versão vigente
   de cada bula no Bulário da ANVISA e registrar a **data da versão** em `BULA_INFO` (hoje o app mostra
