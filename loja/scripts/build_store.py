@@ -44,6 +44,8 @@ sub(r'\s*<!-- Tailwind v3.*?</script>\s*<script>\s*tailwind\.config = .*?</scrip
 sub(r'\s*<style type="text/tailwindcss">.*?</style>', '')
 sub(r'<script src="https://unpkg\.com/lucide@[^"]+"></script>', '<script src="vendor/lucide.min.js"></script>')
 rep('<title>NutriPen — Acompanhamento Nutricional & GLP-1/GIP</title>', '<title>NutriPen</title>')
+sub(r"\n\s*window\.addEventListener\('online',[^\n]*", '')
+sub(r"\n\s*window\.addEventListener\('offline',[^\n]*", '')
 rep('    body { font-family:', '    header.sticky { padding-top: env(safe-area-inset-top, 0px); }\n    body { font-family:')
 
 # ---------------------------------------------------------------- Refeições: sem IA, montador sempre visível

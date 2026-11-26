@@ -703,7 +703,7 @@
             <button type="button" data-chart-mode="thigh" class="chart-mode-btn">🦵 Coxa</button>
             <button type="button" data-chart-mode="glucose" class="chart-mode-btn">🩸 Glicemia</button>
           </div>
-          <div id="svg-chart-container" class="w-full h-64 sm:h-72 rounded-xl bg-slate-50/60 dark:bg-slate-950/60 border border-slate-200/70 dark:border-slate-800 flex items-center justify-center overflow-hidden"></div>
+          <div id="svg-chart-container" class="w-full h-72 rounded-xl bg-slate-50/60 dark:bg-slate-950/60 border border-slate-200/70 dark:border-slate-800 flex items-center justify-center overflow-hidden"></div>
         </div>
 
         <div class="lg:col-span-5 space-y-5">
@@ -2899,7 +2899,10 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         return;
       }
 
-      const W = 640, H = 260, padL = 46, padR = 20, padT = 28, padB = 36;
+      // Desenha no tamanho real do quadro (1 unidade = 1px): texto legível no celular
+      const box = container.getBoundingClientRect();
+      const W = Math.round(Math.max(280, box.width || 640)), H = Math.round(Math.max(220, box.height || 260));
+      const padL = 44, padR = 16, padT = 28, padB = 34;
       const plotW = W - padL - padR, plotH = H - padT - padB;
       const vals = chartPoints.map(p => p.value);
       let minV = Math.min(...vals), maxV = Math.max(...vals);
@@ -3402,6 +3405,8 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       // Virada do dia com o app aberto
       document.addEventListener('visibilitychange', () => { if (!document.hidden && getTodayISO() !== lastRenderedDay) renderAll(); });
       window.addEventListener('online', () => showToast('Conexão restabelecida — IA disponível.'));
+      let resizeTimer;
+      window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (currentTab === 'evolucao') renderInteractiveSVGChart(); }, 150); });
       window.addEventListener('offline', () => showToast('Você está offline. Montador e Tabela seguem funcionando.', 'warning'));
 
       $('welcome-accept').addEventListener('change', () => { $('welcome-start').disabled = !$('welcome-accept').checked; });
