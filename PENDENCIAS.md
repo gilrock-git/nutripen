@@ -261,3 +261,65 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
   - faixas de referência dos exames;
   - política de privacidade por lei: GDPR na Europa; leis estaduais de dados de saúde nos EUA;
   - página na Play Store, imagens e preço em cada idioma e país.
+
+## Pedidos de 26/11/2026 (tarde) — para a próxima versão
+
+### Refeições (a parte que mais precisa simplificar)
+- [ ] **Nome da tela:** "Refeições & Scanner" → **"Refeições"**.
+- [ ] **IA:** escrever só "IA" (sem citar Gemini) e permitir outros provedores no futuro.
+  - Na versão da loja ela continua desligada, porque o app promete não usar internet.
+- [ ] **Registrar tocando em botões, sem precisar digitar:**
+  - botões com comidas básicas e genéricas, ex.: bife, frango, peixe, ovo, carne moída, porco, arroz, feijão,
+    macarrão, batata, salada, legumes, pão, queijo, iogurte, fruta, **sobremesa, doce**;
+  - porção como pouco / médio / muito, em vez de gramas;
+  - **"+ adicionar item"** para pôr mais de uma coisa na mesma refeição;
+  - **calorias e proteína opcionais:** hoje são obrigatórias e travam o registro; o app estima pelos botões ou
+    deixa em branco.
+- [ ] **Velocidade ao comer:** rápido / normal / devagar. Com a caneta, comer rápido costuma causar enjoo, então
+  é útil para a nutricionista.
+- [ ] **Montador rápido** com mais opções genéricas ("bife" em vez de só "filé mignon").
+- [ ] **Sair sem salvar:** o registro aberto pelo "+" precisa de um botão para fechar/cancelar sem preencher nada.
+- [ ] **"O que comer agora"** vira "Sugestões para completar o dia":
+  - acrescentar o botão "Comi outra coisa", que abre os botões de comida;
+  - opção "Sigo o cardápio da nutricionista", que esconde as sugestões e mostra só quanto falta de proteína,
+    fibras e água.
+- [ ] **Atalhos de cima também no rodapé** (confirmar com o usuário quais atalhos).
+
+### Dia a dia
+- [ ] **Atividades:** acrescentar **bicicleta**, e também corrida, natação/hidroginástica, dança, pilates/yoga.
+- [ ] **Dia de festa:** um botão que marca o dia como festa. O app:
+  - não trata o dia como "falha";
+  - dá dicas (proteína primeiro, comer devagar, beber água, cuidado com álcool e enjoo);
+  - registra no relatório.
+- [ ] **Bebida alcoólica** (opcional): quantas doses no dia. É relevante com a caneta: enjoo, calorias e risco de
+  hipoglicemia em quem usa remédio para diabetes.
+- [ ] **Cigarro** como condição no perfil (fumante / ex-fumante), não como registro diário. Opcional, sem
+  julgamento.
+- [ ] **Jejum intermitente** (opcional): registrar a janela de alimentação.
+  - Mostrar o aviso: "combine com seu médico/nutricionista", porque com a caneta aumenta o risco de pouca
+    proteína e de hipoglicemia em diabéticos.
+  - O app não incentiva o jejum.
+- [ ] **Peso e medidas:** tirar o campo "manhã / tarde / noite" (o horário já diz isso). Manter só "em jejum? sim
+  / não".
+- [ ] **Glicemia capilar:** simplificar a tela:
+  - valor + momento (jejum, antes de comer, 2 h depois, ao deitar) e cor da faixa;
+  - aparece só para quem marcou diabetes ou pré-diabetes, ou ativa por conta própria.
+
+### Caneta, exames e registros
+- [ ] **Editar qualquer registro** (aplicação, refeição, peso, glicemia, exame, consulta) em vez de apagar e
+  refazer. Ex.: incluir depois o local da primeira aplicação.
+- [ ] **Estoque também para frasco com seringa:** total em mg (ex.: 10 mg) menos a dose (2,5 mg), dá quantas
+  aplicações restam.
+  - O app só faz a conta; não orienta preparo nem diluição.
+  - Medicamento manipulado é tema regulatório sensível na ANVISA; não promover.
+- [ ] **Mais exames:**
+  - o HDL já existe entre os 6 principais; os demais ficam em "Outros exames" — deixar isso mais visível;
+  - acrescentar: hemograma (hemoglobina), insulina e HOMA-IR, TSH, ácido úrico, ureia, potássio, sódio, PCR,
+    ácido fólico, zinco, GGT, fosfatase alcalina, amilase/lipase.
+
+### Navegação e relatório
+- [ ] **Ordem do menu:** primeiro um **Resumo** com os meus dados (nome, dias de tratamento, próxima dose, peso,
+  metas), depois o **Diário**, depois os demais, e **Evolução por último**.
+- [ ] **Relatório com gráficos** (peso, proteína, fome, exames), não só números, também no PDF/impressão.
+- [ ] **Formatos do relatório:** "Consulta nutricional" primeiro, "Consulta médica" depois.
+- [ ] **Aviso de que as informações são só recomendações** no topo do relatório, logo abaixo da identificação.
