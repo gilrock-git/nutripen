@@ -123,6 +123,16 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
   do ciclo da caneta" (dia 1, 2, 3… após a aplicação) para a pessoa perceber se a fome volta antes da próxima dose;
   entra no relatório para o médico ajustar dose/intervalo.
 
+- [ ] **Contador de dias de tratamento.** Mostrar no Diário, perto da saudação: *"Você está no 15º dia de
+  tratamento"*.
+  - Data de início = primeira aplicação registrada; campo "Comecei o tratamento em" no cadastro/perfil para
+    quem começou antes de usar o app (editável).
+  - Marcos com mensagem de incentivo (30, 60, 90 dias, 6 meses, 1 ano), com resumo do período: peso e medidas
+    desde o início, semanas com a meta de proteína batida.
+  - Se houver pausa longa (ex.: semanas sem aplicação), perguntar se a pessoa retomou e permitir recomeçar a
+    contagem ou manter a data original.
+  - Entra no relatório: "Tempo de tratamento: 15 dias (desde 12/11/2026)".
+
 ### Aprovadas para o futuro (26/11/2026)
 - [ ] "O que comer agora?" — sugestões de lanches que fecham a proteína/fibra que falta no dia.
 - [ ] Visão do mês (calendário) com aplicações, peso, sintomas, atividade e fome.
