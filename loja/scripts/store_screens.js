@@ -2,10 +2,13 @@
 const { chromium } = require('playwright'); const path = require('path'); const fs = require('fs');
 const OUT = process.argv[2], BASE = process.argv[3] || 'http://localhost:8767/';
 (async () => {
-  const b = await chromium.launch();
-  const ctx = await b.newContext({ viewport: { width: 360, height: 640 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true, locale: 'pt-BR' });
+  const b = await chromium.launch({ args: ['--lang=pt-BR'] });
+  const ctx = await b.newContext({ viewport: { width: 360, height: 640 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true, locale: 'pt-BR', timezoneId: 'America/Sao_Paulo' });
   await ctx.addInitScript(() => { try { localStorage.setItem('nutripen_aviso_aceito_v1', '1'); } catch (e) {} });
   const p = await ctx.newPage();
+  // Horário fixo de dia (as capturas mostram data/hora nos campos)
+  const now = new Date(); now.setUTCHours(13, 20, 0, 0); // 10h20 em Brasília
+  await p.clock.setFixedTime(now);
   await p.goto(BASE); await p.waitForTimeout(500);
   await p.evaluate(() => { appState.isDemo = false; renderAll(); document.getElementById('toast-container').innerHTML = ''; });
   const shots = [
@@ -20,6 +23,12 @@ const OUT = process.argv[2], BASE = process.argv[3] || 'http://localhost:8767/';
     await p.evaluate(t => switchTab(t), tab);
     if (tab === 'refeicoes') { await p.selectOption('#opb-protein', 'f03'); await p.selectOption('#opb-carb', 'f32'); await p.selectOption('#opb-veg', 'f13'); }
     if (anchor) await p.evaluate(([id, ex]) => { const el = document.getElementById(id); window.scrollTo(0, el.getBoundingClientRect().top + scrollY - 70 - ex); }, [anchor, extra]);
+    // O navegador de captura formata data/hora em inglês; no celular brasileiro aparecem em pt-BR
+    await p.evaluate(() => document.querySelectorAll('input[type=date], input[type=time]').forEach(i => {
+      const v = i.value; if (!v) return;
+      const shown = i.type === 'date' ? v.split('-').reverse().join('/') : v;
+      i.type = 'text'; i.value = shown;
+    }));
     await p.waitForTimeout(400);
     await p.screenshot({ path: path.join(OUT, file) });
   }
