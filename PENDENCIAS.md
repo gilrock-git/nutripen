@@ -320,7 +320,8 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
 ### Navegação e relatório
 - [ ] **Ordem do menu:** primeiro um **Resumo** com os meus dados (nome, dias de tratamento, próxima dose, peso,
   metas), depois o **Diário**, depois os demais, e **Evolução por último**.
-- [ ] **Relatório com gráficos** (peso, proteína, fome, exames), não só números, também no PDF/impressão.
+- [x] **Relatório com gráficos coloridos** (peso, proteína, água, fome × ciclo, glicemia, exames), também na impressão/PDF; dá para desligar.
+  No Android o app não imprime, então os gráficos aparecem só na tela.
 - [x] **Formatos do relatório:** "Consulta nutricional" primeiro, "Consulta médica" depois.
 - [x] **Aviso de que as informações são só recomendações** no topo do relatório, logo abaixo da identificação.
 
@@ -336,6 +337,10 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
   - **Jejum intermitente:** janela de alimentação, com aviso (ver acima).
 
 ### Versão em inglês (testador na Europa)
+- **Testadora:** trabalha em Luxemburgo e mora na França. Nos dois países a emergência é 112 (na França também
+  15, SAMU) e a bula oficial é a da EMA. Exames: Luxemburgo costuma usar mg/dL; laboratórios franceses
+  costumam mostrar glicemia e colesterol em g/L (1,00 g/L = 100 mg/dL), então aceitar mg/dL, g/L e mmol/L.
+  Falta saber **qual caneta** ela usa.
 - Precisa saber o **país** do testador (unidades da glicemia e do colesterol, telefone de emergência) e **qual
   caneta** ele usa.
 - Caminho mais barato para um testador: uma cópia do link de teste em inglês (ex.: `.../nutripen/en/`), com os
