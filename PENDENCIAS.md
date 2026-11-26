@@ -224,3 +224,30 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
   busca certa no celular.
 - [ ] Faixas de referência dos exames: validar com a nutricionista/médico parceiro.
 
+
+## Ideias anotadas (26/11/2026) — para depois
+
+### Diário para a nutricionista
+- [ ] **"Senti fome" com horário:** botão no "+" que registra a hora e a intensidade (1–5), além da nota do dia.
+- [ ] **Refeição "fora do plano":** marcação opcional na refeição (com o que foi e por quê: fome, evento, ansiedade).
+- [ ] **Devolutiva da semana:** linha do tempo por dia (fome → refeição, horários, intervalo entre elas, itens fora
+  do plano) no relatório, em formato fácil de enviar à nutricionista.
+
+### Documentos guardados no aparelho
+- [ ] **Plano alimentar da nutricionista (PDF ou foto):** guardar no aparelho e abrir com um toque.
+- [ ] **Receita médica (PDF ou foto):** guardar no aparelho, com data de emissão e aviso antes de vencer.
+- Técnico: usar o mesmo armazenamento das fotos (IndexedDB, fora do backup); no Android, abrir o PDF no leitor do
+  celular exige um plugin para abrir arquivos (o WebView não mostra PDF).
+
+### Outros idiomas e países
+- Ordem sugerida: **espanhol** (América Latina e Espanha) → **inglês** (EUA, Reino Unido, Canadá, Austrália) →
+  francês / alemão / italiano.
+- O que adaptar:
+  - todos os textos do app em arquivo de tradução;
+  - unidades: lb, mmol/L (glicemia e colesterol), HbA1c em mmol/mol (Reino Unido), datas e números;
+  - tabela de alimentos e nomes das refeições de cada país;
+  - nomes comerciais e resumo da bula pela agência local (FDA, EMA, COFEPRIS…);
+  - telefone de emergência (192 → 911/112);
+  - faixas de referência dos exames;
+  - política de privacidade por lei: GDPR na Europa; leis estaduais de dados de saúde nos EUA;
+  - página na Play Store, imagens e preço em cada idioma e país.
