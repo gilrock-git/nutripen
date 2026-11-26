@@ -53,7 +53,14 @@ self.addEventListener('fetch', event => {
 
   if (url.origin !== self.location.origin) return;
 
-  // Navegação: abre o app do cache (funciona offline), ignorando ?aba=/?acao=.
+  // Navegação para o app (raiz ou index.html): abre do cache (funciona offline), ignorando ?aba=/?acao=.
+  // Outras páginas do site (ex.: privacidade, prévias) seguem pela rede normalmente.
+  const scopePath = new URL(self.registration.scope).pathname;
+  const isAppPage = url.pathname === scopePath || url.pathname === scopePath + 'index.html';
+  if (req.mode === 'navigate' && !isAppPage) {
+    event.respondWith(fetch(req).catch(() => caches.match(req)));
+    return;
+  }
   if (req.mode === 'navigate') {
     event.respondWith((async () => {
       const cache = await caches.open(SHELL_CACHE);
