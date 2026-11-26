@@ -32,6 +32,45 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
 
 - [x] **Revisão de segurança** proporcional ao app (ver seção abaixo).
 
+- [ ] **"Esqueci a aplicação" — orientação para dose atrasada.** Quando a aplicação passar da data
+  (o app já mostra "Aplicação atrasada há X dias"), exibir uma dica acolhedora e um botão/chave
+  "Esqueci a aplicação" com a orientação da bula da caneta em uso. Tom: *"Acontece. Na maioria dos
+  casos não atrapalha o tratamento — veja o que fazer."*
+  - **Regras a confirmar na bula vigente (ANVISA) antes de implementar** — resumo do que consta nas bulas:
+    - **Tirzepatida (Mounjaro):** aplicar assim que lembrar, **se faltarem até 4 dias (96 h)** desde a dose
+      esquecida; passou de 4 dias → **pular** e aplicar no próximo dia programado. Entre duas doses,
+      no mínimo **3 dias (72 h)**.
+    - **Semaglutida — Ozempic:** aplicar assim que lembrar **em até 5 dias**; passou disso → pular.
+    - **Semaglutida — Wegovy:** se faltarem **mais de 2 dias** para a próxima dose, aplicar; se menos → pular.
+    - **Liraglutida (Saxenda, diária):** não dobrar; seguir no dia seguinte. **Mais de 3 dias sem aplicar** →
+      falar com o médico (pode ser preciso reiniciar a dose mais baixa).
+    - **Todas:** nunca aplicar duas doses para "compensar". **2 semanas ou mais** sem aplicar → falar com o
+      médico antes de voltar (risco de enjoo forte ao retomar a mesma dose).
+    - **Intervalo personalizado pelo médico** (ex.: 10 ou 14 dias): mostrar "siga a orientação do seu médico"
+      em vez da regra da bula.
+  - Ao tocar em "Já apliquei", registrar com a data real; ao escolher "Vou pular", registrar a dose pulada
+    (aparece no relatório para o médico) e recalcular a próxima data.
+  - O lembrete (notificação) de atraso passa a trazer essa orientação resumida.
+
+- [ ] **Ciclo menstrual (opcional, só para perfil feminino).** No cadastro e em Meu Perfil, para quem marcou
+  sexo feminino: "Quer acompanhar o ciclo menstrual?" (desligado por padrão).
+  - Campos: data de início da última menstruação e duração média do ciclo (padrão 28 dias); opções
+    "não menstruo / menopausa / uso contínuo de anticoncepcional" para desligar.
+  - No Diário: chip rápido "🩸 Menstruada hoje" / "TPM" no check-in.
+  - **Acolhimento:** nos dias pré-menstruais e menstruais, se o peso subir, mostrar mensagem como
+    *"Nesses dias é comum reter líquido e o peso subir 0,5 a 2 kg. Não é gordura — olhe a tendência das
+    próximas semanas."* Marcar esses dias no gráfico de peso (faixa rosa clara) e não tratar a alta como
+    "piora" nos cartões.
+  - Dica da Nutri no período: reduzir sal, manter água, proteína e fibras; inchaço e vontade de doce são esperados.
+  - Relatório (opcional): indicar quais pesagens caíram no período pré-menstrual.
+  - **Lembrete de segurança a confirmar na bula:** a tirzepatida pode reduzir o efeito do **anticoncepcional
+    oral** no início do tratamento e a cada aumento de dose (a bula orienta método de barreira ou não oral por
+    4 semanas). Exibir esse aviso para mulheres em idade fértil que usam tirzepatida.
+  - Privacidade: dado sensível de saúde — fica só no aparelho, como o resto; mencionar na política.
+
+- [ ] **Termo "glicemia capilar".** Avaliar trocar no app por "Glicemia (medida no dedo)" e manter
+  "glicemia capilar" só no relatório para o médico. *Aguardando decisão.*
+
 ## Decisões em aberto
 
 - [x] **Nome na loja:** proposta "NutriPen: Diário da Caneta" (26 caracteres), com "caneta
