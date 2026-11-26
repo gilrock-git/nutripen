@@ -21,6 +21,17 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
     (o intervalo pode mudar ao longo do tratamento);
   - relatório: mostrar a evolução de dose **e** de intervalo (ex.: "5 mg a cada 7 dias → 5 mg a cada 14 dias").
 
+- [ ] **Alarme / lembrete da aplicação.** Hoje o app só mostra a contagem quando é aberto.
+  - Versão Android: notificação local agendada (plugin `@capacitor/local-notifications`), que
+    funciona sem internet e não altera a "Segurança dos dados";
+  - lembrete no dia, no horário escolhido (ex.: 9h), e opcional na véspera à noite;
+  - reagendar sozinho ao registrar uma aplicação ou mudar o intervalo (depende do item acima);
+  - pedir a permissão de notificação (Android 13+) só quando a pessoa ativar o lembrete;
+  - não usar "alarme exato" (permissão restrita pelo Google Play); alguns minutos de atraso são aceitáveis;
+  - versão web: sem notificação confiável → oferecer "Adicionar à agenda" (.ics), que toca pelo app de calendário.
+
+- [ ] **Revisão de segurança** proporcional ao app (ver seção abaixo).
+
 ## Decisões em aberto
 
 - [ ] **Nome na loja:** proposta "NutriPen: Diário da Caneta" (26 caracteres), com "caneta
@@ -42,3 +53,20 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
 - [ ] Resumo semanal de adesão.
 - [ ] Mover a política de privacidade para outro endereço antes de tornar o repositório privado.
 - [ ] Futuro: "NutriPen IA" (análise de foto) como assinatura opcional.
+
+## Revisão de segurança (checklist)
+
+O NutriPen não tem servidor, login nem internet na versão Android — a superfície de ataque é pequena,
+mas ainda há pontos a verificar antes de publicar:
+
+- [ ] **Importação de backup:** arquivo malicioso não pode executar código (XSS) nem travar o app
+      (tamanho, campos inesperados, textos com HTML). Testes automatizados com arquivos "envenenados".
+- [ ] **Escapar textos** digitados pelo usuário em todas as telas e no relatório.
+- [ ] **Política de segurança de conteúdo (CSP)** na versão da loja: proibir scripts externos e conexões.
+- [ ] **Android:** permissões (nenhuma), componentes exportados, FileProvider, depuração do WebView
+      desligada em produção, backup automático do Android (decidir se fica ligado).
+- [ ] **Dependências:** `npm audit` e versões fixas.
+- [ ] **GitHub:** secrets da chave de assinatura, permissões mínimas do workflow, ações fixadas por versão
+      exata (hash), proteção da branch main.
+- [ ] **Versão web (testadores):** chave do Gemini guardada no navegador — aviso claro e nunca no backup.
+
