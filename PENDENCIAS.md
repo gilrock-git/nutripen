@@ -340,7 +340,10 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
 - **Testadora:** trabalha em Luxemburgo e mora na França. Nos dois países a emergência é 112 (na França também
   15, SAMU) e a bula oficial é a da EMA. Exames: Luxemburgo costuma usar mg/dL; laboratórios franceses
   costumam mostrar glicemia e colesterol em g/L (1,00 g/L = 100 mg/dL), então aceitar mg/dL, g/L e mmol/L.
-  Falta saber **qual caneta** ela usa.
+  **Caneta: tirzepatida (Mounjaro) comprada no Brasil**, com receita brasileira.
+  - Bula: manter a da ANVISA, porque a embalagem dela é brasileira. Pode acrescentar o link da EMA, já que o
+    Mounjaro também é vendido na Europa (a regra da dose esquecida, até 4 dias, é a mesma).
+  - Para ela, a pasta de documentos já ajuda: guardar a receita para viagem e fronteira.
 - Precisa saber o **país** do testador (unidades da glicemia e do colesterol, telefone de emergência) e **qual
   caneta** ele usa.
 - Caminho mais barato para um testador: uma cópia do link de teste em inglês (ex.: `.../nutripen/en/`), com os
