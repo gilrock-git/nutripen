@@ -5,7 +5,7 @@ Diário de acompanhamento nutricional para quem usa canetas GLP-1/GIP (tirzepati
 **Versão de teste.** Não substitui orientação médica ou nutricional. Os dados de cada pessoa ficam apenas no navegador do próprio aparelho.
 
 ## Usar
-Abra https://gilrock-git.github.io/nutripem/ no celular. Para instalar: Android (Chrome) → menu ⋮ do app → "Instalar no celular"; iPhone (Safari) → Compartilhar → "Adicionar à Tela de Início". Depois da primeira abertura funciona sem internet (exceto a análise por IA).
+Abra https://gilrock-git.github.io/nutripen/ no celular. Para instalar: Android (Chrome) → menu ⋮ do app → "Instalar no celular"; iPhone (Safari) → Compartilhar → "Adicionar à Tela de Início". Depois da primeira abertura funciona sem internet (exceto a análise por IA).
 
 ## Estrutura
 - `index.html`, `app.css`, `vendor/`, `icons/`, `manifest.webmanifest`, `sw.js` — app publicado (gerado).
