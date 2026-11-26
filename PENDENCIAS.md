@@ -323,3 +323,22 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
 - [ ] **Relatório com gráficos** (peso, proteína, fome, exames), não só números, também no PDF/impressão.
 - [x] **Formatos do relatório:** "Consulta nutricional" primeiro, "Consulta médica" depois.
 - [x] **Aviso de que as informações são só recomendações** no topo do relatório, logo abaixo da identificação.
+
+### Estilo alimentar (pedido de 26/11/2026)
+- [ ] No perfil, escolher o estilo alimentar (pode marcar mais de um): onívoro, vegetariano, vegano, low carb,
+  sem glúten, sem lactose, jejum intermitente.
+  - **Vegetariano / vegano:** é o que mais muda, porque bater a meta de proteína fica mais difícil.
+    - Sugestões e montador sem carne (tofu, lentilha, grão-de-bico, ervilha, proteína de soja, whey vegano).
+    - Lembrete de vitamina B12 para o vegano.
+  - **Low carb / cetogênica:** ajusta o teto de carboidratos exibido. Aviso: com a caneta e remédios para
+    diabetes há risco de hipoglicemia; combinar com o profissional.
+  - **Sem glúten / sem lactose:** filtra a tabela, o montador e as sugestões.
+  - **Jejum intermitente:** janela de alimentação, com aviso (ver acima).
+
+### Versão em inglês (testador na Europa)
+- Precisa saber o **país** do testador (unidades da glicemia e do colesterol, telefone de emergência) e **qual
+  caneta** ele usa.
+- Caminho mais barato para um testador: uma cópia do link de teste em inglês (ex.: `.../nutripen/en/`), com os
+  textos traduzidos, a bula citada pela EMA (agência europeia), emergência 112, alimentos genéricos e a política
+  de privacidade em inglês (GDPR).
+- Depois, se o mercado se confirmar, montar a estrutura de tradução de verdade, para manter as duas línguas.
