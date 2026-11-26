@@ -1,6 +1,6 @@
 # NutriPen na Google Play — roteiro passo a passo
 
-App: **NutriPen: diário GLP-1** · pacote `br.com.nutripen.app` · **pago, R$ 14,90** · conta **pessoal**
+App: **NutriPen: Diário da Caneta** · pacote `br.com.nutripen.app` · **pago, R$ 14,90** · conta **pessoal**
 
 > As telas do Play Console mudam com frequência. Os nomes abaixo podem variar um pouco;
 > quando algo não bater, procure pelo assunto (ex.: "Segurança dos dados").
@@ -34,7 +34,7 @@ Depois: *Actions → Android (Google Play) → Run workflow*. Ao terminar, baixe
 ## Etapa 2 — Criar o app
 
 *Todos os apps → Criar app*
-- Nome: **NutriPen: diário GLP-1**
+- Nome: **NutriPen: Diário da Caneta**
 - Idioma padrão: **Português (Brasil)**
 - App ou jogo: **App** · Gratuito ou pago: **Pago** (⚠️ não dá para mudar de gratuito para pago depois)
 - Aceitar as declarações.
@@ -56,16 +56,18 @@ Depois: *Actions → Android (Google Play) → Run workflow*. Ao terminar, baixe
 - O app coleta ou compartilha algum dos tipos de dados exigidos? → **Não**
   (tudo fica no aparelho; o app não tem permissão de internet; compartilhar relatório/backup é ação do próprio usuário, com o app que ele escolher)
 - Resultado na loja: **"Nenhum dado coletado"** e **"Nenhum dado compartilhado com terceiros"**.
+- A permissão de **notificações** (lembrete) não muda essas respostas: os lembretes são agendados no próprio celular.
+- O app **não** usa "alarme exato" — não há declaração de permissão de alarme a fazer.
 
 ## Etapa 4 — Página da loja (*Crescer → Presença na loja → Página principal*)
 
-**Nome:** NutriPen: diário GLP-1
+**Nome:** NutriPen: Diário da Caneta (26 caracteres; o limite é 30)
 
 **Descrição curta (até 80 caracteres):**
-> Proteína, água, peso, glicemia e rodízio da caneta GLP-1. Sem cadastro.
+> Para quem usa caneta emagrecedora: proteína, água, peso e dia da aplicação.
 
 **Descrição completa:**
-> O NutriPen é o diário de quem usa canetas GLP-1/GIP (tirzepatida, semaglutida, liraglutida). Ele ajuda você a comer proteína suficiente, se hidratar, acompanhar o peso e organizar a aplicação — tudo em um só lugar.
+> Para quem usa caneta emagrecedora (Mounjaro, Ozempic, Wegovy, Saxenda e outras): o NutriPen é o seu diário da caneta. Ele ajuda você a comer proteína suficiente, se hidratar, acompanhar o peso e não esquecer a aplicação — tudo em um só lugar.
 >
 > METAS CALCULADAS PARA VOCÊ
 > • Proteína, água, fibras e calorias a partir de idade, sexo, peso, altura e atividade física
@@ -79,7 +81,9 @@ Depois: *Actions → Android (Google Play) → Run workflow*. Ao terminar, baixe
 > • Glicemia capilar com alertas de hipo e hiperglicemia
 >
 > CANETA E SINTOMAS
-> • Contagem para o dia da aplicação e sugestão de rodízio do local
+> • Lembrete no dia da aplicação (e na véspera), no horário que você escolher
+> • Doses fracionadas e intervalo do seu jeito: semanal, a cada 10 ou 14 dias
+> • Contagem para a próxima aplicação, aviso de atraso e sugestão de rodízio do local
 > • Diário de evacuação e sintomas (náusea, refluxo, empachamento) com dicas práticas
 >
 > RELATÓRIO PARA A CONSULTA
@@ -101,7 +105,8 @@ Depois: *Actions → Android (Google Play) → Run workflow*. Ao terminar, baixe
 **Categoria:** Saúde e fitness · **Tags:** saúde, nutrição, controle de peso
 **Contato:** o e-mail de suporte da Etapa 0
 
-> ⚠️ Não use "Mounjaro", "Ozempic" ou "Wegovy" no nome, ícone ou descrição curta (marcas de terceiros).
+> ⚠️ Não use "Mounjaro", "Ozempic" ou "Wegovy" no nome, ícone ou descrição curta (marcas de terceiros). Na descrição completa, como referência de uso, costuma ser aceito.
+> ⚠️ Evite "emagrecedora" no **nome** (pode soar como promessa de resultado); na descrição está ok.
 
 ## Etapa 5 — Preço
 

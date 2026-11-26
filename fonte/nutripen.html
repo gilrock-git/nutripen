@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="NutriPen" />
-  <title>NutriPen — Acompanhamento Nutricional & GLP-1/GIP</title>
+  <title>NutriPen — Diário da Caneta</title>
 
   <!-- Tema aplicado ANTES do primeiro paint (evita "flash" claro no modo escuro) -->
   <script>
@@ -137,7 +137,7 @@
             <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-none">
               Nutri<span class="text-brand-600 dark:text-brand-400">Pen</span>
             </h1>
-            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300 border border-brand-200 dark:border-brand-800">GLP-1 / GIP</span>
+            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-300 border border-brand-200 dark:border-brand-800">Diário da caneta</span>
           </div>
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate" id="header-conditions-subtitle">Acompanhamento Nutricional</p>
         </div>
@@ -656,13 +656,34 @@
 
           <form id="injection-form" class="space-y-3">
             <input type="hidden" id="inj-site" value="Abdômen Esq" />
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div class="grid grid-cols-2 gap-2.5">
               <div><label for="inj-date" class="field-label">Data</label><input type="date" id="inj-date" required class="field field-sm" /></div>
               <div><label for="inj-med" class="field-label">Caneta</label><select id="inj-med" class="field field-sm"></select></div>
               <div><label for="inj-dose" class="field-label">Dose</label><select id="inj-dose" class="field field-sm"></select></div>
+              <div><label for="inj-interval" class="field-label">Próxima em (dias)</label><input type="number" inputmode="numeric" min="1" max="90" step="1" id="inj-interval" class="field field-sm" /></div>
             </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 -mt-1" id="inj-interval-hint"></p>
             <button type="submit" class="w-full btn btn-md btn-primary"><i data-lucide="check-circle-2" class="w-4 h-4"></i> Registrar em <strong id="selected-site-btn-label"></strong></button>
           </form>
+
+          <div id="reminder-card" class="p-3.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-900 space-y-3">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <span class="text-sm font-bold text-slate-900 dark:text-white">🔔 Lembrete da aplicação</span>
+                <p id="reminder-status" class="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5"></p>
+              </div>
+              <label id="reminder-toggle-wrap" class="relative inline-flex items-center cursor-pointer shrink-0 hidden">
+                <input type="checkbox" id="reminder-enabled" class="sr-only peer" />
+                <span class="w-11 h-6 bg-slate-300 dark:bg-slate-600 rounded-full transition peer-checked:bg-brand-600 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:bg-white after:rounded-full after:shadow after:transition peer-checked:after:translate-x-5"></span>
+                <span class="sr-only">Ativar lembrete da aplicação</span>
+              </label>
+            </div>
+            <div class="grid grid-cols-2 gap-2 items-end">
+              <div><label for="reminder-time" class="field-label">Horário</label><input type="time" id="reminder-time" value="09:00" class="field field-sm" /></div>
+              <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300 pb-2.5 cursor-pointer"><input type="checkbox" id="reminder-eve" checked class="w-4 h-4 rounded accent-teal-600" /> Avisar na véspera (20h)</label>
+            </div>
+            <button type="button" id="reminder-ics" class="hidden w-full btn btn-sm btn-soft">📅 Adicionar à agenda do celular</button>
+          </div>
 
           <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
             <h4 class="eyebrow text-slate-500 dark:text-slate-400 mb-2">Últimas aplicações</h4>
@@ -791,7 +812,7 @@
         <div>
           <h3 class="text-sm sm:text-base font-bold text-amber-300">Aviso clínico importante</h3>
           <p class="text-xs sm:text-sm text-slate-200 mt-1 leading-relaxed">
-            O <strong>NutriPen</strong> é uma ferramenta de apoio e não substitui consulta. Metas e alertas são estimativas genéricas. <strong>Qualquer ajuste, escalonamento ou interrupção de dose de agonistas GLP-1/GIP deve ser decidido pelo seu médico.</strong> Em caso de dor abdominal intensa e persistente, vômitos repetidos ou sinais de desidratação, procure atendimento.
+            O <strong>NutriPen</strong> é uma ferramenta de apoio e não substitui consulta. Metas e alertas são estimativas genéricas. <strong>Qualquer ajuste, escalonamento ou interrupção de dose da caneta (agonistas GLP-1/GIP) deve ser decidido pelo seu médico.</strong> Em caso de dor abdominal intensa e persistente, vômitos repetidos ou sinais de desidratação, procure atendimento.
           </p>
         </div>
       </div>
@@ -852,7 +873,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-1">
             <div class="sm:col-span-2"><label for="pm-med" class="field-label">Caneta / medicação</label><select id="pm-med" class="field"></select></div>
             <div><label for="pm-dose" class="field-label">Dose atual</label><select id="pm-dose" class="field"></select></div>
-            <div id="pm-day-wrapper"><label for="pm-day" class="field-label">Dia da aplicação</label><select id="pm-day" class="field"></select></div>
+            <div><label for="pm-interval" class="field-label">Intervalo (dias)</label><input type="number" inputmode="numeric" min="1" max="90" step="1" id="pm-interval" class="field" /></div>
             <div class="sm:col-span-2"><label for="pm-activity" class="field-label">Atividade física</label>
               <select id="pm-activity" class="field">
                 <option value="sedentary">Sedentário (pouco ou nenhum exercício)</option>
@@ -864,7 +885,7 @@
             <div class="sm:col-span-2"><label for="pm-protein-factor" class="field-label">Meta base de proteína</label>
               <select id="pm-protein-factor" class="field">
                 <option value="1.6">1.6 g/kg (manutenção)</option>
-                <option value="1.8">1.8 g/kg (ideal em GLP-1)</option>
+                <option value="1.8">1.8 g/kg (ideal para quem usa a caneta)</option>
                 <option value="2.0">2.0 g/kg (proteção máxima)</option>
               </select>
             </div>
@@ -1013,7 +1034,9 @@
         <div class="grid grid-cols-2 gap-2.5">
           <div class="col-span-2"><label for="ob-med" class="field-label">Caneta em uso</label><select id="ob-med" class="field"></select></div>
           <div><label for="ob-dose" class="field-label">Dose atual</label><select id="ob-dose" class="field"></select></div>
-          <div id="ob-day-wrapper"><label for="ob-day" class="field-label">Dia da aplicação</label><select id="ob-day" class="field"></select></div>
+          <div><label for="ob-interval" class="field-label">Intervalo (dias)</label><input type="number" inputmode="numeric" min="1" max="90" step="1" id="ob-interval" value="7" class="field" /></div>
+          <div class="col-span-2"><label for="ob-last-date" class="field-label">Data da última aplicação (opcional)</label><input type="date" id="ob-last-date" class="field" />
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Com ela, o app já calcula quando é a próxima. 7 dias = semanal; 14 = a cada duas semanas.</p></div>
         </div>
         <div class="pt-2 flex items-center justify-end gap-2">
           <button type="button" data-close-modal class="btn btn-md btn-soft">Cancelar</button>
@@ -1035,7 +1058,7 @@
           <p class="text-xs font-bold text-amber-700 dark:text-amber-300">Versão de teste</p>
         </div>
       </div>
-      <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">Um diário para quem usa canetas GLP-1/GIP: proteína, água, fibras, peso, glicemia, sintomas e rodízio da aplicação. Antes de começar:</p>
+      <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">Um diário para quem usa caneta emagrecedora (Mounjaro, Ozempic, Wegovy, Saxenda): proteína, água, fibras, peso, glicemia, sintomas e rodízio da aplicação. Antes de começar:</p>
       <ul class="space-y-2.5 text-sm text-slate-700 dark:text-slate-300">
         <li class="flex gap-2.5"><span aria-hidden="true">🩺</span><span><strong>Não substitui seu médico ou nutricionista.</strong> Metas e alertas são estimativas gerais. Doses só devem ser alteradas pelo médico. Em emergência, ligue 192.</span></li>
         <li class="flex gap-2.5"><span aria-hidden="true">📱</span><span><strong>Seus dados ficam só neste celular,</strong> no navegador. Ninguém mais tem acesso — nem o criador do app. Se limpar os dados do navegador, eles se perdem: use "Baixar backup" no menu ⋮.</span></li>
@@ -1072,11 +1095,13 @@
     ];
 
     // Doses por medicação (frequência diária para liraglutida)
+    // Rótulo exibido para "Outra" (o valor salvo continua o mesmo, por compatibilidade)
+    const MED_LABELS = { 'Outra GLP-1 / GIP': 'Outra caneta' };
     const MEDICATIONS = {
       'Tirzepatida (Mounjaro)': { short: 'Tirzepatida', frequency: 'weekly', doses: ['2.5mg', '5mg', '7.5mg', '10mg', '12.5mg', '15mg'] },
-      'Semaglutida (Ozempic / Wegovy)': { short: 'Semaglutida', frequency: 'weekly', doses: ['0.25mg', '0.5mg', '1.0mg', '1.7mg', '2.0mg', '2.4mg'] },
-      'Liraglutida (Saxenda)': { short: 'Liraglutida', frequency: 'daily', doses: ['0.6mg', '1.2mg', '1.8mg', '2.4mg', '3.0mg'] },
-      [OTHER_MED]: { short: 'GLP-1/GIP', frequency: 'weekly', doses: ['0.25mg', '0.5mg', '0.6mg', '1.0mg', '1.2mg', '1.7mg', '1.8mg', '2.0mg', '2.4mg', '2.5mg', '3.0mg', '5mg', '7.5mg', '10mg', '12.5mg', '15mg'] }
+      'Semaglutida (Ozempic / Wegovy)': { short: 'Semaglutida', frequency: 'weekly', doses: ['0.25mg', '0.5mg', '1mg', '1.7mg', '2mg', '2.4mg'] },
+      'Liraglutida (Saxenda)': { short: 'Liraglutida', frequency: 'daily', doses: ['0.6mg', '1.2mg', '1.8mg', '2.4mg', '3mg'] },
+      [OTHER_MED]: { short: 'Caneta', frequency: 'weekly', doses: ['0.25mg', '0.5mg', '0.6mg', '1mg', '1.2mg', '1.7mg', '1.8mg', '2mg', '2.4mg', '2.5mg', '3mg', '5mg', '7.5mg', '10mg', '12.5mg', '15mg'] }
     };
     const LEGACY_MED_ALIASES = { 'Outro GLP-1 / GIP': OTHER_MED };
 
@@ -1248,15 +1273,72 @@
     const parseDoseMg = d => parseFloat(String(d || '').replace(',', '.')) || 0;
 
     function populateMedSelect(sel, current) {
-      sel.innerHTML = Object.keys(MEDICATIONS).map(m => `<option value="${escapeHTML(m)}">${escapeHTML(m)}</option>`).join('');
+      sel.innerHTML = Object.keys(MEDICATIONS).map(m => `<option value="${escapeHTML(m)}">${escapeHTML(MED_LABELS[m] || m)}</option>`).join('');
       sel.value = MEDICATIONS[current] ? current : OTHER_MED;
     }
+    // ---- Doses (aceita doses fracionadas) e intervalo entre aplicações ----
+    const CUSTOM_DOSE = '__outra__';
+    function normalizeDose(v) {
+      const n = parseFloat(String(v ?? '').replace(',', '.').replace(/[^0-9.]/g, ''));
+      if (!Number.isFinite(n) || n <= 0 || n > 50) return null;
+      return `${Math.round(n * 1000) / 1000}mg`;
+    }
+    function fmtDose(d) {
+      const n = parseDoseMg(d);
+      return n ? `${n.toLocaleString('pt-BR', { maximumFractionDigits: 3 })} mg` : '';
+    }
+    const medLabel = m => MED_LABELS[m] || m;
+    const defaultIntervalFor = med => (getMedInfo(med).frequency === 'daily' ? 1 : 7);
+    const clampInterval = v => { const n = Math.round(num(v, NaN)); return Number.isFinite(n) && n >= 1 && n <= 90 ? n : null; };
+    function fmtInterval(n) {
+      n = clampInterval(n) || 7;
+      if (n === 1) return 'todo dia';
+      if (n === 7) return 'semanal';
+      if (n === 14) return 'a cada 2 semanas';
+      return `a cada ${n} dias`;
+    }
+    function addDaysISO(iso, n) {
+      const [y, m, d] = iso.split('-').map(Number);
+      return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
+    }
+    function ensureCustomDoseInput(sel) {
+      let input = $(`${sel.id}-custom`);
+      if (input) return input;
+      input = document.createElement('input');
+      input.type = 'text'; input.inputMode = 'decimal'; input.id = `${sel.id}-custom`;
+      input.placeholder = 'Dose em mg (ex.: 3,75)';
+      input.setAttribute('aria-label', 'Dose fracionada em mg');
+      input.className = `${sel.className} mt-1.5 hidden`;
+      sel.insertAdjacentElement('afterend', input);
+      sel.addEventListener('change', () => {
+        const custom = sel.value === CUSTOM_DOSE;
+        input.classList.toggle('hidden', !custom);
+        if (custom) input.focus();
+      });
+      return input;
+    }
     function populateDoseSelect(sel, med, current) {
+      current = normalizeDose(current) || null;
       const list = [...getMedInfo(med).doses];
       if (current && !list.includes(current)) list.push(current);
       list.sort((a, b) => parseDoseMg(a) - parseDoseMg(b));
-      sel.innerHTML = list.map(d => `<option value="${escapeHTML(d)}">${escapeHTML(d)}</option>`).join('');
+      sel.innerHTML = list.map(d => `<option value="${escapeHTML(d)}">${escapeHTML(fmtDose(d))}</option>`).join('')
+        + `<option value="${CUSTOM_DOSE}">Outra dose (fracionada)…</option>`;
       sel.value = list.includes(current) ? current : list[0];
+      const input = ensureCustomDoseInput(sel);
+      input.value = ''; input.classList.add('hidden');
+    }
+    // Lê a dose escolhida; retorna null se "Outra dose" estiver vazia ou inválida
+    function readDose(selId) {
+      const sel = $(selId);
+      if (sel.value !== CUSTOM_DOSE) return sel.value;
+      return normalizeDose($(`${selId}-custom`).value);
+    }
+    function syncIntervalForMed(medSelId, intervalId) {
+      const input = $(intervalId);
+      const daily = getMedInfo($(medSelId).value).frequency === 'daily';
+      if (daily) input.value = 1;
+      else if (!clampInterval(input.value) || Number(input.value) === 1) input.value = 7;
     }
     function populateWeekdaySelect(sel, current) {
       sel.innerHTML = WEEKDAYS_PT.map((d, i) => `<option value="${i}">${d}</option>`).join('');
@@ -1293,7 +1375,7 @@
         isDemo: true,
         profile: {
           name: 'Mariana', age: 48, sex: 'F', initialWeight: 88.4, weight: 81.2, goalWeight: 68.0, height: 165,
-          activityLevel: 'light', medication: 'Tirzepatida (Mounjaro)', dose: '5mg', injectionDay: 5, proteinFactor: 1.8,
+          activityLevel: 'light', medication: 'Tirzepatida (Mounjaro)', dose: '5mg', intervalDays: 7, injectionDay: 5, proteinFactor: 1.8,
           conditions: { ...defaultConditions(), diabetes: true, cholecystectomy: true, clinicalNotes: 'Pré-diabetes (HbA1c 6,1%) e colecistectomia videolaparoscópica prévia' },
           customGeminiKey: ''
         },
@@ -1324,7 +1406,7 @@
           { id: 'gl_4', date: today, time: '07:10', value: 93, context: '🌅 Jejum' }
         ],
         injections: [38, 31, 24, 17, 10, 3].map((ago, i) => ({
-          id: `inj${i + 1}`, date: getPastDateISO(ago), medication: 'Tirzepatida (Mounjaro)', dose: i < 4 ? '2.5mg' : '5mg', site: INJECTION_SITES[i]
+          id: `inj${i + 1}`, date: getPastDateISO(ago), medication: 'Tirzepatida (Mounjaro)', dose: i < 4 ? '2.5mg' : '5mg', intervalDays: 7, site: INJECTION_SITES[i]
         })),
         weights: [
           { id: 'w1', date: getPastDateISO(38), time: '07:30', moment: '🌅 Jejum / Manhã', weight: 88.4, waistNarrow: 88.0, waist: 98.0, arm: 34.5, thigh: 62.0, dose: '2.5mg' },
@@ -1344,11 +1426,12 @@
         profile: {
           name: d.name || 'Paciente', age: num(d.age, 40), sex: d.sex === 'M' ? 'M' : 'F',
           initialWeight: w, weight: w, goalWeight: num(d.goalWeight, w), height: num(d.height, 170),
-          activityLevel: 'light', medication: d.medication, dose: d.dose, injectionDay: num(d.injectionDay, 5), proteinFactor: 1.8,
+          activityLevel: 'light', medication: d.medication, dose: d.dose, intervalDays: clampInterval(d.intervalDays) || defaultIntervalFor(d.medication), injectionDay: 5, proteinFactor: 1.8,
           conditions: defaultConditions(), customGeminiKey: keepGeminiKey || ''
         },
         dailyLogs: { [today]: createEmptyDayLog() },
-        diaryEntries: [], glucoseLogs: [], injections: [],
+        diaryEntries: [], glucoseLogs: [],
+        injections: d.lastDate ? [{ id: uid('inj'), date: d.lastDate, medication: d.medication, dose: d.dose, intervalDays: clampInterval(d.intervalDays) || defaultIntervalFor(d.medication), site: '' }] : [],
         weights: [{ id: uid('w'), date: today, time: getCurrentTimeHM(), moment: '🌅 Jejum / Manhã', weight: w, waistNarrow: null, waist: null, arm: null, thigh: null, dose: d.dose }]
       };
     }
@@ -1364,10 +1447,13 @@
       p.activityLevel = ACTIVITY_MULTIPLIERS[p.activityLevel] ? p.activityLevel : 'light';
       p.medication = LEGACY_MED_ALIASES[p.medication] || p.medication;
       if (!MEDICATIONS[p.medication]) p.medication = OTHER_MED;
-      p.dose = String(p.dose || getMedInfo(p.medication).doses[0]);
+      p.dose = normalizeDose(p.dose) || getMedInfo(p.medication).doses[0];
+      p.intervalDays = clampInterval(p.intervalDays) || defaultIntervalFor(p.medication);
       p.injectionDay = Math.min(6, Math.max(0, num(p.injectionDay, 5)));
       p.proteinFactor = num(p.proteinFactor, 1.8);
       p.customGeminiKey = String(p.customGeminiKey || '');
+      const r = (p.reminder && typeof p.reminder === 'object') ? p.reminder : {};
+      p.reminder = { enabled: !!r.enabled, time: /^([01]\d|2[0-3]):[0-5]\d$/.test(r.time) ? r.time : '09:00', eve: r.eve !== false };
       p.conditions = { ...defaultConditions(), ...(p.conditions || {}) };
       Object.keys(defaultConditions()).forEach(k => { if (k !== 'clinicalNotes') p.conditions[k] = !!p.conditions[k]; });
       p.conditions.clinicalNotes = String(p.conditions.clinicalNotes || '');
@@ -1399,8 +1485,9 @@
       }));
       out.injections = arr(out.injections).filter(i => i && i.date).map(i => ({
         id: String(i.id || uid('inj')), date: String(i.date),
-        medication: LEGACY_MED_ALIASES[i.medication] || String(i.medication || p.medication), dose: String(i.dose || ''),
-        site: INJECTION_SITES.includes(i.site) ? i.site : INJECTION_SITES[0]
+        medication: MEDICATIONS[LEGACY_MED_ALIASES[i.medication] || i.medication] ? (LEGACY_MED_ALIASES[i.medication] || i.medication) : p.medication,
+        dose: normalizeDose(i.dose) || p.dose, intervalDays: clampInterval(i.intervalDays),
+        site: INJECTION_SITES.includes(i.site) ? i.site : ''
       }));
       out.weights = arr(out.weights).filter(w => w && w.date && num(w.weight) > 0).map(w => ({
         id: String(w.id || uid('w')), date: String(w.date), time: String(w.time || ''), moment: String(w.moment || ''),
@@ -1494,7 +1581,7 @@
       if (cond.gerd) rules.push(`🔥 Refluxo: jantar ≤ ${dinnerKcalLimit} kcal e 3h entre jantar e deitar.`);
       const sodiumCeiling = cond.hypertension ? 2000 : 2300;
       if (cond.hypertension) rules.push('🩺 Hipertensão: sódio ≤ 2.000 mg/dia; eletrólitos sem sódio extra (potássio e magnésio — confirme com seu médico se usa diurético ou tem doença renal).');
-      if (rules.length === 0) rules.push(`✅ Protocolo padrão GLP-1/GIP: proteína ${factor} g/kg (${proteinGoal}g), água 35 ml/kg e fibras ${fiberGoal}g/dia.`);
+      if (rules.length === 0) rules.push(`✅ Protocolo padrão da caneta: proteína ${factor} g/kg (${proteinGoal}g), água 35 ml/kg e fibras ${fiberGoal}g/dia.`);
 
       const waterGoal = Math.max(2000, Math.round((weight * 35) / 50) * 50);
       return {
@@ -1576,19 +1663,19 @@
 
     function getSortedInjections() { return [...appState.injections].sort((a, b) => b.date.localeCompare(a.date)); }
 
+    // Próxima aplicação = data da última + intervalo (informado na aplicação ou no perfil)
     function getDoseSchedule(profile) {
       const today = getTodayISO();
-      const info = getMedInfo(profile.medication);
       const last = getSortedInjections()[0] || null;
-      const injectedToday = !!last && last.date === today;
-      const daysSinceLast = last ? daysBetweenISO(last.date, today) : null;
-      if (info.frequency === 'daily') return { daily: true, injectedToday, daysSinceLast, last };
-      const todayDow = new Date().getDay();
-      const targetDow = num(profile.injectionDay, 5);
-      let daysUntil = (targetDow - todayDow + 7) % 7;
-      if (daysUntil === 0 && injectedToday) daysUntil = 7;
-      const overdue = daysSinceLast !== null && daysSinceLast >= 8 && !injectedToday;
-      return { daily: false, injectedToday, daysSinceLast, daysUntil, targetDow, overdue, last };
+      const interval = (last && clampInterval(last.intervalDays)) || clampInterval(profile.intervalDays) || defaultIntervalFor(profile.medication);
+      if (!last) return { hasLast: false, interval, last: null };
+      const nextDate = addDaysISO(last.date, interval);
+      const daysUntil = daysBetweenISO(today, nextDate);
+      return {
+        hasLast: true, last, interval, nextDate, daysUntil,
+        injectedToday: last.date === today, overdue: daysUntil < 0, daysLate: Math.max(0, -daysUntil),
+        daysSinceLast: daysBetweenISO(last.date, today)
+      };
     }
 
     // =========================================================================
@@ -1685,16 +1772,13 @@
         </div>`).join('');
     }
 
-    function syncDayFieldVisibility(medSelectId, wrapperId) {
-      $(wrapperId).classList.toggle('opacity-40', getMedInfo($(medSelectId).value).frequency === 'daily');
-    }
 
     function openProfileModal(focusId) {
       const p = appState.profile, c = p.conditions;
       $('pm-name').value = p.name; $('pm-age').value = p.age; $('pm-sex').value = p.sex; $('pm-height').value = p.height;
       $('pm-initial-weight').value = p.initialWeight; $('pm-weight').value = p.weight; $('pm-goal-weight').value = p.goalWeight;
       populateMedSelect($('pm-med'), p.medication); populateDoseSelect($('pm-dose'), p.medication, p.dose);
-      populateWeekdaySelect($('pm-day'), p.injectionDay); syncDayFieldVisibility('pm-med', 'pm-day-wrapper');
+      $('pm-interval').value = p.intervalDays;
       $('pm-activity').value = p.activityLevel; $('pm-protein-factor').value = String(p.proteinFactor);
       $('pm-gemini-key').value = p.customGeminiKey || '';
       ['diabetes', 'bariatric', 'cholecystectomy', 'gerd', 'hypertension', 'recentSurgery', 'surgery90Days'].forEach(k => { $(`cond-${k}`).checked = !!c[k]; });
@@ -1713,8 +1797,8 @@
         weight: parseFloat($('pm-weight').value) || 80,
         goalWeight: parseFloat($('pm-goal-weight').value) || 70,
         medication: $('pm-med').value,
-        dose: $('pm-dose').value,
-        injectionDay: parseInt($('pm-day').value, 10),
+        dose: readDose('pm-dose'),
+        intervalDays: clampInterval($('pm-interval').value),
         activityLevel: $('pm-activity').value,
         proteinFactor: parseFloat($('pm-protein-factor').value),
         customGeminiKey: $('pm-gemini-key').value.trim(),
@@ -1762,8 +1846,9 @@
       $('ob-submit').className = `btn btn-md ${real ? 'btn-rose' : 'btn-primary'}`;
       populateMedSelect($('ob-med'), appState.profile.medication);
       populateDoseSelect($('ob-dose'), $('ob-med').value, appState.profile.dose);
-      populateWeekdaySelect($('ob-day'), appState.profile.injectionDay);
-      syncDayFieldVisibility('ob-med', 'ob-day-wrapper');
+      $('ob-interval').value = defaultIntervalFor($('ob-med').value);
+      $('ob-last-date').value = '';
+      $('ob-last-date').max = getTodayISO();
       openModal('reset-modal', 'ob-name');
     }
 
@@ -1776,7 +1861,7 @@
       $('demo-mode-banner').classList.toggle('hidden', !appState.isDemo);
       if (appState.isDemo) {
         const p = appState.profile;
-        $('demo-banner-detail').textContent = `(${p.name}, ${p.age} anos, ${getMedInfo(p.medication).short} ${p.dose})`;
+        $('demo-banner-detail').textContent = `(${p.name}, ${p.age} anos, ${getMedInfo(p.medication).short} ${fmtDose(p.dose)})`;
       }
       renderHeaderSummary();
       renderTodayTab();
@@ -1785,6 +1870,8 @@
       renderPenAndDiaryTab();
       renderEvolutionTab();
       renderClinicalReport();
+      renderReminderCard();
+      scheduleReminderSync();
       refreshIcons();
     }
 
@@ -1798,7 +1885,7 @@
       if (c.gerd) tags.push('🔥 DRGE');
       if (c.hypertension) tags.push('🩺 HAS');
       if (c.recentSurgery) tags.push('🩹 Pós-cirúrgico');
-      $('header-conditions-subtitle').textContent = `${getMedInfo(p.medication).short} ${p.dose}${tags.length ? ' • ' + tags.join(' • ') : ''}`;
+      $('header-conditions-subtitle').textContent = `${getMedInfo(p.medication).short} ${fmtDose(p.dose)}${tags.length ? ' • ' + tags.join(' • ') : ''}`;
     }
 
     // =========================================================================
@@ -1837,29 +1924,31 @@
       const sched = getDoseSchedule(profile);
       const medShort = getMedInfo(profile.medication).short;
       const tEl = $('next-dose-countdown'), sEl = $('next-dose-subtext'), nEl = $('next-dose-days-num'), uEl = $('next-dose-days-unit');
-      if (sched.daily) {
-        tEl.textContent = sched.injectedToday ? 'Dose de hoje registrada ✓' : 'Aplicação diária pendente';
-        sEl.textContent = `${medShort} ${profile.dose} • uso diário`;
-        nEl.textContent = sched.injectedToday ? '✓' : '!'; uEl.textContent = 'hoje';
+      const nextLabel = sched.hasLast ? `${WEEKDAYS_PT[new Date(sched.nextDate + 'T12:00:00').getDay()]}, ${formatShortDateBR(sched.nextDate)}` : '';
+      const doseTxt = `${medShort} ${fmtDose(profile.dose)} • ${fmtInterval(sched.interval)}`;
+      if (!sched.hasLast) {
+        tEl.textContent = 'Registre sua aplicação';
+        sEl.textContent = `${doseTxt} • o app calcula a próxima data`;
+        nEl.textContent = '—'; uEl.textContent = '';
       } else if (sched.overdue) {
-        tEl.textContent = `Última aplicação há ${sched.daysSinceLast} dias`;
-        sEl.textContent = 'Passou da janela semanal — registre se já aplicou ou fale com seu médico sobre a dose perdida.';
+        tEl.textContent = `Aplicação atrasada há ${sched.daysLate} ${sched.daysLate === 1 ? 'dia' : 'dias'}`;
+        sEl.textContent = `Prevista para ${formatShortDateBR(sched.nextDate)}. Registre se já aplicou; se perdeu a dose, siga a orientação do seu médico.`;
         nEl.textContent = '!'; uEl.textContent = 'atraso';
-      } else if (sched.daysUntil === 0) {
-        tEl.textContent = 'Hoje é dia da sua aplicação!';
-        sEl.textContent = `${medShort} ${profile.dose} • prefira refeições leves`;
-        nEl.textContent = 'HOJE'; uEl.textContent = '';
       } else if (sched.injectedToday) {
         tEl.textContent = 'Aplicação de hoje registrada ✓';
-        sEl.textContent = `Próxima: ${WEEKDAYS_PT[sched.targetDow]} • ${profile.dose}`;
-        nEl.textContent = String(sched.daysUntil); uEl.textContent = 'dias';
+        sEl.textContent = `Próxima: ${nextLabel} • ${doseTxt}`;
+        nEl.textContent = String(sched.daysUntil); uEl.textContent = sched.daysUntil === 1 ? 'dia' : 'dias';
+      } else if (sched.daysUntil === 0) {
+        tEl.textContent = 'Hoje é dia da sua aplicação!';
+        sEl.textContent = `${doseTxt} • prefira refeições leves`;
+        nEl.textContent = 'HOJE'; uEl.textContent = '';
       } else {
         tEl.textContent = sched.daysUntil === 1 ? 'Amanhã é dia de aplicação' : `Faltam ${sched.daysUntil} dias para a aplicação`;
-        sEl.textContent = `${WEEKDAYS_PT[sched.targetDow]} • ${medShort} ${profile.dose}`;
+        sEl.textContent = `${nextLabel} • ${doseTxt}`;
         nEl.textContent = String(sched.daysUntil); uEl.textContent = sched.daysUntil === 1 ? 'dia' : 'dias';
       }
       $('last-site-quick-hint').textContent = sched.last
-        ? `Último: ${sched.last.site} → Próximo: ${getRecommendedNextSite(sched.last.site)}`
+        ? (sched.last.site ? `Último: ${sched.last.site} → Próximo: ${getRecommendedNextSite(sched.last.site)}` : `Sugestão de local: ${getRecommendedNextSite('')}`)
         : 'Nenhuma aplicação registrada';
 
       updateSmartDicaDaNutri(bowelInfo, sched, targets, totals, latestGl);
@@ -1872,7 +1961,7 @@
       renderDynamicChecklist(dayLog, profile);
 
       $('summary-card-patient').textContent = `${profile.name} • ${profile.age} anos • ${profile.sex === 'M' ? 'Masculino' : 'Feminino'}`;
-      $('summary-card-med').textContent = `${profile.medication} • ${profile.dose}`;
+      $('summary-card-med').textContent = `${medLabel(profile.medication)} • ${fmtDose(profile.dose)} • ${fmtInterval(profile.intervalDays)}`;
       $('summary-card-weights').textContent = `${fmt(profile.initialWeight)} → ${fmt(profile.weight)} / ${fmt(profile.goalWeight)} kg`;
       $('dashboard-bmi-pill').textContent = `${fmt(targets.bmi)} kg/m² • ${targets.bmr} kcal`;
 
@@ -2016,14 +2105,14 @@
           `Você chegou a ${fmt(totals.fat)}g de gordura (teto ≤ 40g). Prefira claras, tilápia, frango desfiado e vegetais no vapor nas próximas refeições.`);
       }
       if (bowelInfo.daysWithout >= 3 || bowelInfo.hasHard) {
-        return set('⚠️ Intestino', 'amber', 'Contra a constipação do GLP-1',
+        return set('⚠️ Intestino', 'amber', 'Contra a constipação comum com a caneta',
           'Hoje: 2 kiwis ou 1 fatia de mamão + 1 col. sopa de chia hidratada ou psyllium, com pelo menos 2,5L de água ao longo do dia. Sem evacuar há mais de 4–5 dias ou com dor: fale com seu médico.');
       }
       if (todaySymptoms.includes('nausea_mild') || todaySymptoms.includes('nausea_strong')) {
         return set('⚠️ Náusea', 'amber', 'Fracione e prefira frios/mornos',
           'Micro-refeições a cada 3h, sem gordura. Whey gelado, iogurte proteico, frango desfiado, purê de abóbora ou chá de gengibre costumam cair melhor. Vômitos repetidos: procure atendimento.');
       }
-      if (!sched.daily && (sched.daysUntil === 0 || sched.daysUntil === 1)) {
+      if (sched.hasLast && !sched.injectedToday && (sched.daysUntil === 0 || sched.daysUntil === 1)) {
         return set('💉 Janela da caneta', 'sky', 'Preparo para a aplicação',
           'Evite frituras e pratos volumosos nas 24h em torno da aplicação. Garanta água, eletrólitos e proteína magra de fácil digestão.');
       }
@@ -2528,7 +2617,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
     function renderInjectionSitesUI() {
       const selected = $('inj-site').value;
       const sorted = getSortedInjections();
-      const last = sorted[0] || null;
+      const last = sorted.find(i => i.site) || null; // última aplicação com local informado
       const recommended = last ? getRecommendedNextSite(last.site) : INJECTION_SITES[0];
       $('selected-site-btn-label').textContent = selected;
       $('rotation-recommendation-text').innerHTML = last
@@ -2562,6 +2651,14 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       if (force || !dose.dataset.touched) { populateDoseSelect(dose, med.value, med.value === p.medication ? p.dose : null); delete dose.dataset.touched; }
       const wDose = $('w-dose');
       if (force || !wDose.dataset.touched) { populateDoseSelect(wDose, p.medication, p.dose); delete wDose.dataset.touched; }
+      const iv = $('inj-interval');
+      if (force || !iv.dataset.touched) { iv.value = p.intervalDays; delete iv.dataset.touched; }
+      updateInjIntervalHint();
+    }
+    function updateInjIntervalHint() {
+      const n = clampInterval($('inj-interval').value);
+      const date = $('inj-date').value || getTodayISO();
+      $('inj-interval-hint').textContent = n ? `Próxima aplicação: ${formatDateBR(addDaysISO(date, n))} (${fmtInterval(n)}).` : 'Informe de 1 a 90 dias.';
     }
 
     function renderPenAndDiaryTab() {
@@ -2570,7 +2667,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       if (!$('inj-date').value) $('inj-date').value = getTodayISO();
       syncInjectionFormSelects(false);
       if (!$('inj-site').dataset.userSet) {
-        const last = getSortedInjections()[0];
+        const last = getSortedInjections().find(i => i.site);
         $('inj-site').value = last ? getRecommendedNextSite(last.site) : INJECTION_SITES[0];
       }
       renderInjectionSitesUI();
@@ -2582,8 +2679,8 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
           <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-xs">
             <div>
               <span class="font-bold text-slate-900 dark:text-white">${formatDateBR(inj.date)}</span>
-              <span class="mx-1 text-slate-400">•</span><span class="font-semibold text-brand-700 dark:text-brand-400">${escapeHTML(inj.dose)}</span>
-              <span class="block text-[11px] text-slate-500 dark:text-slate-400">${escapeHTML(inj.site)} • ${escapeHTML(getMedInfo(inj.medication).short)}</span>
+              <span class="mx-1 text-slate-400">•</span><span class="font-semibold text-brand-700 dark:text-brand-400">${escapeHTML(fmtDose(inj.dose))}</span>${clampInterval(inj.intervalDays) ? `<span class="text-slate-500 dark:text-slate-400"> • ${escapeHTML(fmtInterval(inj.intervalDays))}</span>` : ''}
+              <span class="block text-[11px] text-slate-500 dark:text-slate-400">${escapeHTML(inj.site || 'Local não informado')} • ${escapeHTML(getMedInfo(inj.medication).short)}</span>
             </div>
             <button type="button" onclick="deleteInjection('${escapeHTML(inj.id)}')" class="icon-btn-danger" aria-label="Excluir aplicação"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </div>`).join('');
@@ -2727,7 +2824,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       if (s.includes('nausea_strong')) items.push('<strong>Enjoo forte:</strong> se vomitar repetidamente ou não conseguir manter líquidos, procure atendimento e avise o médico antes da próxima dose.');
       if (s.includes('bloating')) items.push('<strong>Empachamento:</strong> reduza o volume do prato pela metade, mastigue devagar e evite líquidos durante a refeição.');
       if (s.includes('reflux') || cond.gerd) items.push('<strong>Azia/refluxo:</strong> evite deitar por 3h após comer, reduza café e condimentos e mantenha o jantar leve.');
-      if (s.includes('fatigue')) items.push('<strong>Fadiga:</strong> confira água, eletrólitos e proteína do dia — ingestão muito baixa é causa comum com GLP-1.');
+      if (s.includes('fatigue')) items.push('<strong>Fadiga:</strong> confira água, eletrólitos e proteína do dia — ingestão muito baixa é causa comum com a caneta.');
       if (!items.length) items.push('<strong>Boa tolerância:</strong> mantenha a proteína fracionada e sua meta de hidratação.');
       $('immediate-symptom-advice-list').innerHTML = items.map(i => `<li>• ${i}</li>`).join('');
     }
@@ -2813,7 +2910,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
                 ${w.time ? `<span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">${escapeHTML(w.time)}</span>` : ''}
                 ${w.moment ? `<span class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-[10px] font-semibold">${escapeHTML(w.moment)}</span>` : ''}
               </div>
-              <div class="mt-0.5 tabular-nums"><span class="font-extrabold text-brand-700 dark:text-brand-400">${fmt(w.weight)} kg</span>${ex.length ? `<span class="text-slate-600 dark:text-slate-300"> • ${ex.join(' • ')} cm</span>` : ''}${w.dose ? `<span class="text-slate-400"> (${escapeHTML(w.dose)})</span>` : ''}</div>
+              <div class="mt-0.5 tabular-nums"><span class="font-extrabold text-brand-700 dark:text-brand-400">${fmt(w.weight)} kg</span>${ex.length ? `<span class="text-slate-600 dark:text-slate-300"> • ${ex.join(' • ')} cm</span>` : ''}${w.dose ? `<span class="text-slate-400"> (${escapeHTML(fmtDose(w.dose))})</span>` : ''}</div>
             </div>
             <button type="button" onclick="deleteWeightEntry('${escapeHTML(w.id)}')" class="icon-btn-danger" aria-label="Excluir registro"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </div>`;
@@ -2875,7 +2972,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const p = chartPoints[idx];
       if (!p) return;
       const cfg = METRIC_CONFIG[currentChartMode];
-      $('svg-chart-selected-readout').textContent = `${fmt(p.value, cfg.dec)} ${cfg.unit} • ${p.label}${p.sub ? ' • ' + p.sub : ''}${p.dose ? ' (' + p.dose + ')' : ''}`;
+      $('svg-chart-selected-readout').textContent = `${fmt(p.value, cfg.dec)} ${cfg.unit} • ${p.label}${p.sub ? ' • ' + p.sub : ''}${p.dose ? ' (' + fmtDose(p.dose) + ')' : ''}`;
       document.querySelectorAll('#svg-chart-container [data-pt]').forEach(c => c.setAttribute('r', Number(c.dataset.pt) === idx ? '8' : '5.5'));
     }
 
@@ -2934,7 +3031,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
           if (prev && pt.dose && prev.dose && pt.dose !== prev.dose) {
             const x = getX(pt.t);
             const arrow = parseDoseMg(pt.dose) > parseDoseMg(prev.dose) ? '↑' : '↓';
-            svg += `<line x1="${x}" y1="${padT - 6}" x2="${x}" y2="${padT + plotH}" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3"/><rect x="${x - 26}" y="4" width="52" height="16" rx="6" fill="#fef3c7" stroke="#f59e0b"/><text x="${x}" y="15" text-anchor="middle" fill="#92400e" font-size="9" font-weight="800">${arrow} ${escapeHTML(pt.dose)}</text>`;
+            svg += `<line x1="${x}" y1="${padT - 6}" x2="${x}" y2="${padT + plotH}" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3"/><rect x="${x - 26}" y="4" width="52" height="16" rx="6" fill="#fef3c7" stroke="#f59e0b"/><text x="${x}" y="15" text-anchor="middle" fill="#92400e" font-size="9" font-weight="800">${arrow} ${escapeHTML(fmtDose(pt.dose))}</text>`;
           }
         });
       }
@@ -3009,8 +3106,14 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       }
 
       const milestones = [];
-      injections.forEach(i => { if (!milestones.length || milestones[milestones.length - 1].dose !== i.dose) milestones.push(i); });
-      const doseTimeline = milestones.length ? milestones.map(m => `${formatShortDateBR(m.date)} (${m.dose})`).join(' → ') : `${profile.dose} (atual)`;
+      const ivOf = i => clampInterval(i.intervalDays) || profile.intervalDays;
+      injections.forEach(i => {
+        const prev = milestones[milestones.length - 1];
+        if (!prev || prev.dose !== i.dose || ivOf(prev) !== ivOf(i)) milestones.push(i);
+      });
+      const doseTimeline = milestones.length
+        ? milestones.map(m => `${formatShortDateBR(m.date)}: ${fmtDose(m.dose)} ${fmtInterval(ivOf(m))}`).join(' → ')
+        : `${fmtDose(profile.dose)} ${fmtInterval(profile.intervalDays)} (atual)`;
 
       const lastDays = Object.keys(appState.dailyLogs).sort().slice(-7);
       const sums = { protein: 0, fiber: 0, kcal: 0, carbs: 0, fat: 0, water: 0 };
@@ -3054,8 +3157,8 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       sections.push({ title: 'Identificação & perfil clínico', lines: [
         `Paciente: ${p.name} | ${p.age} anos | ${sexLabel}`,
         `Altura: ${p.height} cm | IMC: ${fmt(t.bmi)} kg/m²`,
-        `Medicação: ${p.medication} | Dose atual: ${p.dose}`,
-        `Titulação: ${d.doseTimeline}`,
+        `Medicação: ${medLabel(p.medication)} | Dose atual: ${fmtDose(p.dose)}, ${fmtInterval(p.intervalDays)}`,
+        `Titulação (dose e intervalo): ${d.doseTimeline}`,
         `Condições: ${d.condList.length ? d.condList.join('; ') : 'nenhuma informada'}`,
         ...(d.cond.clinicalNotes ? [`Observações: ${d.cond.clinicalNotes}`] : [])
       ] });
@@ -3235,6 +3338,132 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
     }
 
     // =========================================================================
+    // LEMBRETE DA APLICAÇÃO (notificação no app Android; agenda .ics na web)
+    // =========================================================================
+    const LocalNotif = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
+    const nativeReminders = !!(LocalNotif && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+    const REMINDER_ID_MIN = 1000, REMINDER_ID_MAX = 1099;
+    let reminderSyncTimer = null;
+
+    function scheduleReminderSync() {
+      if (!nativeReminders) return;
+      clearTimeout(reminderSyncTimer);
+      reminderSyncTimer = setTimeout(syncReminders, 300);
+    }
+
+    function buildReminderList() {
+      const p = appState.profile, r = p.reminder;
+      const s = getDoseSchedule(p);
+      if (!r.enabled || !s.hasLast) return [];
+      const now = Date.now(), list = [];
+      const doseTxt = `${getMedInfo(p.medication).short} ${fmtDose(p.dose)}`;
+      const base = { channelId: 'aplicacao', isExactNotification: false, extra: { tab: 'caneta' } };
+      if (s.overdue) {
+        let at = new Date(`${getTodayISO()}T${r.time}:00`);
+        if (at <= now) at = new Date(`${addDaysISO(getTodayISO(), 1)}T${r.time}:00`);
+        list.push({ ...base, id: REMINDER_ID_MIN, title: 'Aplicação da caneta atrasada', body: 'Se já aplicou, registre no NutriPen. Se perdeu a dose, siga a orientação do seu médico.', schedule: { at, allowWhileIdle: true } });
+        return list;
+      }
+      const count = s.interval === 1 ? 14 : 4;
+      for (let k = 0; k < count; k++) {
+        const date = addDaysISO(s.nextDate, k * s.interval);
+        const at = new Date(`${date}T${r.time}:00`);
+        if (at > now) list.push({ ...base, id: REMINDER_ID_MIN + k, title: '💉 Hoje é dia da aplicação', body: `${doseTxt}. Toque para registrar no NutriPen.`, schedule: { at, allowWhileIdle: true } });
+        if (r.eve && s.interval > 1) {
+          const eve = new Date(`${addDaysISO(date, -1)}T20:00:00`);
+          if (eve > now) list.push({ ...base, id: REMINDER_ID_MIN + 50 + k, title: 'Amanhã é dia da aplicação', body: 'Deixe a caneta separada e prefira um jantar leve.', schedule: { at: eve, allowWhileIdle: true } });
+        }
+      }
+      return list;
+    }
+
+    async function syncReminders() {
+      if (!nativeReminders) return;
+      try {
+        const pending = await LocalNotif.getPending();
+        const ours = (pending.notifications || []).filter(n => n.id >= REMINDER_ID_MIN && n.id <= REMINDER_ID_MAX);
+        if (ours.length) await LocalNotif.cancel({ notifications: ours.map(n => ({ id: n.id })) });
+        const list = buildReminderList();
+        if (list.length) await LocalNotif.schedule({ notifications: list });
+      } catch (err) { console.warn('Lembrete não agendado:', err); }
+      renderReminderCard();
+    }
+
+    async function setReminderEnabled(on) {
+      const r = appState.profile.reminder;
+      if (on && nativeReminders) {
+        try {
+          let perm = await LocalNotif.checkPermissions();
+          if (perm.display !== 'granted') perm = await LocalNotif.requestPermissions();
+          if (perm.display !== 'granted') {
+            $('reminder-enabled').checked = false;
+            showToast('Sem permissão de notificação. Ative em Configurações → Apps → NutriPen → Notificações.', 'error', { duration: 7000 });
+            return;
+          }
+          await LocalNotif.createChannel({ id: 'aplicacao', name: 'Lembrete da aplicação', description: 'Avisa no dia (e na véspera) da aplicação da caneta', importance: 4, visibility: 1, vibration: true });
+        } catch (err) { console.warn(err); }
+      }
+      r.enabled = on;
+      saveState(); await syncReminders();
+      if (on) showToast(appState.injections.length ? 'Lembrete ativado 🔔' : 'Lembrete ativado. Registre uma aplicação para o app calcular a data.');
+    }
+
+    function renderReminderCard() {
+      const r = appState.profile.reminder;
+      $('reminder-toggle-wrap').classList.toggle('hidden', !nativeReminders);
+      $('reminder-ics').classList.toggle('hidden', nativeReminders);
+      $('reminder-enabled').checked = r.enabled;
+      $('reminder-time').value = r.time;
+      $('reminder-eve').checked = r.eve;
+      const s = getDoseSchedule(appState.profile);
+      const status = $('reminder-status');
+      if (!nativeReminders) {
+        status.textContent = 'Neste navegador o lembrete funciona pela agenda do celular. Refaça se mudar o intervalo.';
+      } else if (!r.enabled) {
+        status.textContent = 'Desligado. Ative para receber um aviso no dia da aplicação.';
+      } else if (!s.hasLast) {
+        status.textContent = 'Ativo. Registre uma aplicação para o app saber a data.';
+      } else if (s.overdue) {
+        status.textContent = `Ativo • aplicação atrasada: aviso às ${r.time}.`;
+      } else {
+        status.textContent = `Ativo • próximo aviso: ${formatShortDateBR(s.nextDate)} às ${r.time}${r.eve && s.interval > 1 ? ' (e na véspera às 20h)' : ''}.`;
+      }
+    }
+
+    // Arquivo de agenda (.ics) com repetição a cada N dias — para a versão web
+    function exportReminderICS() {
+      const p = appState.profile, r = p.reminder;
+      const s = getDoseSchedule(p);
+      let start = s.hasLast ? s.nextDate : getTodayISO();
+      if (s.overdue) start = getTodayISO();
+      const [hh, mm] = r.time.split(':');
+      const dt = `${start.replace(/-/g, '')}T${hh}${mm}00`;
+      const end = new Date(`${start}T${r.time}:00`); end.setMinutes(end.getMinutes() + 15);
+      const pad = n => String(n).padStart(2, '0');
+      const dtEnd = `${end.getFullYear()}${pad(end.getMonth() + 1)}${pad(end.getDate())}T${pad(end.getHours())}${pad(end.getMinutes())}00`;
+      const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+      const lines = [
+        'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//NutriPen//Diario da Caneta//PT-BR', 'CALSCALE:GREGORIAN',
+        'BEGIN:VEVENT', `UID:nutripen-aplicacao-${Date.now()}@nutripen`, `DTSTAMP:${stamp}`,
+        `DTSTART:${dt}`, `DTEND:${dtEnd}`, `RRULE:FREQ=DAILY;INTERVAL=${s.interval}`,
+        `SUMMARY:Aplicação da caneta (${fmtDose(p.dose).replace(/,/g, '\\,')})`,
+        'DESCRIPTION:Lembrete do NutriPen. Registre a aplicação no app.',
+        'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Hoje é dia da aplicação', 'TRIGGER:PT0M', 'END:VALARM'
+      ];
+      if (r.eve && s.interval > 1) {
+        const mins = Number(hh) * 60 + Number(mm) + (24 * 60 - 20 * 60);
+        lines.push('BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Amanhã é dia da aplicação', `TRIGGER:-PT${mins}M`, 'END:VALARM');
+      }
+      lines.push('END:VEVENT', 'END:VCALENDAR');
+      const blob = new Blob([lines.join('\r\n') + '\r\n'], { type: 'text/calendar' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'nutripen-aplicacao.ics'; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast(`Abra o arquivo para adicionar à agenda: ${fmtInterval(s.interval)}, às ${r.time}.`, 'success', { duration: 7000 });
+    }
+
+    // =========================================================================
     // INICIALIZAÇÃO
     // =========================================================================
     document.addEventListener('DOMContentLoaded', () => {
@@ -3288,13 +3517,16 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       document.querySelectorAll('.report-type-btn').forEach(btn => btn.addEventListener('click', () => { currentReportType = btn.dataset.reportType; renderClinicalReport(); }));
 
       // Selects marcados como "tocados" pelo usuário não são sobrescritos em re-render
-      ['inj-dose', 'w-dose'].forEach(id => $(id).addEventListener('change', () => { $(id).dataset.touched = '1'; }));
+      ['inj-dose', 'w-dose', 'inj-interval'].forEach(id => $(id).addEventListener('change', () => { $(id).dataset.touched = '1'; }));
+      $('inj-interval').addEventListener('input', updateInjIntervalHint);
+      $('inj-date').addEventListener('change', updateInjIntervalHint);
       $('inj-med').addEventListener('change', () => {
         $('inj-med').dataset.touched = '1'; $('inj-dose').dataset.touched = '1';
+        if (!$('inj-interval').dataset.touched) { $('inj-interval').value = defaultIntervalFor($('inj-med').value); updateInjIntervalHint(); }
         populateDoseSelect($('inj-dose'), $('inj-med').value, $('inj-med').value === appState.profile.medication ? appState.profile.dose : null);
       });
-      $('pm-med').addEventListener('change', () => { populateDoseSelect($('pm-dose'), $('pm-med').value, null); syncDayFieldVisibility('pm-med', 'pm-day-wrapper'); });
-      $('ob-med').addEventListener('change', () => { populateDoseSelect($('ob-dose'), $('ob-med').value, null); syncDayFieldVisibility('ob-med', 'ob-day-wrapper'); });
+      $('pm-med').addEventListener('change', () => { populateDoseSelect($('pm-dose'), $('pm-med').value, null); syncIntervalForMed('pm-med', 'pm-interval'); });
+      $('ob-med').addEventListener('change', () => { populateDoseSelect($('ob-dose'), $('ob-med').value, null); syncIntervalForMed('ob-med', 'ob-interval'); });
 
       // Refeição
       ['meal-slot', 'meal-kcal', 'meal-protein', 'meal-fiber', 'meal-carbs', 'meal-fat'].forEach(id => $(id).addEventListener('input', updateMealFormLiveAlert));
@@ -3314,15 +3546,20 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       document.addEventListener('click', e => { if (e.target.closest('#injection-sites-grid, .site-dot')) $('inj-site').dataset.userSet = '1'; });
       $('injection-form').addEventListener('submit', e => {
         e.preventDefault();
-        const inj = { id: uid('inj'), date: $('inj-date').value || getTodayISO(), medication: $('inj-med').value, dose: $('inj-dose').value, site: $('inj-site').value };
+        const dose = readDose('inj-dose');
+        if (!dose) { showToast('Informe a dose em mg (ex.: 3,75).', 'error'); $('inj-dose-custom').focus(); return; }
+        const intervalDays = clampInterval($('inj-interval').value);
+        if (!intervalDays) { showToast('Informe em quantos dias será a próxima aplicação (1 a 90).', 'error'); $('inj-interval').focus(); return; }
+        const inj = { id: uid('inj'), date: $('inj-date').value || getTodayISO(), medication: $('inj-med').value, dose, intervalDays, site: $('inj-site').value };
         const dup = appState.injections.find(i => i.date === inj.date && i.medication === inj.medication);
         appState.injections.push(inj);
         appState.profile.medication = inj.medication;
         appState.profile.dose = inj.dose;
+        appState.profile.intervalDays = inj.intervalDays;
         $('inj-site').dataset.userSet = '';
         syncInjectionFormSelects(true);
         saveState(); renderAll();
-        const dupWarn = dup && getMedInfo(inj.medication).frequency !== 'daily';
+        const dupWarn = dup && inj.intervalDays > 1;
         showToast(dupWarn ? `Atenção: já havia uma aplicação em ${formatDateBR(inj.date)}. Registrada mesmo assim.` : `Aplicação registrada em ${inj.site} ✓`, dupWarn ? 'warning' : 'success', { actionLabel: 'Desfazer', onAction: () => deleteInjection(inj.id), duration: dupWarn ? 9000 : undefined });
       });
 
@@ -3333,7 +3570,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         if (!weight || weight < 35 || weight > 300) { showToast('Informe um peso válido (35–300 kg).', 'error'); $('w-val').focus(); return; }
         const opt = id => numOrNull($(id).value);
         const date = $('w-date').value || getTodayISO(), time = $('w-time').value || getCurrentTimeHM();
-        const entry = { id: uid('w'), date, time, moment: selectedWeightMoment, weight, waistNarrow: opt('w-waist-narrow'), waist: opt('w-waist'), arm: opt('w-arm'), thigh: opt('w-thigh'), dose: $('w-dose').value };
+        const entry = { id: uid('w'), date, time, moment: selectedWeightMoment, weight, waistNarrow: opt('w-waist-narrow'), waist: opt('w-waist'), arm: opt('w-arm'), thigh: opt('w-thigh'), dose: readDose('w-dose') || appState.profile.dose };
         appState.weights.push(entry);
         syncProfileWeightFromHistory();
         ['w-val', 'w-waist-narrow', 'w-waist', 'w-arm', 'w-thigh'].forEach(id => { $(id).value = ''; });
@@ -3373,6 +3610,8 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       $('profile-modal-form').addEventListener('submit', e => {
         e.preventDefault();
         const d = readProfileModalDraft();
+        if (!d.dose) { showToast('Informe a dose em mg (ex.: 3,75).', 'error'); $('pm-dose-custom').focus(); return; }
+        if (!d.intervalDays) { showToast('Informe o intervalo entre aplicações (1 a 90 dias).', 'error'); $('pm-interval').focus(); return; }
         if (d.goalWeight >= d.weight) showToast('Atenção: o peso meta está igual ou acima do atual.', 'warning');
         const weightChanged = Math.abs(d.weight - appState.profile.weight) >= 0.05;
         appState.profile = { ...appState.profile, ...d };
@@ -3392,8 +3631,12 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         }
         const data = {
           name: $('ob-name').value.trim(), age: $('ob-age').value, sex: $('ob-sex').value, weight: $('ob-weight').value,
-          goalWeight: $('ob-goal').value, height: $('ob-height').value, medication: $('ob-med').value, dose: $('ob-dose').value, injectionDay: $('ob-day').value
+          goalWeight: $('ob-goal').value, height: $('ob-height').value, medication: $('ob-med').value, dose: readDose('ob-dose'),
+          intervalDays: clampInterval($('ob-interval').value), lastDate: $('ob-last-date').value || ''
         };
+        if (!data.dose) { showToast('Informe a dose em mg (ex.: 3,75).', 'error'); $('ob-dose-custom').focus(); return; }
+        if (!data.intervalDays) { showToast('Informe o intervalo entre aplicações (1 a 90 dias).', 'error'); $('ob-interval').focus(); return; }
+        if (data.lastDate && data.lastDate > getTodayISO()) data.lastDate = '';
         appState = normalizeState(createCleanUserState(data, appState.profile.customGeminiKey));
         saveState(); closeResetModal();
         $('onboarding-reset-form').reset();
@@ -3411,6 +3654,20 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
 
       $('welcome-accept').addEventListener('change', () => { $('welcome-start').disabled = !$('welcome-accept').checked; });
       $('welcome-start').addEventListener('click', acceptWelcome);
+      // Lembrete
+      $('reminder-enabled').addEventListener('change', e => setReminderEnabled(e.target.checked));
+      $('reminder-time').addEventListener('change', e => {
+        if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(e.target.value)) return;
+        appState.profile.reminder.time = e.target.value; saveState(); syncReminders(); renderReminderCard();
+      });
+      $('reminder-eve').addEventListener('change', e => { appState.profile.reminder.eve = e.target.checked; saveState(); syncReminders(); renderReminderCard(); });
+      $('reminder-ics').addEventListener('click', exportReminderICS);
+      if (nativeReminders) {
+        LocalNotif.addListener('localNotificationActionPerformed', a => {
+          const tab = a && a.notification && a.notification.extra && a.notification.extra.tab;
+          switchTab(tab === 'caneta' ? 'caneta' : 'hoje');
+        });
+      }
       registerServiceWorker();
       renderAll();
       let startTab = 'hoje';

@@ -7,7 +7,7 @@ def rep(a, b):
     global h
     assert h.count(a) == 1, (h.count(a), a[:70]); h = h.replace(a, b)
 rep('<!DOCTYPE html>\n<html lang="pt-BR">\n<head>\n', '<title>NutriPen</title>\n')
-rep('  <title>NutriPen — Acompanhamento Nutricional & GLP-1/GIP</title>\n', '')
+rep('  <title>NutriPen — Diário da Caneta</title>\n', '')
 cls = re.search(r'</head>\n<body class="([^"]+)">', h).group(1)
 h = re.sub(r'</head>\n<body class="[^"]+">', f'<script>document.documentElement.lang="pt-BR";document.body.className={cls!r};</script>', h, count=1)
 rep('</body>\n</html>', '')

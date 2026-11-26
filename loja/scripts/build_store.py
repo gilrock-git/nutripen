@@ -43,7 +43,7 @@ sub(r'\s*<link rel="preconnect" href="https://fonts\.googleapis\.com" />\s*<link
 sub(r'\s*<!-- Tailwind v3.*?</script>\s*<script>\s*tailwind\.config = .*?</script>', '\n  <link rel="stylesheet" href="app.css" />')
 sub(r'\s*<style type="text/tailwindcss">.*?</style>', '')
 sub(r'<script src="https://unpkg\.com/lucide@[^"]+"></script>', '<script src="vendor/lucide.min.js"></script>')
-rep('<title>NutriPen — Acompanhamento Nutricional & GLP-1/GIP</title>', '<title>NutriPen</title>')
+rep('<title>NutriPen — Diário da Caneta</title>', '<title>NutriPen</title>')
 sub(r"\n\s*window\.addEventListener\('online',[^\n]*", '')
 sub(r"\n\s*window\.addEventListener\('offline',[^\n]*", '')
 rep('    body { font-family:', '    header.sticky { padding-top: env(safe-area-inset-top, 0px); }\n    body { font-family:')
@@ -69,7 +69,7 @@ sub(r'<a id="wa-link"[^>]*>📲 WhatsApp</a>',
     '<button type="button" onclick="shareClinicalReport()" class="btn btn-md bg-[#16a34a] hover:bg-[#15803d] text-white shadow-sm">📤 Compartilhar</button>')
 rep('            <button type="button" onclick="window.print()" class="btn btn-md btn-soft">🖨️ Imprimir / PDF</button>\n', '')
 rep('<p class="text-xs font-bold text-amber-700 dark:text-amber-300">Versão de teste</p>',
-    '<p class="text-xs font-bold text-brand-700 dark:text-brand-400">Diário para canetas GLP-1/GIP</p>')
+    '<p class="text-xs font-bold text-brand-700 dark:text-brand-400">Diário da caneta</p>')
 sub(r'<li class="flex gap-2\.5"><span aria-hidden="true">📱</span>.*?</li>',
     '<li class="flex gap-2.5"><span aria-hidden="true">🔒</span><span><strong>Seus dados ficam só neste celular.</strong> Sem cadastro e sem internet: o app não envia nada a servidores, nem ao criador do app. Se desinstalar, os dados são apagados — use ⋮ → "Salvar backup" de vez em quando.</span></li>')
 sub(r'<li class="flex gap-2\.5"><span aria-hidden="true">📸</span>.*?</li>\s*<li class="flex gap-2\.5"><span aria-hidden="true">🧪</span>.*?</li>',
