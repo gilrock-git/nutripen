@@ -46,6 +46,9 @@ poisoned.profile.treatmentStart = X;
 poisoned.dailyLogs[today].hunger = X;
 poisoned.dailyLogs[today].activity = { type: X, minutes: 1e9 };
 poisoned.injections[0].skipped = X;
+poisoned.dailyLogs[today].hungerEvents = [{ id: JS, time: X, level: 4 }, { id: 'h1', time: '10:30', level: X }];
+poisoned.dailyLogs[today].meals[0].offPlan = X;
+poisoned.dailyLogs[today].meals[0].offReason = X;
 
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? '✅' : '❌'} ${name}${detail ? ' — ' + detail : ''}`); };
@@ -108,6 +111,9 @@ const check = (name, ok, detail = '') => { results.push({ name, ok }); console.l
   check('Avisos vistos: chaves inválidas descartadas', st2.seen.length === 1 && st2.seen[0] === 'ok_1', st2.seen.join(','));
   check('Estoque, ciclo, água e início do tratamento saneados', st2.pen.dosesPerPen === null && st2.pen.remaining === null && st2.cyc.lastStart === null && st2.cyc.length === 28 && st2.wr.every === 2 && st2.wr.start === '08:00' && st2.ts === null && st2.lb === null);
   check('Fome e atividade inválidas descartadas', st2.day.hunger === null && st2.day.activity === null);
+  const st3 = await page.evaluate(() => { const l = appState.dailyLogs[Object.keys(appState.dailyLogs)[0]]; return { ev: l.hungerEvents, meal: l.meals[0] }; });
+  check('Fome com horário e "fora do plano" saneados', st3.ev.length === 1 && st3.ev[0].time === '10:30' && st3.ev[0].level === 3 && /^[A-Za-z0-9_-]+$/.test(st3.ev[0].id)
+    && (!st3.meal || (st3.meal.offPlan === false && st3.meal.offReason === '')), JSON.stringify(st3.ev));
   check('Lembrete com valores válidos', st.reminder.enabled === false && st.reminder.time === '09:00');
   check('Texto malicioso exibido apenas como texto', (await page.evaluate(() => document.getElementById('header-patient-summary').textContent)).includes('<img'));
 

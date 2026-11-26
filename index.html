@@ -201,6 +201,17 @@
           <span id="hunger-cycle-day" class="text-[11px] text-slate-500 dark:text-slate-400"></span>
         </div>
         <div id="hunger-options" class="grid grid-cols-5 gap-1.5 mt-3" role="radiogroup" aria-label="Nível de fome"></div>
+        <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Horários em que senti fome</span>
+            <button type="button" id="hunger-now-btn" onclick="toggleHungerNow()" aria-expanded="false" class="btn btn-sm btn-soft">⏰ Senti fome</button>
+          </div>
+          <div id="hunger-now-box" class="hidden mt-2 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70">
+            <div class="flex items-center gap-2"><label for="hunger-time" class="text-xs font-semibold text-slate-600 dark:text-slate-300">Hora</label><input type="time" id="hunger-time" class="field field-sm w-28" /><span class="text-[11px] text-slate-500 dark:text-slate-400">Quanta fome?</span></div>
+            <div id="hunger-now-levels" class="grid grid-cols-4 gap-1.5 mt-2"></div>
+          </div>
+          <div id="hunger-events" class="flex flex-wrap gap-1.5 mt-2"></div>
+        </div>
         <p id="hunger-insight" class="hidden mt-3 text-xs rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-900 dark:text-sky-100 p-2.5"></p>
       </div>
 
@@ -498,6 +509,14 @@
                   <div class="py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-center text-xs font-semibold peer-checked:bg-rose-50 peer-checked:border-rose-500 peer-checked:text-rose-800 dark:peer-checked:bg-rose-950 dark:peer-checked:text-rose-300 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500 transition">🔴 Pesada</div></label>
               </div>
             </fieldset>
+            <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-3">
+              <label class="flex items-center gap-2 text-sm font-semibold cursor-pointer"><input type="checkbox" id="meal-offplan" class="w-4 h-4 accent-violet-600" /> Fora do plano alimentar</label>
+              <div id="meal-offreason-row" class="hidden mt-2">
+                <label for="meal-offreason" class="field-label">O que levou a isso? (opcional)</label>
+                <select id="meal-offreason" class="field field-sm"><option value="">Prefiro não dizer</option><option value="fome">😋 Fome</option><option value="evento">🎉 Evento / social</option><option value="vontade">🍫 Vontade</option><option value="emocional">😟 Ansiedade / emoção</option><option value="sem_opcao">🚗 Sem opção melhor</option></select>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5">Sem culpa: isso só ajuda a nutricionista a entender a sua semana.</p>
+              </div>
+            </div>
             <button type="submit" class="w-full btn btn-md btn-primary"><i data-lucide="plus" class="w-4 h-4"></i> Salvar refeição</button>
           </form>
         </div>
@@ -508,6 +527,7 @@
             <span id="today-meals-count" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"></span>
           </div>
           <div id="today-meals-list" class="space-y-3"></div>
+          <button type="button" onclick="openNutritionWeekReport()" class="mt-4 w-full btn btn-sm btn-soft">📤 Diário da semana para a nutricionista</button>
         </div>
       </div>
     
@@ -816,6 +836,10 @@
   <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">❓ Perguntar ao médico</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
   <div class="pt-4"><div id="questions-section"></div></div>
 </details>
+      <details class="fold card p-4" data-fold="documentos">
+  <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">📁 Plano alimentar e receitas</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
+  <div class="pt-4"><div id="docs-section"></div></div>
+</details>
       <details class="fold card p-4" data-fold="contabilidade">
   <summary class="flex items-center justify-between gap-3"><h3 class="text-sm font-bold">🧮 Minhas metas e condições</h3><i data-lucide="chevron-right" class="chev w-5 h-5 shrink-0 text-slate-400"></i></summary>
   <div class="pt-4"><div class="space-y-4">
@@ -1069,7 +1093,7 @@
 
       <div id="reset-data-warning" class="hidden p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/70 border border-rose-300 dark:border-rose-800 text-xs text-rose-950 dark:text-rose-100 space-y-2">
         <strong class="block">⚠️ Isto apaga TODOS os seus registros atuais.</strong>
-        <p>Refeições, glicemias, aplicações, medidas, exames e fotos serão perdidos. Não dá para desfazer.</p>
+        <p>Refeições, glicemias, aplicações, medidas, exames, fotos e documentos serão perdidos. Não dá para desfazer.</p>
         <div class="flex flex-wrap items-center gap-2">
           <button type="button" onclick="exportBackupJSON()" class="btn btn-sm btn-dark"><i data-lucide="download" class="w-3.5 h-3.5"></i> Baixar backup antes</button>
           <label class="inline-flex items-center gap-2 font-semibold cursor-pointer"><input type="checkbox" id="reset-confirm-check" class="w-4 h-4 rounded" /> Entendo, pode apagar</label>
@@ -1428,7 +1452,7 @@
       diabetes: false, bariatric: false, cholecystectomy: false, gerd: false,
       hypertension: false, recentSurgery: false, surgery90Days: false, dyslipidemia: false, steatosis: false, clinicalNotes: ''
     });
-    const createEmptyDayLog = () => ({ quickMacros: { protein: 0, water: 0, fiber: 0, kcal: 0 }, electrolytes: false, meals: [], habits: {}, hunger: null, activity: null });
+    const createEmptyDayLog = () => ({ quickMacros: { protein: 0, water: 0, fiber: 0, kcal: 0 }, electrolytes: false, meals: [], habits: {}, hunger: null, hungerEvents: [], activity: null });
 
     function createDemoState() {
       const today = getTodayISO();
@@ -1458,13 +1482,17 @@
         dailyLogs: {
           [d3]: { quickMacros: { protein: 25, water: 2600, fiber: 6, kcal: 100 }, electrolytes: false, habits: { protein_first: true, slow_satiety: true, water_goal: true, low_fat: true }, meals: [
             { id: 'm10', slot: 'Café da Manhã', time: '08:00', desc: '2 ovos mexidos + 1 fatia de pão integral', protein: 15.3, fiber: 2.1, kcal: 217, carbs: 12.2, fat: 11.8, digest: 'Leve' },
-            { id: 'm11', slot: 'Almoço', time: '12:30', desc: 'Tilápia grelhada + brócolis + arroz integral', protein: 30.8, fiber: 5.4, kcal: 263, carbs: 26.5, fat: 4.0, digest: 'Leve' }] },
+            { id: 'm11', slot: 'Almoço', time: '12:30', desc: 'Tilápia grelhada + brócolis + arroz integral', protein: 30.8, fiber: 5.4, kcal: 263, carbs: 26.5, fat: 4.0, digest: 'Leve' },
+            { id: 'm12', slot: 'Lanche da Tarde', time: '16:20', desc: '2 fatias de bolo de chocolate (aniversário no trabalho)', protein: 5, fiber: 1.5, kcal: 420, carbs: 58, fat: 19, digest: 'Pesada', offPlan: true, offReason: 'evento' }],
+            hungerEvents: [{ id: 'hf1', time: '15:40', level: 4 }] },
           [d2]: { quickMacros: { protein: 25, water: 2850, fiber: 10, kcal: 100 }, electrolytes: true, habits: { protein_first: true, slow_satiety: true, strength_training: true, water_goal: true, low_fat: true }, meals: [
             { id: 'm13', slot: 'Café da Manhã', time: '07:45', desc: 'Shake: whey + banana + chia', protein: 28.5, fiber: 7.4, kcal: 268, carbs: 29.7, fat: 5.3, digest: 'Leve' },
-            { id: 'm14', slot: 'Almoço', time: '13:00', desc: 'Frango desfiado + vagem + feijão carioca', protein: 37.3, fiber: 11.2, kcal: 269, carbs: 19.4, fat: 4.2, digest: 'Leve' }] },
+            { id: 'm14', slot: 'Almoço', time: '13:00', desc: 'Frango desfiado + vagem + feijão carioca', protein: 37.3, fiber: 11.2, kcal: 269, carbs: 19.4, fat: 4.2, digest: 'Leve' }],
+            hungerEvents: [{ id: 'hf2', time: '12:20', level: 3 }, { id: 'hf3', time: '16:00', level: 4 }] },
           [d1]: { quickMacros: { protein: 20, water: 2700, fiber: 8, kcal: 120 }, electrolytes: true, habits: { protein_first: true, slow_satiety: true, strength_training: true, low_fat: true }, meals: [
             { id: 'm16', slot: 'Café da Manhã', time: '08:15', desc: 'Omelete de 2 ovos + queijo cottage', protein: 23.5, fiber: 0, kcal: 243, carbs: 4.0, fat: 13.6, digest: 'Leve' },
-            { id: 'm17', slot: 'Almoço', time: '12:40', desc: 'Frango grelhado + abobrinha + arroz integral', protein: 39.2, fiber: 3.9, kcal: 307, carbs: 23.7, fat: 5.2, digest: 'Leve' }] },
+            { id: 'm17', slot: 'Almoço', time: '12:40', desc: 'Frango grelhado + abobrinha + arroz integral', protein: 39.2, fiber: 3.9, kcal: 307, carbs: 23.7, fat: 5.2, digest: 'Leve' }],
+            hungerEvents: [{ id: 'hf4', time: '16:10', level: 3 }] },
           [today]: { quickMacros: { protein: 10, water: 1500, fiber: 5, kcal: 40 }, electrolytes: true, habits: { protein_first: true, slow_satiety: true, low_fat: true, glucose_check: true }, meals: [
             { id: 'demo_m1', slot: 'Café da Manhã', time: '08:00', desc: 'Whey isolado + 2 ovos mexidos', protein: 37.5, fiber: 0, kcal: 267, carbs: 2.7, fat: 11.5, digest: 'Leve' },
             { id: 'demo_m2', slot: 'Almoço', time: '12:30', desc: 'Frango desfiado + brócolis + arroz integral', protein: 35.8, fiber: 5.4, kcal: 293, carbs: 26.5, fat: 4.7, digest: 'Leve' }] }
@@ -1541,6 +1569,9 @@
     const inRange = (v, min, max, d) => { const n = num(v, NaN); return Number.isFinite(n) && n >= min && n <= max ? n : d; };
     const rangeOrNull = (v, min, max) => { const n = numOrNull(v); return n !== null && n >= min && n <= max ? n : null; };
     const MEAL_SLOT_NAMES = MEAL_SLOTS.map(s => s[0]);
+    // Motivos (opcionais) de uma refeição fora do plano alimentar
+    const OFF_REASONS = [['fome', '😋 Fome'], ['evento', '🎉 Evento / social'], ['vontade', '🍫 Vontade'], ['emocional', '😟 Ansiedade / emoção'], ['sem_opcao', '🚗 Sem opção melhor']];
+    const offReasonText = id => { const r = OFF_REASONS.find(x => x[0] === id); return r ? r[1].replace(/^\S+\s/, '') : ''; };
     const WEIGHT_MOMENTS = ['🌅 Jejum / Manhã', '☀️ Tarde', '🌙 Noite', '🏋️ Pós-treino'];
     const GLUCOSE_CONTEXTS = ['🌅 Jejum', '🕒 Pré-refeição', '🍽️ Pós-prandial 2h', '🌙 Antes de dormir'];
 
@@ -1589,6 +1620,9 @@
           electrolytes: l.electrolytes === true,
           habits,
           hunger: [1, 2, 3, 4, 5].includes(Number(l.hunger)) ? Number(l.hunger) : null,
+          hungerEvents: (Array.isArray(l.hungerEvents) ? l.hungerEvents : []).filter(e => e && typeof e === 'object' && HHMM.test(e.time)).slice(0, 30)
+            .map(e => ({ id: safeId(e.id, 'hf'), time: e.time, level: [2, 3, 4, 5].includes(Number(e.level)) ? Number(e.level) : 3 }))
+            .sort((a, b) => a.time.localeCompare(b.time)),
           activity: (l.activity && typeof l.activity === 'object' && ACTIVITY_TYPES.some(a => a.id === l.activity.type))
             ? { type: l.activity.type, minutes: Math.round(inRange(l.activity.minutes, 0, 600, 0)) } : null,
           meals: (Array.isArray(l.meals) ? l.meals : []).filter(m => m && typeof m === 'object').slice(0, 100).map(m => ({
@@ -1596,7 +1630,8 @@
             desc: safeText(m.desc, 200) || 'Refeição',
             kcal: inRange(m.kcal, 0, 10000, 0), protein: inRange(m.protein, 0, 500, 0), fiber: inRange(m.fiber, 0, 300, 0),
             carbs: inRange(m.carbs, 0, 1000, 0), fat: inRange(m.fat, 0, 500, 0),
-            digest: ['Leve', 'Moderada', 'Pesada'].includes(m.digest) ? m.digest : 'Leve'
+            digest: ['Leve', 'Moderada', 'Pesada'].includes(m.digest) ? m.digest : 'Leve',
+            offPlan: m.offPlan === true, offReason: m.offPlan === true && OFF_REASONS.some(r => r[0] === m.offReason) ? m.offReason : ''
           }))
         };
       });
@@ -2368,6 +2403,7 @@
                   <span class="text-xs font-bold text-brand-700 dark:text-brand-400">${slotEmoji} ${escapeHTML(m.slot)}</span>
                   ${m.time ? `<span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">${escapeHTML(m.time)}</span>` : ''}
                   <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold ${badge}">${escapeHTML(m.digest)}</span>
+                  ${m.offPlan ? `<span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-violet-50 text-violet-800 dark:bg-violet-950 dark:text-violet-300">↪ Fora do plano${m.offReason ? ' · ' + escapeHTML(offReasonText(m.offReason)) : ''}</span>` : ''}
                 </div>
                 <p class="text-sm font-semibold text-slate-900 dark:text-white break-words">${escapeHTML(m.desc)}</p>
                 <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-slate-600 dark:text-slate-300 tabular-nums">
@@ -2376,6 +2412,7 @@
                 </div>
               </div>
               <div class="flex items-center gap-0.5 shrink-0">
+                <button type="button" onclick="toggleMealOffPlan('${escapeHTML(m.id)}')" class="icon-btn-danger ${m.offPlan ? '!text-violet-600' : ''} hover:!text-violet-600 hover:!bg-violet-50 dark:hover:!bg-violet-950/60" aria-pressed="${m.offPlan}" aria-label="${m.offPlan ? 'Desmarcar fora do plano' : 'Marcar como fora do plano'}" title="Fora do plano"><i data-lucide="flag" class="w-4 h-4"></i></button>
                 <button type="button" onclick="duplicateMeal('${escapeHTML(m.id)}')" class="icon-btn-danger hover:!text-brand-600 hover:!bg-brand-50 dark:hover:!bg-brand-950/60" aria-label="Repetir esta refeição agora" title="Repetir agora"><i data-lucide="copy" class="w-4 h-4"></i></button>
                 <button type="button" onclick="deleteMeal('${escapeHTML(m.id)}')" class="icon-btn-danger" aria-label="Remover refeição" title="Remover"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
               </div>
@@ -2420,6 +2457,7 @@
       $('meal-slot').value = suggestSlotByTime();
       const r = document.querySelector('input[name="meal-digest"][value="Leve"]'); if (r) r.checked = true;
       $('meal-form-live-alert').classList.add('hidden');
+      $('meal-offplan').checked = false; $('meal-offreason').value = ''; $('meal-offreason-row').classList.add('hidden');
     }
 
     function addMealToToday(meal) {
@@ -2427,7 +2465,8 @@
       const newMeal = {
         id: uid('meal'), slot: meal.slot || suggestSlotByTime(), time: meal.time || getCurrentTimeHM(), desc: String(meal.desc || 'Refeição').slice(0, 200),
         kcal: Math.round(num(meal.kcal)), protein: round1(meal.protein), fiber: round1(meal.fiber), carbs: round1(meal.carbs), fat: round1(meal.fat),
-        digest: ['Leve', 'Moderada', 'Pesada'].includes(meal.digest) ? meal.digest : 'Leve'
+        digest: ['Leve', 'Moderada', 'Pesada'].includes(meal.digest) ? meal.digest : 'Leve',
+        offPlan: meal.offPlan === true, offReason: meal.offPlan === true && OFF_REASONS.some(r => r[0] === meal.offReason) ? meal.offReason : ''
       };
       dayLog.meals.push(newMeal);
       saveState();
@@ -2439,6 +2478,15 @@
       return newMeal;
     }
 
+    function toggleMealOffPlan(id) {
+      const m = ensureTodayLog().meals.find(x => x.id === id); if (!m) return;
+      m.offPlan = !m.offPlan; if (!m.offPlan) m.offReason = '';
+      saveState(); renderMealsTab(); renderTodayLog(); renderClinicalReport();
+      showToast(m.offPlan ? 'Marcada como fora do plano. Sem culpa: é só para a nutricionista entender a semana.' : 'Desmarcada.');
+    }
+    function openNutritionWeekReport() {
+      currentReportType = 'nutrition'; renderClinicalReport(); openFold('relatorio');
+    }
     function duplicateMeal(id) {
       const m = ensureTodayLog().meals.find(x => x.id === id);
       if (m) addMealToToday({ ...m, time: getCurrentTimeHM() });
@@ -2852,6 +2900,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       const d = getTodayISO(), t = getCurrentTimeHM();
       ['diary-entry-date', 'inj-date', 'w-date'].forEach(id => autoFill(id, d));
       ['diary-entry-time', 'w-time', 'meal-time'].forEach(id => autoFill(id, t));
+      if (!$('hunger-now-box').classList.contains('hidden')) autoFill('hunger-time', t);
     }
 
     function renderPenAndDiaryTab() {
@@ -3353,6 +3402,38 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       };
     }
 
+    // Diário dos últimos 7 dias: refeições e fome com horário, itens fora do plano
+    function buildFoodDiaryWeek() {
+      const today = getTodayISO(), WD = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      const days = [], offBy = {}, hours = {}, waits = []; let offN = 0, hungerN = 0;
+      const toMin = t => Number(t.slice(0, 2)) * 60 + Number(t.slice(3, 5));
+      for (let i = 6; i >= 0; i--) {
+        const d = addDaysISO(today, -i), l = appState.dailyLogs[d]; if (!l) continue;
+        const meals = l.meals || [], evs = l.hungerEvents || [], items = [];
+        meals.forEach(m => {
+          const desc = m.desc.length > 45 ? m.desc.slice(0, 44) + '…' : m.desc;
+          items.push([m.time, `${m.slot}: ${desc}${m.offPlan ? ` [fora do plano${m.offReason ? ' – ' + offReasonText(m.offReason).toLowerCase() : ''}]` : ''}`]);
+          if (m.offPlan) { offN++; const k = m.offReason || ''; offBy[k] = (offBy[k] || 0) + 1; }
+        });
+        evs.forEach(e => {
+          items.push([e.time, `fome ${HUNGER_LEVELS.find(x => x[0] === e.level)[2].toLowerCase()}`]);
+          hungerN++; const hr = Number(e.time.slice(0, 2)); hours[hr] = (hours[hr] || 0) + 1;
+          const next = meals.filter(m => m.time && m.time >= e.time).sort((a, b) => a.time.localeCompare(b.time))[0];
+          if (next) waits.push(toMin(next.time) - toMin(e.time));
+        });
+        if (!items.length) continue;
+        items.sort((a, b) => (a[0] || '99').localeCompare(b[0] || '99'));
+        days.push(`${WD[new Date(`${d}T12:00:00`).getDay()]} ${formatShortDateBR(d)}: ${items.map(([t, x]) => `${t ? t + ' ' : ''}${x}`).join(' · ')}${l.hunger ? ` · fome do dia ${l.hunger}/5` : ''}`);
+      }
+      const summary = [];
+      if (offN) summary.push(`Refeições fora do plano: ${offN} (${Object.entries(offBy).map(([k, n]) => `${k ? offReasonText(k).toLowerCase() : 'sem motivo informado'}: ${n}`).join('; ')})`);
+      if (hungerN) {
+        const peak = Object.entries(hours).sort((a, b) => b[1] - a[1])[0];
+        summary.push(`Fome registrada ${hungerN} ${hungerN === 1 ? 'vez' : 'vezes'}${hungerN >= 3 ? ` · horário mais frequente: ${peak[0]}h–${Number(peak[0]) + 1}h` : ''}${waits.length ? ` · da fome até comer: ${Math.round(waits.reduce((a, b) => a + b, 0) / waits.length)} min em média` : ''}`);
+      }
+      return { days, summary };
+    }
+
     function renderClinicalReport() {
       document.querySelectorAll('.report-type-btn').forEach(btn => {
         const on = btn.dataset.reportType === currentReportType;
@@ -3390,6 +3471,10 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         `Calorias: ${fmt(d.avgKcal, 0)} kcal/dia — meta ${t.kcalGoal} kcal`,
         `Hidratação: ${fmt(d.avgWater, 0)} ml/dia — meta ${fmt(t.waterGoal, 0)} ml`
       ] : ['Sem registros alimentares nos últimos 7 dias.'] });
+      if (d.showNutrition) {
+        const fw = buildFoodDiaryWeek();
+        if (fw.days.length) sections.push({ title: 'Diário da semana (horários, fome e plano alimentar)', lines: [...fw.summary, ...fw.days] });
+      }
       // Tratamento, aderência à caneta, atividade e fome
       const tStart = getTreatmentStart(), tDay = getTreatmentDay();
       const skipped = appState.injections.filter(i => i.skipped);
@@ -3825,7 +3910,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
     function renderTodayLog() {
       const t = getTodayISO(), items = [];
       const dayLog = ensureTodayLog();
-      dayLog.meals.forEach(m => items.push([m.time || '', `${(MEAL_SLOTS.find(s => s[0] === m.slot) || [0, '🍽️'])[1]} ${escapeHTML(m.desc)} <span class="text-xs text-slate-500">· ${fmt(m.protein)} g prot</span>`]));
+      dayLog.meals.forEach(m => items.push([m.time || '', `${(MEAL_SLOTS.find(s => s[0] === m.slot) || [0, '🍽️'])[1]} ${escapeHTML(m.desc)} <span class="text-xs text-slate-500">· ${fmt(m.protein)} g prot${m.offPlan ? ' · fora do plano' : ''}</span>`]));
       appState.weights.filter(w => w.date === t).forEach(w => items.push([w.time, `⚖️ Peso <strong class="tabular-nums">${fmt(w.weight)} kg</strong>`]));
       appState.glucoseLogs.filter(g => g.date === t).forEach(g => items.push([g.time, `🩸 Glicemia <strong class="tabular-nums">${g.value} mg/dL</strong> <span class="text-xs text-slate-500">${escapeHTML(g.context)}</span>`]));
       appState.diaryEntries.filter(e => e.date === t).forEach(e => {
@@ -3836,6 +3921,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       appState.injections.filter(i => i.date === t).forEach(i => items.push(['', i.skipped ? '⏭️ Dose pulada' : `💉 Aplicação ${escapeHTML(fmtDose(i.dose))}${i.site ? ' · ' + escapeHTML(i.site) : ''}`]));
       if (dayLog.activity) { const a = ACTIVITY_TYPES.find(x => x.id === dayLog.activity.type); items.push(['', `${a.emoji} ${a.label}${dayLog.activity.minutes ? ` · ${dayLog.activity.minutes} min` : ''}`]); }
       if (dayLog.hunger) { const hl = HUNGER_LEVELS.find(x => x[0] === dayLog.hunger); items.push(['', `${hl[1]} Fome: ${hl[2].toLowerCase()}`]); }
+      (dayLog.hungerEvents || []).forEach(e => { const hl = HUNGER_LEVELS.find(x => x[0] === e.level); items.push([e.time, `${hl[1]} Senti fome (${hl[2].toLowerCase()})`]); });
       items.sort((a, b) => (a[0] || '99').localeCompare(b[0] || '99'));
       $('today-log-count').textContent = `(${items.length})`;
       $('today-log-list').innerHTML = items.length ? items.map(([tm, html]) => `<li class="flex gap-3"><span class="tabular-nums text-xs text-slate-500 dark:text-slate-400 w-10 pt-0.5 shrink-0">${escapeHTML(tm)}</span><span class="min-w-0 break-words">${html}</span></li>`).join('')
@@ -3849,6 +3935,11 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       $('hunger-cycle-day').textContent = cd === null ? '' : cd === 0 ? 'dia da aplicação' : `dia ${cd} após a aplicação`;
       $('hunger-options').innerHTML = HUNGER_LEVELS.map(([v, e, l]) => `<button type="button" role="radio" aria-checked="${dayLog.hunger === v}" onclick="setHunger(${v})"
         class="flex flex-col items-center gap-0.5 py-2 rounded-xl border text-[11px] font-semibold transition ${dayLog.hunger === v ? 'bg-brand-600 border-brand-600 text-white' : 'border-slate-200 dark:border-slate-700 hover:border-brand-400'}"><span class="text-xl" aria-hidden="true">${e}</span>${l}</button>`).join('');
+      const evs = dayLog.hungerEvents || [];
+      $('hunger-events').innerHTML = evs.length ? evs.map(e => { const hl = HUNGER_LEVELS.find(x => x[0] === e.level);
+        return `<span class="inline-flex items-center gap-1 pl-2 pr-0.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900 text-xs font-semibold tabular-nums">${escapeHTML(e.time)} <span aria-hidden="true">${hl[1]}</span> ${hl[2]}<button type="button" onclick="deleteHungerEvent('${escapeHTML(e.id)}')" class="w-6 h-6 rounded-full text-slate-500 hover:bg-amber-100 dark:hover:bg-amber-900" aria-label="Excluir fome das ${escapeHTML(e.time)}">✕</button></span>`; }).join('')
+        : '<span class="text-[11px] text-slate-500 dark:text-slate-400">Toque em "Senti fome" na hora em que ela aparecer. Ajuda a nutricionista a ajustar os horários.</span>';
+      $('hunger-now-levels').innerHTML = HUNGER_LEVELS.filter(x => x[0] >= 2).map(([v, e, l]) => `<button type="button" onclick="addHungerEvent(${v})" class="flex flex-col items-center py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-brand-400 text-[11px] font-semibold"><span class="text-lg" aria-hidden="true">${e}</span>${l}</button>`).join('');
       const box = $('hunger-insight');
       const stats = hungerByCycleDay();
       if (dayLog.hunger && stats.days >= 6) {
@@ -3859,6 +3950,27 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         box.textContent = 'Registrado 👍 Com alguns dias de registro, o app mostra em que dia do ciclo da caneta sua fome aumenta.';
         box.classList.remove('hidden');
       } else box.classList.add('hidden');
+    }
+    function toggleHungerNow(force) {
+      const box = $('hunger-now-box'), open = typeof force === 'boolean' ? force : box.classList.contains('hidden');
+      box.classList.toggle('hidden', !open); $('hunger-now-btn').setAttribute('aria-expanded', String(open));
+      if (open) { $('hunger-time').value = getCurrentTimeHM(); $('hunger-time').dataset.auto = '1'; }
+    }
+    function addHungerEvent(level) {
+      const dayLog = ensureTodayLog(); dayLog.hungerEvents = dayLog.hungerEvents || [];
+      if (dayLog.hungerEvents.length >= 30) { showToast('Limite de 30 registros de fome por dia.', 'error'); return; }
+      const time = HHMM.test($('hunger-time').value) ? $('hunger-time').value : getCurrentTimeHM();
+      const ev = { id: uid('hf'), time, level: [2, 3, 4, 5].includes(level) ? level : 3 };
+      dayLog.hungerEvents.push(ev); dayLog.hungerEvents.sort((a, b) => a.time.localeCompare(b.time));
+      saveState(); toggleHungerNow(false); renderHunger(); renderTodayLog(); renderClinicalReport();
+      showToast(`Fome registrada às ${time} ✓ Quando comer, registre a refeição.`, 'success', { actionLabel: 'Desfazer', onAction: () => deleteHungerEvent(ev.id, true) });
+    }
+    function deleteHungerEvent(id, silent) {
+      const dayLog = ensureTodayLog(), list = dayLog.hungerEvents || [], idx = list.findIndex(e => e.id === id);
+      if (idx < 0) return;
+      const [removed] = list.splice(idx, 1);
+      saveState(); renderHunger(); renderTodayLog(); renderClinicalReport();
+      if (!silent) showToast('Registro de fome excluído.', 'success', { actionLabel: 'Desfazer', onAction: () => { list.push(removed); list.sort((a, b) => a.time.localeCompare(b.time)); saveState(); renderHunger(); renderTodayLog(); renderClinicalReport(); } });
     }
     function setHunger(v) {
       const dayLog = ensureTodayLog();
@@ -3941,7 +4053,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
       ['🩸', 'Glicemia', () => openGlucoseModal()],
       ['🏃', 'Atividade', () => { switchTab('diario', { keepScroll: true }); scrollToId('activity-card'); }],
       ['🤢', 'Sintoma', () => { refreshAutoDates(); openFold('checkin'); }],
-      ['😋', 'Fome', () => { switchTab('diario', { keepScroll: true }); scrollToId('hunger-card'); }],
+      ['😋', 'Senti fome', () => { switchTab('diario', { keepScroll: true }); scrollToId('hunger-card'); toggleHungerNow(true); }],
       ['💉', 'Aplicação', () => { switchTab('caneta'); setTimeout(() => scrollToId('injection-form'), 120); }],
       ['🧪', 'Exame', () => openFold('exames')],
       ['📅', 'Consulta', () => openFold('consultas')],
@@ -3969,6 +4081,11 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         const past = appState.appointments.filter(a => a.type === type && a.date < today).sort((a, b) => b.date.localeCompare(a.date))[0];
         const future = appState.appointments.some(a => a.type === type && a.date >= today);
         if (past && !future && daysBetweenISO(past.date, today) >= APPT_TYPES[type].returnDays) list.push({ id: `return-${type}-${past.date}`, icon: APPT_TYPES[type].emoji, title: `Última consulta com ${type === 'medico' ? 'o médico' : 'a nutricionista'}: há ${daysBetweenISO(past.date, today)} dias`, body: 'Lembre de agendar o retorno.', action: ['Agendar', "openFold('consultas')"] });
+      });
+      (docsCache || []).filter(d => d.kind === 'receita' && d.validUntil).forEach(d => {
+        const left = daysBetweenISO(today, d.validUntil);
+        if (left >= 0 && left <= 7) list.push({ id: `rx-${d.id}-${d.validUntil}`, icon: '💊', title: left === 0 ? 'A receita vence hoje' : `A receita vence em ${left} ${left === 1 ? 'dia' : 'dias'}`, body: `${d.name}. Agende a renovação antes de precisar comprar a próxima caneta.`, action: ['Ver documentos', "openFold('documentos')"] });
+        else if (left < 0 && left >= -15) list.push({ id: `rx-${d.id}-${d.validUntil}`, icon: '💊', title: `A receita venceu em ${formatShortDateBR(d.validUntil)}`, body: `${d.name}. Peça uma nova ao seu médico.`, action: ['Ver documentos', "openFold('documentos')"] });
       });
       const td = getTreatmentDay();
       if (td && MILESTONES.includes(td)) list.push({ id: `milestone-${td}`, icon: '🎉', title: `${td} dias de tratamento!`, body: milestoneSummary(), action: ['Ver resumo', "openFold('resumo-semana')"] });
@@ -4338,7 +4455,113 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
     async function deleteProgressPhoto(id) { if (!SAFE_ID.test(id)) return; try { await photoOp('readwrite', st => st.delete(id)); renderPhotos(); showToast('Foto excluída.'); } catch (e) {} }
 
     // ---------- Mais: consultas, perguntas, preferências ----------
-    function renderMais() { renderAppointments(); renderQuestions(); renderPrefs(); }
+    function renderMais() { renderAppointments(); renderQuestions(); renderPrefs(); renderDocs(); }
+
+    // Documentos (plano alimentar, receita): ficam só no aparelho (IndexedDB) e não entram no backup
+    const DOC_DB = 'nutripen-docs';
+    const DOC_KINDS = { plano: ['🥗', 'Plano alimentar'], receita: ['💊', 'Receita médica'], outro: ['📄', 'Outro documento'] };
+    const DOC_MAX = 30, DOC_MAX_BYTES = 15 * 1024 * 1024;
+    let docsCache = [];
+    function docDb() {
+      return new Promise((res, rej) => { if (!window.indexedDB) return rej(new Error('sem IndexedDB'));
+        const r = indexedDB.open(DOC_DB, 1); r.onupgradeneeded = () => r.result.createObjectStore('docs', { keyPath: 'id' }); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+    }
+    async function docOp(mode, fn) { const db = await docDb(); return new Promise((res, rej) => { const tx = db.transaction('docs', mode); const out = fn(tx.objectStore('docs')); tx.oncomplete = () => res(out && out.result !== undefined ? out.result : out); tx.onerror = () => rej(tx.error); }); }
+    async function renderDocs() {
+      const box = $('docs-section'); if (!box) return;
+      try { docsCache = ((await docOp('readonly', st => st.getAll())) || []).filter(d => d && SAFE_ID.test(d.id) && DOC_KINDS[d.kind] && d.blob); }
+      catch (e) { docsCache = []; box.innerHTML = '<p class="text-xs text-slate-500">Documentos indisponíveis neste navegador.</p>'; return; }
+      const today = getTodayISO(), kind = $('doc-kind') ? $('doc-kind').value : 'plano';
+      const list = [...docsCache].sort((a, b) => (a.kind === b.kind ? b.addedAt.localeCompare(a.addedAt) : Object.keys(DOC_KINDS).indexOf(a.kind) - Object.keys(DOC_KINDS).indexOf(b.kind)));
+      const row = d => { const [em, lab] = DOC_KINDS[d.kind], exp = d.validUntil && d.validUntil < today;
+        return `<div class="row-card flex items-center gap-3"><span class="text-2xl" aria-hidden="true">${em}</span>
+          <div class="min-w-0 flex-1"><strong class="block text-sm truncate">${escapeHTML(d.name)}</strong>
+          <span class="block text-xs text-slate-500 dark:text-slate-400">${lab} · ${d.mime === 'application/pdf' ? 'PDF' : 'foto'} · ${formatShortDateBR(d.addedAt)}${d.validUntil ? ` · <span class="${exp ? 'text-rose-600 dark:text-rose-400 font-semibold' : ''}">${exp ? 'venceu em' : 'válida até'} ${formatShortDateBR(d.validUntil)}</span>` : ''}</span></div>
+          <button type="button" onclick="openDocument('${d.id}')" class="btn btn-sm btn-soft">Abrir</button>
+          <button type="button" onclick="shareDocument('${d.id}')" class="icon-btn-danger hover:!text-brand-600 hover:!bg-brand-50 dark:hover:!bg-brand-950/60" aria-label="Enviar ${escapeHTML(d.name)}" title="Enviar"><i data-lucide="share-2" class="w-4 h-4"></i></button>
+          <button type="button" onclick="deleteDocument('${d.id}')" class="icon-btn-danger" aria-label="Excluir ${escapeHTML(d.name)}"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`; };
+      box.innerHTML = `<p class="text-xs text-slate-600 dark:text-slate-400">Guarde o plano da nutricionista e a receita para ter à mão no mercado ou na farmácia. 🔒 Os arquivos ficam só neste aparelho e <strong>não</strong> entram no backup — guarde também o original.</p>
+        <div class="grid grid-cols-2 gap-2 mt-3">
+          <div><label for="doc-kind" class="field-label">Tipo</label><select id="doc-kind" class="field field-sm" onchange="$('doc-valid-wrap').classList.toggle('invisible', this.value !== 'receita')">${Object.entries(DOC_KINDS).map(([k, [em, lab]]) => `<option value="${k}" ${k === kind ? 'selected' : ''}>${em} ${lab}</option>`).join('')}</select></div>
+          <div id="doc-valid-wrap" class="${kind === 'receita' ? '' : 'invisible'}"><label for="doc-valid" class="field-label">Válida até (opcional)</label><input id="doc-valid" type="date" class="field field-sm" /></div>
+          <label for="doc-input" class="col-span-2 btn btn-sm btn-primary cursor-pointer">📎 Adicionar PDF ou foto<input id="doc-input" type="file" accept="application/pdf,image/*" class="hidden" onchange="addDocument(this)" /></label>
+        </div>
+        ${list.length ? `<div class="space-y-2 mt-4">${list.map(row).join('')}</div>` : '<p class="text-xs text-slate-500 dark:text-slate-400 mt-3">Nenhum documento ainda.</p>'}`;
+      refreshIcons(); renderNotifications();
+    }
+    async function addDocument(input) {
+      const file = input.files && input.files[0]; input.value = ''; if (!file) return;
+      if (docsCache.length >= DOC_MAX) { showToast(`Limite de ${DOC_MAX} documentos. Exclua algum antigo.`, 'error'); return; }
+      const kind = DOC_KINDS[$('doc-kind').value] ? $('doc-kind').value : 'outro';
+      const valid = kind === 'receita' && ISO_DATE.test($('doc-valid').value) ? $('doc-valid').value : null;
+      const name = safeText(String(file.name || '').replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' '), 60).trim() || DOC_KINDS[kind][1];
+      let blob, mime;
+      try {
+        if (file.type.startsWith('image/')) {
+          blob = await new Promise((res, rej) => { const url = URL.createObjectURL(file), img = new Image();
+            img.onload = () => { const s = Math.min(1, 2000 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+              c.width = Math.round(img.width * s); c.height = Math.round(img.height * s); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+              c.toBlob(b => (b ? res(b) : rej(new Error('imagem'))), 'image/jpeg', 0.85); };
+            img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('imagem')); }; img.src = url; });
+          mime = 'image/jpeg';
+        } else {
+          if (file.size > DOC_MAX_BYTES) { showToast('Arquivo grande demais (máximo 15 MB).', 'error'); return; }
+          const buf = await file.arrayBuffer();
+          if (new TextDecoder().decode(new Uint8Array(buf, 0, Math.min(5, buf.byteLength))) !== '%PDF-') { showToast('Escolha um arquivo PDF ou uma foto.', 'error'); return; }
+          blob = new Blob([buf], { type: 'application/pdf' }); mime = 'application/pdf';
+        }
+      } catch (e) { showToast('Não consegui abrir este arquivo.', 'error'); return; }
+      try { await docOp('readwrite', st => st.put({ id: uid('doc'), kind, name, mime, addedAt: getTodayISO(), validUntil: valid, blob })); }
+      catch (e) { showToast('Não consegui guardar o arquivo (sem espaço?).', 'error'); return; }
+      showToast(`${DOC_KINDS[kind][1]} guardado neste aparelho 📁`); renderDocs();
+    }
+    const getDoc = id => docsCache.find(d => d.id === id);
+    const docFileName = d => `${d.name.replace(/[^\p{L}\p{N} ._-]+/gu, '').trim().slice(0, 60) || 'documento'}.${d.mime === 'application/pdf' ? 'pdf' : 'jpg'}`;
+    function openDocument(id) {
+      const d = getDoc(id); if (!d) return;
+      if (d.mime !== 'application/pdf') { openDocViewer(d); return; }
+      openDocBlob(d.blob, docFileName(d), d.mime);
+    }
+    // Versão web: abre o PDF no leitor do navegador (no celular, baixa e abre). A versão Android substitui estas funções.
+    function openDocBlob(blob, fileName) {
+      const url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+      if (/Android|iPhone|iPad/i.test(navigator.userAgent)) a.download = fileName;
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000);
+    }
+    async function shareDocBlob(blob, fileName, mime) {
+      const f = new File([blob], fileName, { type: mime });
+      if (navigator.canShare && navigator.canShare({ files: [f] })) {
+        try { await navigator.share({ files: [f], title: fileName }); } catch (e) {}
+        return;
+      }
+      openDocBlob(blob, fileName); showToast('Arquivo aberto: envie pelo app de sua preferência.');
+    }
+    function shareDocument(id) { const d = getDoc(id); if (d) shareDocBlob(d.blob, docFileName(d), d.mime); }
+    let docViewerUrl = null;
+    function openDocViewer(d) {
+      closeDocViewer();
+      docViewerUrl = URL.createObjectURL(d.blob);
+      const v = document.createElement('div');
+      v.id = 'doc-viewer'; v.setAttribute('role', 'dialog'); v.setAttribute('aria-modal', 'true'); v.setAttribute('aria-label', d.name);
+      v.className = 'fixed inset-0 z-[90] bg-black/95 flex flex-col';
+      v.innerHTML = `<div class="flex items-center justify-between gap-2 p-3 text-white" style="padding-top:max(.75rem,env(safe-area-inset-top))"><strong class="truncate text-sm">${escapeHTML(d.name)}</strong>
+        <button type="button" onclick="closeDocViewer()" class="shrink-0 px-3 py-1.5 rounded-lg bg-white/15 text-sm font-bold">Fechar ✕</button></div>
+        <div class="flex-1 overflow-auto flex items-start justify-center p-2"><img src="${docViewerUrl}" alt="${escapeHTML(d.name)}" class="max-w-none w-full h-auto" /></div>`;
+      document.body.appendChild(v); v.querySelector('button').focus();
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('doc-viewer')) closeDocViewer(); });
+    function closeDocViewer() {
+      const v = $('doc-viewer'); if (v) v.remove();
+      if (docViewerUrl) { URL.revokeObjectURL(docViewerUrl); docViewerUrl = null; }
+    }
+    async function deleteDocument(id) {
+      const d = getDoc(id); if (!d) return;
+      try { await docOp('readwrite', st => st.delete(id)); } catch (e) { return; }
+      renderDocs();
+      showToast('Documento excluído.', 'success', { actionLabel: 'Desfazer', onAction: async () => { try { await docOp('readwrite', st => st.put(d)); renderDocs(); } catch (e) {} } });
+    }
+    async function clearDocuments() { try { await docOp('readwrite', st => st.clear()); } catch (e) {} docsCache = []; }
     function renderAppointments() {
       const sec = $('appointments-section'); if (!sec) return;
       const today = getTodayISO();
@@ -4535,6 +4758,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
 
       // Refeição
       ['meal-slot', 'meal-kcal', 'meal-protein', 'meal-fiber', 'meal-carbs', 'meal-fat'].forEach(id => $(id).addEventListener('input', updateMealFormLiveAlert));
+      $('meal-offplan').addEventListener('change', () => $('meal-offreason-row').classList.toggle('hidden', !$('meal-offplan').checked));
       $('meal-form').addEventListener('submit', e => {
         e.preventDefault();
         const desc = $('meal-desc').value.trim();
@@ -4542,7 +4766,8 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         if (!desc) { showToast('Descreva a refeição.', 'error'); $('meal-desc').focus(); return; }
         if (kcalRaw === '' || protRaw === '') { showToast('Informe calorias e proteína (pode ser 0).', 'error'); (kcalRaw === '' ? $('meal-kcal') : $('meal-protein')).focus(); return; }
         const v = readMealFormValues();
-        addMealToToday({ ...v, desc, time: $('meal-time').value || getCurrentTimeHM(), digest: document.querySelector('input[name="meal-digest"]:checked')?.value });
+        addMealToToday({ ...v, desc, time: $('meal-time').value || getCurrentTimeHM(), digest: document.querySelector('input[name="meal-digest"]:checked')?.value,
+          offPlan: $('meal-offplan').checked, offReason: $('meal-offreason').value });
         clearMealForm();
       });
 
@@ -4647,7 +4872,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         if (!data.intervalDays) { showToast('Informe o intervalo entre aplicações (1 a 90 dias).', 'error'); $('ob-interval').focus(); return; }
         if (data.lastDate && data.lastDate > getTodayISO()) data.lastDate = '';
         appState = normalizeState(createCleanUserState(data, appState.profile.customGeminiKey));
-        clearProgressPhotos().then(renderPhotos);
+        clearProgressPhotos().then(renderPhotos); clearDocuments().then(renderDocs);
         saveState(); closeResetModal();
         $('onboarding-reset-form').reset();
         syncInjectionFormSelects(true);
@@ -4657,7 +4882,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
 
       // Virada do dia com o app aberto
       document.addEventListener('visibilitychange', () => { if (document.hidden) return; if (getTodayISO() !== lastRenderedDay) renderAll(); else refreshAutoDates(); });
-      ['diary-entry-date', 'diary-entry-time', 'inj-date', 'w-date', 'w-time', 'meal-time'].forEach(id => ['input', 'change'].forEach(ev => $(id).addEventListener(ev, e => { if (e.isTrusted) $(id).dataset.auto = ''; })));
+      ['diary-entry-date', 'diary-entry-time', 'inj-date', 'w-date', 'w-time', 'meal-time', 'hunger-time'].forEach(id => ['input', 'change'].forEach(ev => $(id).addEventListener(ev, e => { if (e.isTrusted) $(id).dataset.auto = ''; })));
       window.addEventListener('online', () => showToast('Conexão restabelecida — IA disponível.'));
       let resizeTimer;
       window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (currentTab === 'evolucao') renderInteractiveSVGChart(); }, 150); });

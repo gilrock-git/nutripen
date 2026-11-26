@@ -227,17 +227,27 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
 
 ## Ideias anotadas (26/11/2026) — para depois
 
-### Diário para a nutricionista
-- [ ] **"Senti fome" com horário:** botão no "+" que registra a hora e a intensidade (1–5), além da nota do dia.
-- [ ] **Refeição "fora do plano":** marcação opcional na refeição (com o que foi e por quê: fome, evento, ansiedade).
-- [ ] **Devolutiva da semana:** linha do tempo por dia (fome → refeição, horários, intervalo entre elas, itens fora
-  do plano) no relatório, em formato fácil de enviar à nutricionista.
-
-### Documentos guardados no aparelho
-- [ ] **Plano alimentar da nutricionista (PDF ou foto):** guardar no aparelho e abrir com um toque.
-- [ ] **Receita médica (PDF ou foto):** guardar no aparelho, com data de emissão e aviso antes de vencer.
-- Técnico: usar o mesmo armazenamento das fotos (IndexedDB, fora do backup); no Android, abrir o PDF no leitor do
-  celular exige um plugin para abrir arquivos (o WebView não mostra PDF).
+### Versão 1.3 (26/11/2026) — implementado
+- [x] **"Senti fome" com horário** e intensidade, no cartão da fome e no botão "+".
+- [x] **Refeição "fora do plano"**, com motivo opcional (fome, evento, vontade, emoção, sem opção), marcada ao
+  salvar ou depois pela bandeira; texto acolhedor ("sem culpa").
+- [x] **Diário da semana para a nutricionista:** no relatório nutricional, a linha do tempo de cada dia
+  (refeições e fome com horários, itens fora do plano), mais o resumo:
+  - quantas refeições saíram do plano e por quê;
+  - horário mais frequente de fome;
+  - tempo médio entre sentir fome e comer.
+  
+  Na tela de Refeições há um atalho para esse relatório.
+- [x] **Plano alimentar e receitas (PDF ou foto)** em Mais:
+  - os arquivos ficam só no aparelho, fora do backup;
+  - foto abre dentro do app; PDF abre no leitor do celular;
+  - botão para enviar o arquivo (WhatsApp etc.);
+  - receita com validade e aviso no sininho 7 dias antes de vencer.
+- [x] Corrigido: o botão "voltar" do Android ainda usava a aba antiga "hoje". Ele nunca saía do app e não
+  fechava o painel de avisos.
+- [ ] *Opcional:* no Android, o PDF abre pelo menu "Abrir com…". Para mostrar direto no leitor padrão, dá para
+  usar o plugin `@capacitor-community/file-opener` (versão 8.0.1). Adicionar uma dependência nova precisa de
+  autorização.
 
 ### Outros idiomas e países
 - Ordem sugerida: **espanhol** (América Latina e Espanha) → **inglês** (EUA, Reino Unido, Canadá, Austrália) →

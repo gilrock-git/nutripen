@@ -5,7 +5,7 @@ Diferenças em relação à versão web:
 - nenhum acesso à internet: CSS do Tailwind compilado, ícones e fontes locais;
 - sem análise por IA (Gemini) e sem service worker;
 - backup e relatório usam o compartilhamento nativo do Android;
-- botão "voltar" do Android fecha janelas e volta para a aba Hoje.
+- botão "voltar" do Android fecha janelas e volta para o Diário.
 
 Uso (dentro de loja/): python3 scripts/build_store.py
 """
@@ -132,6 +132,27 @@ native = r'''
     showToast('Backup salvo.');
   };
 
+  // Documentos (plano alimentar, receita): grava uma cópia temporária e abre o menu do Android
+  // ("Abrir com…" / enviar), sem precisar de permissão de armazenamento.
+  async function nativeDocUri(blob, fileName) {
+    const b64 = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(blob); });
+    const res = await NativePlugins.Filesystem.writeFile({ path: fileName, data: b64, directory: 'CACHE' });
+    return res.uri;
+  }
+  const webOpenDoc = window.openDocBlob, webShareDoc = window.shareDocBlob;
+  async function nativeShareDoc(blob, fileName, title) {
+    try { await NativePlugins.Share.share({ title: fileName, files: [await nativeDocUri(blob, fileName)], dialogTitle: title }); }
+    catch (e) { if (!String(e && e.message).toLowerCase().includes('cancel')) showToast('Não consegui abrir o arquivo. Instale um leitor de PDF.', 'error'); }
+  }
+  window.openDocBlob = function (blob, fileName, mime) {
+    if (isNative && NativePlugins.Filesystem && NativePlugins.Share) return nativeShareDoc(blob, fileName, 'Abrir com…');
+    return webOpenDoc(blob, fileName, mime);
+  };
+  window.shareDocBlob = function (blob, fileName, mime) {
+    if (isNative && NativePlugins.Filesystem && NativePlugins.Share) return nativeShareDoc(blob, fileName, 'Enviar para…');
+    return webShareDoc(blob, fileName, mime);
+  };
+
   // Depois do aviso inicial, leva direto à criação do perfil
   window.acceptWelcome = (orig => function () {
     orig();
@@ -141,11 +162,12 @@ native = r'''
   // Botão "voltar" do Android
   if (isNative && NativePlugins.App) {
     NativePlugins.App.addListener('backButton', () => {
-      const menu = document.getElementById('more-menu');
-      if (menu && !menu.classList.contains('hidden')) { closeMoreMenu(); return; }
+      if (document.getElementById('doc-viewer')) { closeDocViewer(); return; }
+      const notif = document.getElementById('notif-panel');
+      if (notif && !notif.classList.contains('hidden')) { closeNotifPanel(); return; }
       const open = [...document.querySelectorAll('.modal.flex')].pop();
       if (open) { if (!open.dataset.required) closeModal(open.id); return; }
-      if (currentTab !== 'hoje') { switchTab('hoje'); return; }
+      if (currentTab !== 'diario') { switchTab('diario'); return; }
       NativePlugins.App.exitApp();
     });
   }
