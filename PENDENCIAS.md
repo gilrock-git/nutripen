@@ -346,6 +346,11 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
   - Para ela, a pasta de documentos já ajuda: guardar a receita para viagem e fronteira.
 - Precisa saber o **país** do testador (unidades da glicemia e do colesterol, telefone de emergência) e **qual
   caneta** ele usa.
+- [x] Já feito: emergência "192 (na Europa, 112)" e link da bula da EMA ao lado do da ANVISA.
+- **Teste agora, sem custo:** abrir o link no **Chrome** (aba normal, não o app instalado) e usar "Traduzir para
+  inglês". Traduz as telas na hora; datas e unidades continuam no formato brasileiro.
+- Tradução própria: são cerca de 1.500 frases (telas, alertas, bulas, 50 alimentos), uns 80 mil caracteres —
+  trabalho de uma rodada inteira, com revisão dos textos clínicos.
 - Caminho mais barato para um testador: uma cópia do link de teste em inglês (ex.: `.../nutripen/en/`), com os
   textos traduzidos, a bula citada pela EMA (agência europeia), emergência 112, alimentos genéricos e a política
   de privacidade em inglês (GDPR).

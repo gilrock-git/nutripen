@@ -1192,7 +1192,7 @@
       </div>
       <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">Um diário para quem usa caneta emagrecedora (Mounjaro, Ozempic, Wegovy, Saxenda): proteína, água, fibras, peso, glicemia, sintomas e rodízio da aplicação. Antes de começar:</p>
       <ul class="space-y-2.5 text-sm text-slate-700 dark:text-slate-300">
-        <li class="flex gap-2.5"><span aria-hidden="true">🩺</span><span><strong>Não substitui seu médico ou nutricionista.</strong> Metas e alertas são estimativas gerais. Doses só devem ser alteradas pelo médico. Em emergência, ligue 192.</span></li>
+        <li class="flex gap-2.5"><span aria-hidden="true">🩺</span><span><strong>Não substitui seu médico ou nutricionista.</strong> Metas e alertas são estimativas gerais. Doses só devem ser alteradas pelo médico. Em emergência, ligue 192 (na Europa, 112).</span></li>
         <li class="flex gap-2.5"><span aria-hidden="true">📱</span><span><strong>Seus dados ficam só neste celular,</strong> no navegador. Ninguém mais tem acesso — nem o criador do app. Se limpar os dados do navegador, eles se perdem: use "Baixar backup" no menu ⋮.</span></li>
         <li class="flex gap-2.5"><span aria-hidden="true">📸</span><span><strong>Análise por foto (opcional):</strong> só funciona se você cadastrar uma chave do Google Gemini. Nesse caso, a foto ou o texto da refeição é enviado ao Google para análise.</span></li>
         <li class="flex gap-2.5"><span aria-hidden="true">🧪</span><span><strong>É um teste:</strong> podem aparecer erros. O app começa com dados de exemplo; para usar os seus, toque em ⋮ → "Zerar e iniciar meu perfil".</span></li>
@@ -1856,7 +1856,7 @@
     function classifyGlucoseReading(val, context) {
       const v = num(val);
       if (v < 54) return { status: 'hypo', badge: '🚨 HIPOGLICEMIA GRAVE (< 54 mg/dL)', boxClass: 'bg-rose-50 dark:bg-rose-950/90 border-rose-500 text-rose-950 dark:text-rose-100',
-        advice: 'Ingira 15g de carboidrato rápido AGORA e peça ajuda. Se houver confusão, sonolência ou desmaio, ligue 192 (SAMU). Não dirija.' };
+        advice: 'Ingira 15g de carboidrato rápido AGORA e peça ajuda. Se houver confusão, sonolência ou desmaio, ligue 192 (SAMU; na Europa, 112). Não dirija.' };
       if (v < 70) return { status: 'hypo', badge: '🚨 HIPOGLICEMIA (< 70 mg/dL)', boxClass: 'bg-rose-50 dark:bg-rose-950/90 border-rose-400 dark:border-rose-700 text-rose-950 dark:text-rose-100',
         advice: 'Regra dos 15: ingira 15g de carboidrato rápido (1 col. sopa de mel, 150ml de suco de laranja ou 3 balas de glicose), espere 15 min e meça de novo. Repita se continuar < 70 e avise seu médico.' };
       if (v > 250) return { status: 'hyper', badge: '🚨 HIPERGLICEMIA ACENTUADA (> 250 mg/dL)', boxClass: 'bg-amber-50 dark:bg-amber-950/90 border-amber-500 text-amber-950 dark:text-amber-100',
@@ -2359,7 +2359,7 @@
 
       if (latestGl && latestGl.date === today && latestGl.value < 70) {
         return set('🚨 Hipoglicemia', 'rose', 'Regra dos 15: carboidrato rápido agora',
-          `Sua última glicemia hoje foi ${latestGl.value} mg/dL. Ingira 15g de carboidrato rápido (1 col. sopa de mel ou 150ml de suco), espere 15 min e meça de novo. Abaixo de 54 ou com confusão/desmaio: ligue 192.`);
+          `Sua última glicemia hoje foi ${latestGl.value} mg/dL. Ingira 15g de carboidrato rápido (1 col. sopa de mel ou 150ml de suco), espere 15 min e meça de novo. Abaixo de 54 ou com confusão/desmaio: ligue 192 (na Europa, 112).`);
       }
       if (cond.cholecystectomy && totals.fat > targets.fatCeiling) {
         return set('🫀 Teto de gordura', 'amber', 'Sem vesícula: zere gorduras adicionadas hoje',
@@ -3939,6 +3939,8 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
 
     // ---- Resumos de bula: sempre com fonte e convite a conferir a versão vigente ----
     const BULARIO = nome => `https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=${encodeURIComponent(nome)}`;
+    // Bula europeia (EMA), para quem mora ou se trata na Europa
+    const EMA_EPAR = nome => `https://www.ema.europa.eu/en/medicines/human/EPAR/${encodeURIComponent(nome.toLowerCase())}`;
     const BULA_INFO = {
       'Tirzepatida (Mounjaro)': { produtos: [['Mounjaro', BULARIO('Mounjaro')]], esquecida: { tipo: 'janela', dias: 4,
         texto: 'Aplique assim que lembrar, se passaram até 4 dias da data prevista. Passou de 4 dias: pule esta dose e aplique na próxima data. Entre duas aplicações, mantenha pelo menos 3 dias.' },
@@ -4351,7 +4353,7 @@ Se a imagem não mostrar comida, retorne dishName "Não identificado" e valores 
         ${info.anticoncepcional ? '<div class="row-card"><strong class="block mb-1">🌸 Anticoncepcional oral</strong><p>Pode ter o efeito reduzido nas 4 semanas após o início e após cada aumento de dose; use também método de barreira ou um método não oral nesse período.</p></div>' : ''}
         <div class="row-card"><strong class="block mb-1">🚨 Procure atendimento se</strong><p>Dor forte e persistente na barriga (que pode ir para as costas), com ou sem vômitos; vômitos ou diarreia que não param; sinais de desidratação; dor no lado direito da barriga com febre ou pele amarelada.</p></div>
         <p class="text-[11px] text-slate-500 dark:text-slate-400">${escapeHTML(BULA_FONTE)}</p>
-        <div class="flex flex-wrap gap-2">${info.produtos.map(([n, u]) => `<a class="btn btn-sm btn-soft" target="_blank" rel="noopener noreferrer" href="${u}">📄 Bula oficial: ${escapeHTML(n)}</a>`).join('')}</div>`;
+        <div class="flex flex-wrap gap-2">${info.produtos.map(([n, u]) => `<a class="btn btn-sm btn-soft" target="_blank" rel="noopener noreferrer" href="${u}">📄 Bula oficial: ${escapeHTML(n)}</a>`).join('')}${info.produtos.map(([n]) => `<a class="btn btn-sm btn-soft" target="_blank" rel="noopener noreferrer" href="${EMA_EPAR(n)}">🇪🇺 Europa (EMA): ${escapeHTML(n)}</a>`).join('')}</div>`;
     }
     let pendingCatchUp = null; // distância (dias) até o dia de sempre, quando a dose atrasada é aplicada hoje
     const MIN_GAP = med => (med.startsWith('Tirzepatida') ? 3 : med.startsWith('Semaglutida') ? 2 : 1);
