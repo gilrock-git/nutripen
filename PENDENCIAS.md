@@ -81,6 +81,13 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
   - **Medidas:** abas internas Peso | Medidas | Glicemia | Exames, cada uma com gráfico e "Registrar ▸".
   - **Refeições:** resumo do dia no topo; "Registrar refeição ▸", "Montador ▸", "Diário de hoje (3) ▸".
 
+- [ ] **Diário em primeiro lugar.** É a tela usada todos os dias: deve ser a primeira da navegação e a tela
+  inicial do app, fácil de achar e rápida de preencher (registrar em 1–2 toques).
+
+- [ ] **Lembretes de água.** Opcional: avisar a cada X horas (ex.: de 2 em 2 h, das 8h às 20h) com quanto
+  falta para a meta; parar sozinho quando a meta do dia for batida; não avisar à noite. No Android, notificação
+  local (mesmo mecanismo do lembrete da aplicação); na web, só o lembrete visual ao abrir o app.
+
 - [ ] **Atividade física.** Registro simples por dia: *Não pratiquei* / *Caminhada* / *Musculação* /
   *Outra*, com minutos opcionais.
   - Meta semanal de referência (OMS): **150 min de atividade moderada + 2 dias de força**; mostrar progresso
