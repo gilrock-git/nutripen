@@ -355,3 +355,25 @@ mês, fotos de progresso (só no aparelho), tamanho de letra, aviso de reganho n
   textos traduzidos, a bula citada pela EMA (agência europeia), emergência 112, alimentos genéricos e a política
   de privacidade em inglês (GDPR).
 - Depois, se o mercado se confirmar, montar a estrutura de tradução de verdade, para manter as duas línguas.
+
+### Relatório com cara de documento profissional (pedido de 26/11/2026)
+O relatório vai para o médico e a nutricionista e funciona como propaganda do app: tem de ser bonito e fácil de
+ler.
+- [ ] **Mais espaço:** letra um pouco maior, linhas mais espaçadas, margens generosas, menos texto corrido.
+- [ ] **Cabeçalho limpo:**
+  - nome, idade, caneta e dose, tempo de tratamento e período do relatório;
+  - logo discreto do NutriPen.
+- [ ] **Cartões de destaque no topo** (número grande + variação):
+  - peso perdido;
+  - % da meta;
+  - proteína média;
+  - água;
+  - doses aplicadas e puladas;
+  - HbA1c.
+- [ ] **Cada métrica com o seu gráfico ao lado** (peso, proteína, água, fome × ciclo, glicemia, exames), com uma
+  frase curta de leitura (ex.: "Meta de proteína batida em 9 de 14 dias").
+- [ ] **Cores com significado:** verde = na meta, âmbar = atenção, vermelho = alerta. Pensar na impressão em preto e
+  branco: usar também ícone ou rótulo, não só a cor.
+- [ ] **Paginação da impressão:** A4, sem cortar blocos, rodapé com página e data, aviso clínico curto no topo.
+- [ ] **Diário da semana em tabela** (dia × horários), em vez de texto corrido.
+- [ ] Rodapé discreto "Gerado pelo NutriPen" para divulgação entre profissionais.
