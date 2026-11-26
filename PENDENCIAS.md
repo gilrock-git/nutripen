@@ -107,6 +107,32 @@ Lista de melhorias anotadas para as próximas versões. Marque com [x] quando co
   - botão "📄 Ver bula oficial" que abre o **Bulário Eletrônico da ANVISA** no navegador (sempre atualizado);
   - guardar no código a data da versão consultada e revisar os resumos a cada nova versão da bula.
 
+- [ ] **Central de avisos (sininho 🔔 no topo).** Todos os avisos vão para um só lugar, com contador, para a
+  tela não ficar poluída: comprar/encomendar a caneta, consulta agendada, agendar a próxima consulta, aplicação
+  atrasada, exame a refazer, fazer backup. Avisos importantes também podem virar notificação no celular.
+
+- [ ] **Estoque da caneta.** Informar quantas doses tem a caneta (ou cliques) e quantas restam; avisar no sininho
+  quando faltarem ~2 aplicações para dar tempo de encomendar.
+
+- [ ] **Consultas.** Agenda simples: médico, nutricionista e "Outro profissional" (campo livre); data/hora e
+  local; aviso na véspera e no dia; após a consulta, lembrar de **agendar a próxima** (ex.: "Sua última consulta
+  com a nutricionista foi há 30 dias"). Lista "Perguntar ao médico" ligada à próxima consulta.
+  - Decisão: não criar telas específicas para educador físico ou psicólogo (foco do app); o campo livre atende.
+
+- [ ] **Fome e saciedade × dias após a aplicação.** Registro diário de 1 a 5 (1 toque). Gráfico "fome por dia
+  do ciclo da caneta" (dia 1, 2, 3… após a aplicação) para a pessoa perceber se a fome volta antes da próxima dose;
+  entra no relatório para o médico ajustar dose/intervalo.
+
+### Aprovadas para o futuro (26/11/2026)
+- [ ] "O que comer agora?" — sugestões de lanches que fecham a proteína/fibra que falta no dia.
+- [ ] Visão do mês (calendário) com aplicações, peso, sintomas, atividade e fome.
+- [ ] Lista "Perguntar ao médico" (entra no relatório).
+- [ ] Tamanho de letra ajustável (acessibilidade).
+- [ ] Fotos de progresso (só no aparelho).
+- [ ] Fase de manutenção: acompanhar o peso ao espaçar/parar a caneta e avisar com delicadeza se voltar a subir.
+- [ ] Resumo da semana com conquistas, em tom de incentivo.
+- [ ] Navegação em 5 abas: **Diário (tela inicial)** · Refeições · Evolução · Caneta · Mais.
+
 ## Decisões em aberto
 
 - [x] **Nome na loja:** proposta "NutriPen: Diário da Caneta" (26 caracteres), com "caneta
